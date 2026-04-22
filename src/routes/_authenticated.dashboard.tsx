@@ -19,6 +19,7 @@ import { BottomTabs } from "@/components/BottomTabs";
 import { useAuth } from "@/hooks/useAuth";
 import { useBranch } from "@/hooks/useBranch";
 import { supabase } from "@/integrations/supabase/client";
+import { formatKRWShort } from "@/components/StatusBadge";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -121,7 +122,7 @@ function DashboardPage() {
             to="/invoices"
             icon={Receipt}
             label="이번 달 매출"
-            value={`${(stats.monthRevenue / 10000).toFixed(0)}만`}
+            value={formatKRWShort(stats.monthRevenue)}
             tone="success"
           />
           <Tile to="/invoices" icon={AlertCircle} label="미납" value={`${stats.overdue}건`} tone="danger" />

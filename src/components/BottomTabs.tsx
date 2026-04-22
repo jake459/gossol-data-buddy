@@ -26,7 +26,8 @@ export function BottomTabs({ tabs }: { tabs?: Tab[] }) {
         className="grid grid-cols-5 rounded-2xl border border-white/50 bg-white/80 p-1.5 shadow-[0_15px_40px_-10px_oklch(0.2_0.05_260/0.25)] backdrop-blur-xl"
       >
         {items.map(({ to, label, Icon }) => {
-          const active = location.pathname === to || location.pathname.startsWith(`${to}/`);
+          const path = location.pathname;
+          const active = to === "/dashboard" ? path === "/" || path.startsWith("/dashboard") : path === to || path.startsWith(`${to}/`);
           return (
             <Link
               key={to}
