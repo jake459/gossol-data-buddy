@@ -6,9 +6,10 @@ import { TopBar } from "@/components/TopBar";
 import { BottomTabs } from "@/components/BottomTabs";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/EmptyState";
+import { StatusBadge, formatKRW } from "@/components/StatusBadge";
 import { supabase } from "@/integrations/supabase/client";
 import { useBranch } from "@/hooks/useBranch";
-import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/tenants")({
   head: () => ({ meta: [{ title: "입실자 — Gossol" }] }),
@@ -26,17 +27,6 @@ type Tenant = {
   room_id: string | null;
 };
 type RoomMini = { id: string; room_number: string };
-
-const STATUS_LABEL: Record<TenantStatus, string> = {
-  active: "정상",
-  overdue: "미납",
-  moved_out: "퇴실",
-};
-const STATUS_TONE: Record<TenantStatus, string> = {
-  active: "bg-emerald-50 text-emerald-600",
-  overdue: "bg-rose-50 text-rose-600",
-  moved_out: "bg-slate-100 text-slate-500",
-};
 
 function TenantsPage() {
   const { selected } = useBranch();
@@ -93,15 +83,13 @@ function TenantsPage() {
         {loading ? (
           <p className="py-10 text-center text-sm text-muted-foreground">불러오는 중…</p>
         ) : filtered.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border p-8 text-center">
-            <UserRound className="mx-auto h-8 w-8 text-muted-foreground" />
-            <p className="mt-2 text-sm text-muted-foreground">아직 등록된 입실자가 없어요.</p>
-            <Link to="/tenants/new">
-              <Button className="mt-3 h-10 rounded-xl">
-                <Plus className="h-4 w-4" /> 입주 등록
-              </Button>
-            </Link>
-          </div>
+          <EmptyState
+            icon={UserRound}
+            title={q ? "검색 결과가 없어요" : "아직 등록된 입실자가 없어요"}
+            description={q ? "다른 이름이나 연락처로 검색해 보세요." : "첫 입실자를 등록해 운영을 시작해 보세요."}
+            actionLabel="입주 등록"
+            actionTo="/tenants/new"
+          />
         ) : (
           <ul className="space-y-2">
             {filtered.map((t) => {
@@ -117,17 +105,10 @@ function TenantsPage() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <p className="truncate text-[14px] font-semibold">{t.name}</p>
-                      <span
-                        className={cn(
-                          "rounded-full px-2 py-0.5 text-[10.5px] font-bold",
-                          STATUS_TONE[t.status],
-                        )}
-                      >
-                        {STATUS_LABEL[t.status]}
-                      </span>
+                      <StatusBadge kind="tenant" value={t.status} />
                     </div>
                     <p className="mt-0.5 truncate text-[12px] text-muted-foreground">
-                      {room ? `${room.room_number}호` : "미배정"} · 월 {(t.monthly_rent ?? 0).toLocaleString()}원
+                      {room ? `${room.room_number}호` : "미배정"} · 월 {formatKRW(t.monthly_rent ?? 0)}
                       {t.payment_day ? ` · 매달 ${t.payment_day}일` : ""}
                     </p>
                   </div>

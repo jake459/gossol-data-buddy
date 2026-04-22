@@ -5,6 +5,8 @@ import { MobileFrame } from "@/components/MobileFrame";
 import { TopBar } from "@/components/TopBar";
 import { BottomTabs } from "@/components/BottomTabs";
 import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/EmptyState";
+import { formatKRW, formatKRWShort } from "@/components/StatusBadge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useBranch } from "@/hooks/useBranch";
@@ -153,12 +155,13 @@ function InvoicesPage() {
         {loading ? (
           <p className="py-10 text-center text-sm text-muted-foreground">불러오는 중…</p>
         ) : invoices.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border p-8 text-center">
-            <Receipt className="mx-auto h-8 w-8 text-muted-foreground" />
-            <p className="mt-2 text-sm text-muted-foreground">
-              아직 이번 달 청구서가 없어요. 상단의 "이번 달 발행"을 눌러보세요.
-            </p>
-          </div>
+          <EmptyState
+            icon={Receipt}
+            title="이번 달 청구서가 없어요"
+            description='상단의 "이번 달 발행"을 누르면 활동 중인 입실자에게 자동으로 발행됩니다.'
+            actionLabel={issuing ? "발행 중..." : "이번 달 발행"}
+            onAction={issueMonthly}
+          />
         ) : (
           <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
             {invoices.map((iv) => {
@@ -185,7 +188,7 @@ function InvoicesPage() {
                       </p>
                     </div>
                     <p className={cn("text-[15px] font-bold", paid ? "text-muted-foreground" : "text-foreground")}>
-                      {iv.amount.toLocaleString()}원
+                      {formatKRW(iv.amount)}
                     </p>
                   </button>
                 </li>
@@ -206,7 +209,7 @@ function SumTile({ label, value, tone }: { label: string; value: number; tone: "
   return (
     <div className="rounded-2xl border border-border bg-card p-3">
       <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{label}</p>
-      <p className={cn("mt-1 text-[16px] font-bold", toneClass)}>{(value / 10000).toFixed(0)}만</p>
+      <p className={cn("mt-1 text-[16px] font-bold", toneClass)}>{formatKRWShort(value)}</p>
     </div>
   );
 }
