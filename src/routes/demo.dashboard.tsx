@@ -4,19 +4,12 @@ import { TopBar } from "@/components/TopBar";
 import { BottomTabs } from "@/components/BottomTabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, Receipt, AlertCircle, DoorOpen } from "lucide-react";
 
 export const Route = createFileRoute("/demo/dashboard")({
   head: () => ({ meta: [{ title: "데모 대시보드 — Gossol" }] }),
   component: DemoDashboard,
 });
 
-const demoTabs = [
-  { to: "/demo/dashboard", label: "대시보드", Icon: TrendingUp },
-  { to: "/demo/dashboard", label: "일정", Icon: Receipt },
-  { to: "/demo/dashboard", label: "입실자", Icon: AlertCircle },
-  { to: "/demo/dashboard", label: "지점", Icon: DoorOpen },
-];
 
 function DemoDashboard() {
   return (
