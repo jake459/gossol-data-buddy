@@ -83,17 +83,26 @@ function LoginPage() {
 
   return (
     <MobileFrame>
-      <main className="flex flex-1 flex-col bg-app-shell px-5 pb-8 pt-10">
+      <main className="relative flex flex-1 flex-col px-5 pb-8 pt-12">
+        {/* Soft mesh backdrop */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-[42vh]"
+          style={{
+            background:
+              "radial-gradient(70% 60% at 20% 0%, oklch(0.85 0.14 268 / 0.45), transparent 70%), radial-gradient(60% 50% at 100% 0%, oklch(0.85 0.12 200 / 0.4), transparent 70%)",
+          }}
+        />
         {/* Brand */}
-        <div className="mb-6 text-center">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-brand to-[oklch(0.32_0.16_265)] text-2xl font-black text-primary-foreground shadow-lg shadow-brand/30">
+        <div className="relative mb-7 text-center">
+          <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-[oklch(0.55_0.22_268)] to-[oklch(0.32_0.16_263)] text-2xl font-black text-primary-foreground shadow-[0_15px_30px_-10px_oklch(0.32_0.16_263/0.6)]">
             G
           </div>
-          <p className="mt-3 text-[13px] font-medium text-muted-foreground">고시원 관리, 더 가볍게</p>
+          <p className="mt-3 text-[12px] font-semibold uppercase tracking-[0.2em] text-brand">Gossol</p>
+          <p className="mt-1 text-[13px] text-muted-foreground">고시원 운영, 더 가볍게</p>
         </div>
 
-        {/* Card */}
-        <section className="rounded-3xl border border-border bg-card p-6 shadow-sm">
+        {/* Glass card */}
+        <section className="relative rounded-[28px] border border-white/60 bg-white/70 p-6 shadow-[0_20px_50px_-20px_oklch(0.2_0.1_268/0.25)] backdrop-blur-xl">
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="email" className="text-[13px] font-semibold text-foreground">

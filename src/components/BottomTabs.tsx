@@ -19,26 +19,30 @@ export function BottomTabs({ tabs, basePath = "" }: { tabs?: Tab[]; basePath?: s
     ];
 
   return (
-    <nav
-      aria-label="주요 탐색"
-      className="sticky bottom-0 z-30 mt-auto grid grid-cols-4 border-t border-border bg-background/95 px-2 pb-[env(safe-area-inset-bottom)] pt-2 backdrop-blur"
-    >
-      {items.map(({ to, label, Icon }) => {
-        const active = location.pathname === to || location.pathname.startsWith(`${to}/`);
-        return (
-          <Link
-            key={to}
-            to={to}
-            className={cn(
-              "flex flex-col items-center justify-center gap-1 rounded-md py-1.5 text-xs font-medium transition-colors",
-              active ? "text-brand" : "text-muted-foreground hover:text-foreground",
-            )}
-          >
-            <Icon className={cn("h-5 w-5", active && "stroke-[2.4]")} />
-            <span>{label}</span>
-          </Link>
-        );
-      })}
-    </nav>
+    <div className="sticky bottom-0 z-30 mt-auto px-3 pb-[max(env(safe-area-inset-bottom),0.75rem)] pt-2">
+      <nav
+        aria-label="주요 탐색"
+        className="grid grid-cols-4 rounded-2xl border border-white/50 bg-white/80 p-1.5 shadow-[0_15px_40px_-10px_oklch(0.2_0.05_260/0.25)] backdrop-blur-xl"
+      >
+        {items.map(({ to, label, Icon }) => {
+          const active = location.pathname === to || location.pathname.startsWith(`${to}/`);
+          return (
+            <Link
+              key={to}
+              to={to}
+              className={cn(
+                "flex flex-col items-center justify-center gap-0.5 rounded-xl py-2 text-[11px] font-semibold transition-all",
+                active
+                  ? "bg-foreground text-background shadow-md"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
+            >
+              <Icon className={cn("h-[18px] w-[18px]", active && "stroke-[2.4]")} />
+              <span className="tracking-tight">{label}</span>
+            </Link>
+          );
+        })}
+      </nav>
+    </div>
   );
 }
