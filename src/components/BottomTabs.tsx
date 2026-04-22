@@ -63,7 +63,7 @@ export function BottomTabs({ tabs }: { tabs?: Tab[] }) {
         aria-label="주요 탐색"
         className="grid grid-cols-5 rounded-[22px] bg-white/85 p-1.5 shadow-[0_18px_45px_-18px_oklch(0.45_0.18_260/0.35)] ring-1 ring-[oklch(0.92_0.04_258)] backdrop-blur-xl"
       >
-        {items.map(({ to, label, Icon, color, activeBg }) => {
+        {items.map(({ to, label, Icon, color = FALLBACK_COLOR, activeBg = FALLBACK_ACTIVE_BG }) => {
           const path = location.pathname;
           const active =
             to === "/dashboard"
