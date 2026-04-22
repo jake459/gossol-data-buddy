@@ -186,7 +186,53 @@ function LoginPage() {
         >
           로그인 없이 체험하기 <ArrowRight className="h-4 w-4" />
         </Link>
+
+        <div className="mx-auto mt-5 flex items-center gap-2 text-[11px] text-muted-foreground">
+          <button type="button" onClick={() => setLegalOpen("terms")} className="hover:text-foreground hover:underline">
+            이용약관
+          </button>
+          <span>·</span>
+          <button type="button" onClick={() => setLegalOpen("privacy")} className="hover:text-foreground hover:underline">
+            개인정보처리방침
+          </button>
+        </div>
       </main>
+
+      <LegalModal
+        kind={legalOpen ?? "terms"}
+        open={legalOpen !== null}
+        onOpenChange={(o) => !o && setLegalOpen(null)}
+      />
+      <InfoModal
+        open={comingSoon !== null}
+        onOpenChange={(o) => !o && setComingSoon(null)}
+        title={comingSoon === "kakao" ? "카카오 로그인 준비 중" : "네이버 로그인 준비 중"}
+        description="더 많은 소셜 로그인을 곧 지원할 예정이에요."
+        icon={<Sparkles className="h-4 w-4" />}
+        tone="warning"
+        actionLabel="알겠어요"
+      >
+        <p>
+          현재는 <b>Google</b>, <b>Apple</b>, 또는 <b>이메일</b>로 로그인할 수 있어요.
+          {comingSoon === "kakao" ? " 카카오 알림톡 연동과 함께 곧 오픈됩니다." : " 네이버 OAuth 심사가 끝나는 대로 활성화됩니다."}
+        </p>
+      </InfoModal>
+      <InfoModal
+        open={findIdOpen}
+        onOpenChange={setFindIdOpen}
+        title="아이디(이메일) 찾기"
+        description="가입 시 사용한 이메일이 기억나지 않으세요?"
+        icon={<Mail className="h-4 w-4" />}
+        tone="brand"
+        actionLabel="고객센터 열기"
+        onAction={() => toast.info("고객센터 채팅이 곧 연결됩니다.")}
+      >
+        <ul className="list-disc space-y-1 pl-5 text-[13px] text-muted-foreground">
+          <li>가입 시 받았던 환영 메일을 검색해 보세요. (제목: “Gossol에 오신 것을 환영합니다”)</li>
+          <li>휴대폰 번호로 가입한 경우 SMS 인증 기록을 확인해 주세요.</li>
+          <li>그래도 찾을 수 없다면 <b>1588-0000</b> 또는 <b>help@gossol.kr</b>로 문의하세요.</li>
+        </ul>
+      </InfoModal>
     </MobileFrame>
   );
 }
