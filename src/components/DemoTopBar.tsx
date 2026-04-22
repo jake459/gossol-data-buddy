@@ -16,6 +16,7 @@ export function DemoTopBar() {
   const [selectedId, setSelectedId] = useState(DEMO_BRANCHES[0].id);
   const [open, setOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
+  const [notiOpen, setNotiOpen] = useState(false);
   const selected = DEMO_BRANCHES.find((b) => b.id === selectedId)!;
 
   return (
