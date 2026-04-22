@@ -61,7 +61,7 @@ function SettingsPage() {
     const { error } = await supabase
       .from("branch_settings")
       .upsert(
-        { branch_id: selected.id, owner_id: user.id, [key]: value },
+        [{ branch_id: selected.id, owner_id: user.id, [key]: value }],
         { onConflict: "branch_id" },
       );
     if (error) {

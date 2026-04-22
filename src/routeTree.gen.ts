@@ -16,13 +16,17 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DemoDashboardRouteImport } from './routes/demo.dashboard'
 import { Route as AuthenticatedTenantsRouteImport } from './routes/_authenticated.tenants'
+import { Route as AuthenticatedStatsRouteImport } from './routes/_authenticated.stats'
+import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated.settings'
 import { Route as AuthenticatedScheduleRouteImport } from './routes/_authenticated.schedule'
 import { Route as AuthenticatedRoomsRouteImport } from './routes/_authenticated.rooms'
 import { Route as AuthenticatedRoomTypesRouteImport } from './routes/_authenticated.room-types'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated.onboarding'
 import { Route as AuthenticatedInvoicesRouteImport } from './routes/_authenticated.invoices'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
+import { Route as AuthenticatedCommunityRouteImport } from './routes/_authenticated.community'
 import { Route as AuthenticatedBranchesRouteImport } from './routes/_authenticated.branches'
+import { Route as AuthenticatedApplicationsRouteImport } from './routes/_authenticated.applications'
 import { Route as AuthenticatedTenantsNewRouteImport } from './routes/_authenticated.tenants.new'
 
 const SignupRoute = SignupRouteImport.update({
@@ -59,6 +63,16 @@ const AuthenticatedTenantsRoute = AuthenticatedTenantsRouteImport.update({
   path: '/tenants',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedStatsRoute = AuthenticatedStatsRouteImport.update({
+  id: '/stats',
+  path: '/stats',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedScheduleRoute = AuthenticatedScheduleRouteImport.update({
   id: '/schedule',
   path: '/schedule',
@@ -89,11 +103,22 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedCommunityRoute = AuthenticatedCommunityRouteImport.update({
+  id: '/community',
+  path: '/community',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedBranchesRoute = AuthenticatedBranchesRouteImport.update({
   id: '/branches',
   path: '/branches',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedApplicationsRoute =
+  AuthenticatedApplicationsRouteImport.update({
+    id: '/applications',
+    path: '/applications',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedTenantsNewRoute = AuthenticatedTenantsNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -105,13 +130,17 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/applications': typeof AuthenticatedApplicationsRoute
   '/branches': typeof AuthenticatedBranchesRoute
+  '/community': typeof AuthenticatedCommunityRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/invoices': typeof AuthenticatedInvoicesRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/room-types': typeof AuthenticatedRoomTypesRoute
   '/rooms': typeof AuthenticatedRoomsRoute
   '/schedule': typeof AuthenticatedScheduleRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/stats': typeof AuthenticatedStatsRoute
   '/tenants': typeof AuthenticatedTenantsRouteWithChildren
   '/demo/dashboard': typeof DemoDashboardRoute
   '/tenants/new': typeof AuthenticatedTenantsNewRoute
@@ -121,13 +150,17 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/applications': typeof AuthenticatedApplicationsRoute
   '/branches': typeof AuthenticatedBranchesRoute
+  '/community': typeof AuthenticatedCommunityRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/invoices': typeof AuthenticatedInvoicesRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/room-types': typeof AuthenticatedRoomTypesRoute
   '/rooms': typeof AuthenticatedRoomsRoute
   '/schedule': typeof AuthenticatedScheduleRoute
+  '/settings': typeof AuthenticatedSettingsRoute
+  '/stats': typeof AuthenticatedStatsRoute
   '/tenants': typeof AuthenticatedTenantsRouteWithChildren
   '/demo/dashboard': typeof DemoDashboardRoute
   '/tenants/new': typeof AuthenticatedTenantsNewRoute
@@ -139,13 +172,17 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/_authenticated/applications': typeof AuthenticatedApplicationsRoute
   '/_authenticated/branches': typeof AuthenticatedBranchesRoute
+  '/_authenticated/community': typeof AuthenticatedCommunityRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/invoices': typeof AuthenticatedInvoicesRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/room-types': typeof AuthenticatedRoomTypesRoute
   '/_authenticated/rooms': typeof AuthenticatedRoomsRoute
   '/_authenticated/schedule': typeof AuthenticatedScheduleRoute
+  '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/stats': typeof AuthenticatedStatsRoute
   '/_authenticated/tenants': typeof AuthenticatedTenantsRouteWithChildren
   '/demo/dashboard': typeof DemoDashboardRoute
   '/_authenticated/tenants/new': typeof AuthenticatedTenantsNewRoute
@@ -157,13 +194,17 @@ export interface FileRouteTypes {
     | '/login'
     | '/reset-password'
     | '/signup'
+    | '/applications'
     | '/branches'
+    | '/community'
     | '/dashboard'
     | '/invoices'
     | '/onboarding'
     | '/room-types'
     | '/rooms'
     | '/schedule'
+    | '/settings'
+    | '/stats'
     | '/tenants'
     | '/demo/dashboard'
     | '/tenants/new'
@@ -173,13 +214,17 @@ export interface FileRouteTypes {
     | '/login'
     | '/reset-password'
     | '/signup'
+    | '/applications'
     | '/branches'
+    | '/community'
     | '/dashboard'
     | '/invoices'
     | '/onboarding'
     | '/room-types'
     | '/rooms'
     | '/schedule'
+    | '/settings'
+    | '/stats'
     | '/tenants'
     | '/demo/dashboard'
     | '/tenants/new'
@@ -190,13 +235,17 @@ export interface FileRouteTypes {
     | '/login'
     | '/reset-password'
     | '/signup'
+    | '/_authenticated/applications'
     | '/_authenticated/branches'
+    | '/_authenticated/community'
     | '/_authenticated/dashboard'
     | '/_authenticated/invoices'
     | '/_authenticated/onboarding'
     | '/_authenticated/room-types'
     | '/_authenticated/rooms'
     | '/_authenticated/schedule'
+    | '/_authenticated/settings'
+    | '/_authenticated/stats'
     | '/_authenticated/tenants'
     | '/demo/dashboard'
     | '/_authenticated/tenants/new'
@@ -262,6 +311,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTenantsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/stats': {
+      id: '/_authenticated/stats'
+      path: '/stats'
+      fullPath: '/stats'
+      preLoaderRoute: typeof AuthenticatedStatsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/settings': {
+      id: '/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/schedule': {
       id: '/_authenticated/schedule'
       path: '/schedule'
@@ -304,11 +367,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/community': {
+      id: '/_authenticated/community'
+      path: '/community'
+      fullPath: '/community'
+      preLoaderRoute: typeof AuthenticatedCommunityRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/branches': {
       id: '/_authenticated/branches'
       path: '/branches'
       fullPath: '/branches'
       preLoaderRoute: typeof AuthenticatedBranchesRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/applications': {
+      id: '/_authenticated/applications'
+      path: '/applications'
+      fullPath: '/applications'
+      preLoaderRoute: typeof AuthenticatedApplicationsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/tenants/new': {
@@ -333,24 +410,32 @@ const AuthenticatedTenantsRouteWithChildren =
   AuthenticatedTenantsRoute._addFileChildren(AuthenticatedTenantsRouteChildren)
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedApplicationsRoute: typeof AuthenticatedApplicationsRoute
   AuthenticatedBranchesRoute: typeof AuthenticatedBranchesRoute
+  AuthenticatedCommunityRoute: typeof AuthenticatedCommunityRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedInvoicesRoute: typeof AuthenticatedInvoicesRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedRoomTypesRoute: typeof AuthenticatedRoomTypesRoute
   AuthenticatedRoomsRoute: typeof AuthenticatedRoomsRoute
   AuthenticatedScheduleRoute: typeof AuthenticatedScheduleRoute
+  AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedStatsRoute: typeof AuthenticatedStatsRoute
   AuthenticatedTenantsRoute: typeof AuthenticatedTenantsRouteWithChildren
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedApplicationsRoute: AuthenticatedApplicationsRoute,
   AuthenticatedBranchesRoute: AuthenticatedBranchesRoute,
+  AuthenticatedCommunityRoute: AuthenticatedCommunityRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedInvoicesRoute: AuthenticatedInvoicesRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedRoomTypesRoute: AuthenticatedRoomTypesRoute,
   AuthenticatedRoomsRoute: AuthenticatedRoomsRoute,
   AuthenticatedScheduleRoute: AuthenticatedScheduleRoute,
+  AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedStatsRoute: AuthenticatedStatsRoute,
   AuthenticatedTenantsRoute: AuthenticatedTenantsRouteWithChildren,
 }
 
