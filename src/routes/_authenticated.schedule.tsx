@@ -43,7 +43,7 @@ type EventRow = {
 };
 
 const KIND_LABEL: Record<EventKind, string> = {
-  move_in: "입주",
+  move_in: "입실",
   move_out: "퇴실",
   inspection: "점검",
   room_tour: "방투어",

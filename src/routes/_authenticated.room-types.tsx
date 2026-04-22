@@ -114,7 +114,7 @@ function RoomTypesPage() {
               <div className="min-w-0 flex-1">
                 <p className="truncate text-[14px] font-semibold">{rt.name}</p>
                 <p className="text-[12px] text-muted-foreground">
-                  월세 {rt.monthly_rent.toLocaleString()}원 · 보증금{" "}
+                  월 이용료 {rt.monthly_rent.toLocaleString()}원 · 선납금{" "}
                   {rt.deposit.toLocaleString()}원
                 </p>
               </div>
@@ -159,7 +159,7 @@ function RoomTypesPage() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label>월세(원)</Label>
+                <Label>월 이용료(원)</Label>
                 <Input
                   type="number"
                   value={edit?.monthly_rent ?? 0}
@@ -168,7 +168,7 @@ function RoomTypesPage() {
                 />
               </div>
               <div className="space-y-1.5">
-                <Label>보증금(원)</Label>
+                <Label>선납금(원)</Label>
                 <Input
                   type="number"
                   value={edit?.deposit ?? 0}
