@@ -1,78 +1,65 @@
 
-# 고쏠 (Gossol) — 고시원 관리 앱 구현 계획
 
-모바일 전용(좁은 폭 고정), Lovable Cloud 인증 + DB, 한국어 UI, 모달 기반 인터랙션. 사양서 v1.3 전체 범위를 다룹니다.
+# 로그인/소셜로그인 네비게이션 수정 계획
 
-## 1. 기술 구조
-- **레이아웃**: 모든 페이지를 모바일 프레임(max-w-md, 중앙 고정)으로 감싸고 PC에서는 양옆에 부드러운 회색 배경 표시 → "Android 앱" 느낌
-- **하단 고정 탭**: `대시보드 | 일정 | 입실자 | 지점` (인증 영역 공통)
-- **상단 바**: 좌측 지점 선택 드롭다운, 우측 고객센터(가이드/1:1 문의/공지) 아이콘
-- **백엔드**: Lovable Cloud — 이메일/비밀번호 + Google 소셜 로그인, RLS 적용
-- **모달 시스템**: 모든 추가/수정/삭제/경고를 shadcn Dialog로 처리. 필수값 누락 시 경고 모달
+## 진단
 
-## 2. 컬러 시스템 (사양서 준수, oklch)
-- Primary 딥블루, Success(emerald), Warning(amber), Danger(rose), Neutral(slate)
-- 미납·공실·삭제 등 위험 데이터는 **텍스트 컬러까지 Danger**로 강조
+1. **"Invalid login credentials"는 정상 응답**입니다 — 임의 비밀번호이므로 Supabase가 400을 반환합니다. 다만 영어 메시지가 그대로 노출되고, 일부 사용자는 회원가입 시 **이메일 확인** 절차 때문에 실제 가입 후에도 같은 오류를 봅니다.
+2. **소셜 로그인 후 화면 미이동**의 진짜 원인:
+   - `lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin })`는 OAuth 성공 시 **랜딩 페이지(`/`)** 로 돌아갑니다 → `/dashboard`로 가지 않음
+   - 로그인 페이지의 `useEffect`가 **`supabase.auth.getSession()` 한 번만** 호출하므로, OAuth 콜백으로 세션이 갱신되어도 페이지가 반응하지 않음 (race condition)
+   - 회원가입 페이지도 같은 문제
+3. `signup.tsx`의 `emailRedirectTo`도 `/dashboard`로 되어 있지만, 이메일 확인이 켜져 있으면 가입 직후 세션 없이 안내 메일만 발송됩니다.
 
-## 3. 라우트 구성
-**공개**
-- `/` — 랜딩 (히어로 + **"무료로 시작하기(체험)"** 최상단 CTA + 로그인/회원가입)
-- `/login`, `/signup` — 이메일+소셜(Google) + ID/PW 찾기
-- `/demo/*` — 로그인 없이 모든 화면을 풍부한 샘플 데이터로 체험 (별도 데모 컨텍스트, in-memory)
+## 수정 사항
 
-**인증 영역 `/_authenticated/`**
-- `/onboarding` — 신규가입 후 반투명 오버레이 가이드 ("지점 등록부터 해보세요")
-- `/branches/select` — 지점 선택
-- `/dashboard` — **올인원 대시보드**: 오늘의 할 일 위젯, 입실 현황·매출 그래프(Recharts), 대형 폰트 타일(매출/입퇴실 일정/미납자/룸투어)
-- `/rooms` — 호실 현황판: 그리드 카드, 상태 컬러 태그, [방 타입 설정]·[호실 복제] 상단 강조, 카드에 [입실자 관리]·[청구서 발송] 직접 노출
-- `/rooms/types` — 방 타입 템플릿 관리
-- `/tenants` — 입실자 관리: 탭(룸투어 신청/입실 신청/현재 입실자), 미납 행 빨간 글씨
-- `/tenants/$id` — 입실자 상세 + 수정/퇴실/청구
-- `/schedule` — 월간 캘린더(입퇴실, 시설 점검, 룸투어 핀)
-- `/billing` — 청구서 관리: 수납 현황 그래프, 청구서 미리보기, 일괄 발송
-- `/branches` — 지점 목록/추가/수정/삭제(위험 모달)
-- `/branches/$id/settings` — 자동 발송 토글(입퇴실 안내/청구서/전자계약), 지점 정보(은행·계좌·사업자), 갤러리·테마
-- `/community` — 공지사항/이벤트/운영팁/업데이트 카드 그리드
-- `/account` — 프로필 수정, 추천인 코드, 결제 관리, 로그아웃, 탈퇴(위험 모달)
-- 푸터: 다크 그레이, 사업자 정보, 약관/개인정보처리방침
+### A. 이메일 확인 비활성화 (즉시 로그인 가능)
+`supabase/config.toml`에 auth 블록 추가:
+```toml
+[auth]
+enable_signup = true
+enable_confirmations = false
+```
+→ 회원가입 즉시 세션 발급, 다음 로그인도 정상 작동.
 
-## 4. 데이터베이스 스키마 (RLS 적용)
-- `profiles` — 프로필(이름, 추천인코드, 회사명)
-- `user_roles` (별도 테이블, app_role enum: owner/staff)
-- `branches` — 지점 (사용자 소유)
-- `room_types` — 방 타입 템플릿(옵션 JSON)
-- `rooms` — 호실 (지점별, 상태: 입실중/공실/청소중)
-- `tenants` — 입실자 (호실 연결, 입실일, 연락처, 상태)
-- `applications` — 룸투어/입실 신청
-- `invoices` — 청구서 (입실자 연결, 금액, 기한, 납부상태)
-- `events` — 일정 (지점별, 입퇴실/점검/룸투어)
-- `branch_settings` — 자동 발송 토글, 은행 정보, 갤러리, 테마
-- `community_posts` — 공지/이벤트/팁/업데이트
-- `support_inquiries` — 1:1 문의
+### B. 로그인/회원가입 네비게이션을 `useAuth` 기반으로 전환
+- `useEffect`에서 `getSession()` 대신 **`useAuth()`의 `session`을 watch** → 세션이 생기는 즉시 `/dashboard`로 이동
+- OAuth 인라인 성공(토큰 즉시 수신) · 비밀번호 로그인 · OAuth 콜백 후 복귀 모두 한 경로로 처리
+- 로딩 중에는 폼 비활성화
 
-모든 테이블 RLS: 본인 소유 데이터만 SELECT/INSERT/UPDATE/DELETE
+```ts
+const { session, loading } = useAuth();
+useEffect(() => {
+  if (!loading && session) navigate({ to: "/dashboard" });
+}, [loading, session, navigate]);
+```
 
-## 5. 핵심 동작 규칙 (사양서 명시)
-- **모든 버튼 실제 작동** — 미구현 stub 금지
-- **모든 데이터 CRUD** — 추가, 수정, 취소, 삭제 기본 탑재
-- **필수값 누락 시 경고 모달** → 진행 차단
-- **퇴실 처리** → 호실 자동 "청소중(노랑)" 전환 → 관리자 확인 후 "공실(빨강)"
-- **결제 기한 경과** → 입실자 텍스트 자동 "미납(빨강)" 변환
-- **입실 승인** → 공실 체크, 미공실이면 에러 모달 + 호실 재배정 요구
-- **풍부한 샘플 데이터** — 데모 모드 + 신규 가입자에게도 시드 옵션 제공
+### C. 소셜 OAuth 리다이렉트 URI 수정
+`redirect_uri`를 `${window.location.origin}/dashboard`로 변경하여, 외부 리다이렉트가 발생하더라도 콜백 후 곧바로 인증된 라우트로 진입하게 합니다 (`_authenticated` 가드가 onboarding/대시보드로 자동 분기).
 
-## 6. 데모 모드 처리
-- `/demo/*` 라우트는 인증 우회. localStorage 기반 in-memory 상태로 모든 CRUD 가능 (새로고침 시 시드로 리셋)
-- 데모에서 "회원가입하고 내 데이터로 시작하기" CTA를 항상 노출
+### D. 한국어 오류 메시지 매핑
+헬퍼 함수로 Supabase 오류를 한국어로 변환:
+- `Invalid login credentials` → "이메일 또는 비밀번호가 올바르지 않습니다."
+- `Email not confirmed` → "이메일 인증을 완료해 주세요."
+- `User already registered` → "이미 가입된 이메일입니다."
+- 그 외 → 원본 메시지
 
-## 7. 단계별 빌드 순서
-1. 디자인 시스템(컬러/타이포/모바일 프레임/하단 탭/상단 바) + 랜딩/로그인/회원가입
-2. Cloud 스키마 + RLS + 인증 컨텍스트 + 온보딩 오버레이
-3. 지점 선택/설정 + 대시보드(위젯·그래프·대형 타일)
-4. 호실 현황판 + 방 타입 + 호실 복제
-5. 입실자 관리(탭, 미납 강조) + 룸투어/입실 신청 플로우
-6. 일정 캘린더 + 청구서 관리(그래프, 미리보기)
-7. 커뮤니티 + 고객센터 + 계정 설정 + 푸터
-8. 데모 모드 컨텍스트 + 풍부한 시드 데이터
+`src/lib/auth-errors.ts`로 분리하여 login/signup에서 재사용.
 
-규모가 크므로 위 순서대로 점진적으로 빌드하며, 각 단계마다 모바일 뷰포트(375~414px)에서 확인합니다.
+### E. 회원가입 후 처리
+`emailRedirectTo`는 유지하되, `enable_confirmations = false`이므로 즉시 세션이 생성됨 → useEffect가 `/dashboard`로 이동시킴. 별도 명시적 navigate 호출 제거.
+
+## 변경 파일
+
+- `supabase/config.toml` — auth 섹션 추가
+- `src/lib/auth-errors.ts` — 신규, 오류 메시지 한글 매핑
+- `src/routes/login.tsx` — useAuth 기반 navigation, redirect_uri 수정, 한글 오류
+- `src/routes/signup.tsx` — useAuth 기반 navigation, 한글 오류
+
+## 기대 동작
+
+1. 잘못된 비밀번호 → "이메일 또는 비밀번호가 올바르지 않습니다." 토스트 (페이지 유지, 정상)
+2. 올바른 자격증명 → 토스트 후 `/dashboard`로 자동 이동 (지점 없으면 `/onboarding`)
+3. 구글 로그인 클릭 → 구글 인증 → 자동으로 `/dashboard` 진입
+4. 회원가입 → 즉시 로그인되어 `/onboarding`으로 진입
+
