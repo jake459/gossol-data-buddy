@@ -60,6 +60,7 @@ const STATUS_TONE: Record<RoomStatus, string> = {
 function RoomsPage() {
   const { user } = useAuth();
   const { selected } = useBranch();
+  const { confirm, ConfirmDialog } = useConfirm();
   const [rooms, setRooms] = useState<Room[]>([]);
   const [types, setTypes] = useState<RoomType[]>([]);
   const [loading, setLoading] = useState(true);
@@ -337,7 +338,13 @@ function RoomsPage() {
                 variant="ghost"
                 className="text-destructive"
                 onClick={async () => {
-                  if (!confirm("삭제할까요?")) return;
+                  const ok = await confirm({
+                    title: "이 호실을 삭제할까요?",
+                    description: "삭제하면 호실 정보가 사라집니다. 입실자가 배정되어 있다면 먼저 호실 변경을 해주세요.",
+                    tone: "danger",
+                    confirmLabel: "삭제",
+                  });
+                  if (!ok) return;
                   const { error } = await supabase.from("rooms").delete().eq("id", edit.id!);
                   if (error) return toast.error(error.message);
                   toast.success("삭제되었습니다.");
