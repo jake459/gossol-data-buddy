@@ -26,6 +26,8 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useBranch } from "@/hooks/useBranch";
+import { EmptyState } from "@/components/EmptyState";
+import { StatusBadge } from "@/components/StatusBadge";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -134,9 +136,13 @@ function ApplicationsPage() {
 
       <main className="flex-1 space-y-2 px-4 py-3">
         {filtered.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-border p-8 text-center text-[13px] text-muted-foreground">
-            신청 내역이 없어요.
-          </p>
+          <EmptyState
+            icon={Plus}
+            title="신청 내역이 없어요"
+            description="새 입주 문의나 방 보기 신청을 등록해 관리해 보세요."
+            actionLabel="신청 등록"
+            onAction={() => setEdit({ kind: "room_tour" })}
+          />
         ) : (
           filtered.map((a) => (
             <article key={a.id} className="rounded-2xl border border-border bg-card p-4">
@@ -154,17 +160,7 @@ function ApplicationsPage() {
                     >
                       {a.kind === "room_tour" ? "방 보기" : "입주 신청"}
                     </span>
-                    <span
-                      className={cn(
-                        "rounded-full px-2 py-0.5 font-semibold",
-                        a.status === "pending" && "bg-amber-100 text-amber-700",
-                        a.status === "approved" && "bg-emerald-100 text-emerald-700",
-                        a.status === "rejected" && "bg-rose-100 text-rose-700",
-                        a.status === "completed" && "bg-muted text-muted-foreground",
-                      )}
-                    >
-                      {STATUS_LABEL[a.status]}
-                    </span>
+                    <StatusBadge kind="application" value={a.status} />
                   </div>
                 </div>
               </div>
