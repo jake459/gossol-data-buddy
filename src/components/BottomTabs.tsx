@@ -23,7 +23,7 @@ export function BottomTabs({ tabs }: { tabs?: Tab[] }) {
     <div className="sticky bottom-0 z-30 mt-auto px-3 pb-[max(env(safe-area-inset-bottom),0.75rem)] pt-2">
       <nav
         aria-label="주요 탐색"
-        className="grid grid-cols-4 rounded-2xl border border-white/50 bg-white/80 p-1.5 shadow-[0_15px_40px_-10px_oklch(0.2_0.05_260/0.25)] backdrop-blur-xl"
+        className="grid grid-cols-5 rounded-2xl border border-white/50 bg-white/80 p-1.5 shadow-[0_15px_40px_-10px_oklch(0.2_0.05_260/0.25)] backdrop-blur-xl"
       >
         {items.map(({ to, label, Icon }) => {
           const active = location.pathname === to || location.pathname.startsWith(`${to}/`);
