@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import {
   ArrowRight,
   Sparkles,
@@ -11,6 +12,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { MobileFrame } from "@/components/MobileFrame";
+import { LegalModal, type LegalKind } from "@/components/LegalModal";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -31,6 +33,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Landing() {
+  const [legalOpen, setLegalOpen] = useState<LegalKind | null>(null);
   return (
     <MobileFrame>
       <main className="relative flex flex-1 flex-col">
