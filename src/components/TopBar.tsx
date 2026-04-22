@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { ChevronDown, HeadphonesIcon } from "lucide-react";
+import { ChevronDown, HeadphonesIcon, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BranchSwitcher } from "@/components/BranchSwitcher";
 import { SupportModal } from "@/components/SupportModal";
+import { NotificationsModal } from "@/components/NotificationsModal";
 import { useBranch } from "@/hooks/useBranch";
 
 export function TopBar({
