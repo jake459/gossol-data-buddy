@@ -185,14 +185,14 @@ function DashboardPage() {
               {greetingName} 님 👋
             </h1>
             <p className="mt-1 text-[13px] opacity-85">
-              {selected ? `${selected.name}의 운영 현황입니다.` : "지점을 선택하면 자세한 현황이 보여요."}
+              {selected ? `${selected.name} 운영 현황입니다.` : "지점을 선택하면 자세한 현황이 보여요."}
             </p>
             <div className="mt-4 flex items-end justify-between rounded-2xl bg-white/12 p-3.5 backdrop-blur-md ring-1 ring-white/20">
               <div>
-                <div className="text-[11px] font-semibold uppercase tracking-wider opacity-80">입실률</div>
+                <div className="text-[11px] font-semibold uppercase tracking-wider opacity-80">방 가동률</div>
                 <div className="mt-1 text-[26px] font-black leading-none">{occupancy}%</div>
                 <div className="mt-1 text-[11.5px] opacity-80">
-                  {stats.occupied}/{totalRooms}실 입실 중
+                  전체 {totalRooms}실 중 {stats.occupied}실 입실
                 </div>
               </div>
               <div className="flex w-1/2 flex-col items-end gap-1.5">
@@ -202,26 +202,26 @@ function DashboardPage() {
                     style={{ width: `${occupancy}%` }}
                   />
                 </div>
-                <div className="text-[11px] opacity-80">공실 {stats.vacant}실</div>
+                <div className="text-[11px] opacity-80">빈 방 {stats.vacant}실</div>
               </div>
             </div>
           </div>
         </section>
 
         <section className="grid grid-cols-2 gap-3">
-          <Tile to="/rooms" icon={DoorOpen} label="공실" value={`${stats.vacant}실`} tone="danger" />
-          <Tile to="/tenants" icon={Users} label="현재 입실" value={`${stats.occupied}명`} tone="brand" />
+          <Tile to="/rooms" icon={DoorOpen} label="빈 방" value={`${stats.vacant}실`} tone="danger" />
+          <Tile to="/tenants" icon={Users} label="입실 인원" value={`${stats.occupied}명`} tone="brand" />
           <Tile
             to="/invoices"
             icon={Receipt}
-            label="이번 달 수금"
+            label="이번 달 월세 수납"
             value={formatKRWShort(stats.monthRevenue)}
             tone="success"
           />
           <Tile
             to="/invoices"
             icon={AlertCircle}
-            label="미수금"
+            label="월세 미납"
             value={`${stats.overdueCount}건`}
             tone="danger"
           />
@@ -235,7 +235,7 @@ function DashboardPage() {
               icon={Receipt}
               color="text-amber-600"
               bg="bg-amber-50"
-              label={`오늘 결제 예정 ${stats.todayDue}건`}
+              label={`오늘 월세 납부 예정 ${stats.todayDue}건`}
               empty={stats.todayDue === 0}
               to="/invoices"
             />
@@ -245,8 +245,8 @@ function DashboardPage() {
               bg="bg-rose-50"
               label={
                 stats.overdueCount > 0
-                  ? `미수금 ${stats.overdueCount}건 · ${formatKRW(stats.overdueSum)}`
-                  : "미수금이 없어요"
+                  ? `월세 미납 ${stats.overdueCount}건 · ${formatKRW(stats.overdueSum)}`
+                  : "미납자가 없어요"
               }
               empty={stats.overdueCount === 0}
               to="/invoices"
@@ -255,7 +255,7 @@ function DashboardPage() {
               icon={DoorOpen}
               color="text-emerald-600"
               bg="bg-emerald-50"
-              label={stats.vacant > 0 ? `공실 ${stats.vacant}실 — 입실 모집 가능` : "전 호실 입실 중"}
+              label={stats.vacant > 0 ? `빈 방 ${stats.vacant}실 — 입실 모집 가능` : "전 호실 입실 완료"}
               empty={stats.vacant === 0}
               to="/rooms"
             />
@@ -267,7 +267,7 @@ function DashboardPage() {
           <section className="rounded-2xl border border-rose-200 bg-rose-50/40 p-4">
             <div className="flex items-center justify-between">
               <h2 className="inline-flex items-center gap-1.5 text-[14px] font-bold text-rose-700">
-                <AlertCircle className="h-4 w-4" /> 연락이 필요한 입실자
+                <AlertCircle className="h-4 w-4" /> 월세 독촉이 필요한 입실자
               </h2>
               <Link to="/invoices" className="text-[12px] font-semibold text-rose-700">
                 전체
@@ -283,7 +283,7 @@ function DashboardPage() {
                   >
                     <p className="truncate text-[13px] font-semibold text-foreground">{t.name}</p>
                     <p className="text-[11.5px] text-rose-700">
-                      {t.due_date} 미납 · {formatKRW(t.amount)}
+                      {t.due_date} 납부 예정일 경과 · {formatKRW(t.amount)}
                     </p>
                   </Link>
                   {t.phone && (
@@ -303,7 +303,7 @@ function DashboardPage() {
 
         <section className="rounded-2xl border border-border bg-card p-5">
           <div className="flex items-center justify-between">
-            <h2 className="text-[15px] font-bold">다가오는 일정</h2>
+            <h2 className="text-[15px] font-bold">입·퇴실 예정</h2>
             <Link to="/schedule" className="text-[12px] font-semibold text-brand">
               전체 보기
             </Link>
@@ -311,7 +311,7 @@ function DashboardPage() {
           <ul className="mt-3 space-y-2 text-[13px]">
             {stats.upcoming.length === 0 ? (
               <li className="flex items-center gap-2 text-muted-foreground">
-                <CalendarClock className="h-4 w-4 text-brand" /> 예정된 일정이 없어요.
+                <CalendarClock className="h-4 w-4 text-brand" /> 예정된 입·퇴실이 없어요.
               </li>
             ) : (
               stats.upcoming.map((e) => {
@@ -336,9 +336,9 @@ function DashboardPage() {
         </section>
 
         <section className="grid grid-cols-2 gap-3">
-          <QuickLink to="/applications" icon={ClipboardList} label="입실 신청" />
+          <QuickLink to="/applications" icon={ClipboardList} label="룸투어·입실 문의" />
           <QuickLink to="/stats" icon={TrendingUp} label="운영 통계" />
-          <QuickLink to="/community" icon={Megaphone} label="커뮤니티" />
+          <QuickLink to="/community" icon={Megaphone} label="원장님 커뮤니티" />
           <QuickLink to="/branches" icon={Building2} label="지점 관리" />
         </section>
       </main>
