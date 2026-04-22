@@ -463,80 +463,177 @@ function TenantDetailPage() {
   );
 }
 
-function Header({ onBack, title }: { onBack: () => void; title: string }) {
+function Header({
+  onBack,
+  title,
+  status,
+  onEdit,
+}: {
+  onBack: () => void;
+  title: string;
+  status?: TenantStatus;
+  onEdit?: () => void;
+}) {
   return (
-    <header className="flex items-center gap-2 border-b border-border bg-background/90 px-4 py-3 backdrop-blur">
+    <header className="flex items-center gap-2 border-b border-border bg-background/95 px-3 py-2.5 backdrop-blur">
       <button
         type="button"
         onClick={onBack}
-        className="-ml-2 grid h-9 w-9 place-items-center rounded-full text-muted-foreground hover:bg-accent"
+        className="-ml-1 grid h-9 w-9 place-items-center rounded-full text-muted-foreground hover:bg-accent"
       >
         <ChevronLeft className="h-5 w-5" />
       </button>
-      <h1 className="flex-1 text-[15px] font-bold">{title}</h1>
+      <h1 className="flex flex-1 items-center gap-2 text-[15px] font-bold">
+        {title}
+        {status && (
+          <span className="rounded-md bg-emerald-100 px-1.5 py-0.5 text-[10.5px] font-bold text-emerald-700">
+            {status === "active" ? "입실자" : status === "overdue" ? "연체" : "퇴실"}
+          </span>
+        )}
+      </h1>
+      {onEdit && (
+        <button
+          type="button"
+          onClick={onEdit}
+          className="grid h-9 w-9 place-items-center rounded-full text-muted-foreground hover:bg-accent"
+          aria-label="수정"
+        >
+          <Pencil className="h-4 w-4" />
+        </button>
+      )}
+      <button
+        type="button"
+        className="grid h-9 w-9 place-items-center rounded-full text-muted-foreground hover:bg-accent"
+        aria-label="더보기"
+      >
+        <MoreVertical className="h-4 w-4" />
+      </button>
     </header>
   );
 }
 
-function MiniStat({ label, value }: { label: string; value: string }) {
+function Card({ children }: { children: React.ReactNode }) {
+  return <section className="overflow-hidden rounded-2xl border border-border bg-card">{children}</section>;
+}
+
+function CardHeader({ title, right }: { title: string; right?: React.ReactNode }) {
   return (
-    <div className="rounded-xl bg-white/12 p-2.5 ring-1 ring-white/20 backdrop-blur-sm">
-      <div className="text-[10.5px] font-semibold uppercase tracking-wide opacity-75">{label}</div>
-      <div className="mt-0.5 text-[14px] font-bold leading-tight">{value}</div>
+    <div className="flex items-center justify-between px-3 py-2.5">
+      <h2 className="text-[13.5px] font-bold">{title}</h2>
+      {right}
     </div>
   );
 }
 
-function ActionTile({
+const TILE_TONES: Record<string, string> = {
+  blue: "bg-[oklch(0.97_0.03_258)] border-[oklch(0.92_0.04_258)]",
+  green: "bg-emerald-50/70 border-emerald-100",
+  purple: "bg-violet-50/70 border-violet-100",
+  amber: "bg-amber-50/70 border-amber-100",
+  gray: "bg-muted/40 border-border",
+};
+
+function StatusTile({
+  tone,
+  icon: Icon,
+  title,
+  status,
+  detail,
+  badge,
+}: {
+  tone: keyof typeof TILE_TONES;
+  icon: React.ComponentType<{ className?: string }>;
+  title: string;
+  status: string;
+  detail: string;
+  badge?: string;
+}) {
+  return (
+    <div className={cn("relative rounded-xl border p-2.5", TILE_TONES[tone])}>
+      <div className="flex items-center gap-1.5">
+        <Icon className="h-3.5 w-3.5 text-foreground/70" />
+        <p className="text-[12px] font-bold">{title}</p>
+        {badge && (
+          <span className="ml-auto rounded-md bg-violet-200/70 px-1.5 py-0.5 text-[9.5px] font-bold text-violet-700">
+            {badge}
+          </span>
+        )}
+      </div>
+      <p className="mt-1 text-[11.5px] font-semibold text-foreground/80">{status}</p>
+      {detail && <p className="mt-0.5 text-[10.5px] text-muted-foreground">{detail}</p>}
+    </div>
+  );
+}
+
+function KV({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <p className="text-[10.5px] text-muted-foreground">{label}</p>
+      <p className="mt-0.5 text-[13px] font-bold">{value}</p>
+    </div>
+  );
+}
+
+function DocBtn({
   icon: Icon,
   label,
-  color,
-  bg,
   onClick,
-  disabled,
 }: {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
-  color: string;
-  bg: string;
   onClick: () => void;
-  disabled?: boolean;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      disabled={disabled}
-      className={cn(
-        "flex flex-col items-center gap-1.5 rounded-2xl border border-border bg-card py-3 text-[11.5px] font-semibold transition active:scale-[0.97]",
-        disabled && "opacity-40",
-      )}
+      className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-border bg-background py-2 text-[12px] font-semibold hover:bg-accent"
     >
-      <span className={cn("grid h-9 w-9 place-items-center rounded-full", bg)}>
-        <Icon className={cn("h-4 w-4", color)} />
-      </span>
-      <span>{label}</span>
+      <Icon className="h-3.5 w-3.5" /> {label}
     </button>
   );
 }
 
-function InfoRow({
+function Tag({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground">
+      {children}
+    </span>
+  );
+}
+
+function ActionMini({
   icon: Icon,
   label,
-  value,
+  onClick,
 }: {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
-  value: string;
+  onClick: () => void;
 }) {
   return (
-    <div className="flex items-center justify-between py-1.5 text-[13px]">
-      <span className="inline-flex items-center gap-2 text-muted-foreground">
-        <Icon className="h-3.5 w-3.5" /> {label}
-      </span>
-      <span className="font-semibold text-foreground">{value}</span>
-    </div>
+    <button
+      type="button"
+      onClick={onClick}
+      className="inline-flex flex-col items-center justify-center gap-1 rounded-xl border border-border bg-card py-2.5 text-[11.5px] font-semibold transition active:scale-[0.97]"
+    >
+      <Icon className="h-4 w-4 text-[oklch(0.46_0.18_258)]" />
+      {label}
+    </button>
   );
+}
+
+function formatKRWMan(amount: number) {
+  if (amount >= 10000) {
+    const man = amount / 10000;
+    return `${man % 1 === 0 ? man.toFixed(0) : man.toFixed(1)}만원`;
+  }
+  return `${amount.toLocaleString("ko-KR")}원`;
+}
+
+// Used by edit modal
+function _UnusedKeepCheckCircle() {
+  return <CheckCircle2 />;
 }
 
 /* ---------- Modals ---------- */
