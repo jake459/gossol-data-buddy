@@ -30,6 +30,12 @@ function SignupPage() {
   const [loading, setLoading] = useState(false);
   const [agreeAll, setAgreeAll] = useState(false);
 
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) navigate({ to: "/dashboard" });
+    });
+  }, [navigate]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!agreeAll) {
