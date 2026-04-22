@@ -9,6 +9,8 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
+import { toKoreanAuthError } from "@/lib/auth-errors";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "로그인 — Gossol" }] }),
@@ -22,15 +24,16 @@ const schema = z.object({
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { session, loading: authLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/dashboard" });
-    });
-  }, [navigate]);
+    if (!authLoading && session) {
+      navigate({ to: "/dashboard" });
+    }
+  }, [authLoading, session, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,26 +46,19 @@ function LoginPage() {
     const { error } = await supabase.auth.signInWithPassword(parsed.data);
     setLoading(false);
     if (error) {
-      toast.error(error.message ?? "로그인에 실패했습니다.");
+      toast.error(toKoreanAuthError(error.message));
       return;
     }
     toast.success("환영합니다!");
-    navigate({ to: "/dashboard" });
+    // navigation handled by useEffect watching session
   };
 
   const handleSocial = async (provider: "google" | "naver" | "kakao" | "apple") => {
-    if (provider === "google") {
-      const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+    if (provider === "google" || provider === "apple") {
+      const result = await lovable.auth.signInWithOAuth(provider, {
+        redirect_uri: `${window.location.origin}/dashboard`,
       });
-      if (result.error) toast.error(result.error.message ?? "로그인에 실패했습니다.");
-      return;
-    }
-    if (provider === "apple") {
-      const result = await lovable.auth.signInWithOAuth("apple", {
-        redirect_uri: window.location.origin,
-      });
-      if (result.error) toast.error(result.error.message ?? "로그인에 실패했습니다.");
+      if (result.error) toast.error(toKoreanAuthError(result.error.message));
       return;
     }
     toast.info(
