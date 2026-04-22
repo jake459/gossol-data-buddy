@@ -27,7 +27,7 @@ export function BranchProvider({ children }: { children: ReactNode }) {
     if (typeof window === "undefined") return null;
     return window.localStorage.getItem(STORAGE_KEY);
   });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const setSelectedId = useCallback((id: string | null) => {
     setSelectedIdState(id);
@@ -40,6 +40,7 @@ export function BranchProvider({ children }: { children: ReactNode }) {
   const refresh = useCallback(async () => {
     if (!user) {
       setBranches([]);
+      setLoading(false);
       return;
     }
     setLoading(true);

@@ -1,4 +1,5 @@
-import { createFileRoute, Outlet, redirect, Link } from "@tanstack/react-router";
+import { createFileRoute, Outlet, useNavigate, useLocation } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useBranch } from "@/hooks/useBranch";
 import { MobileFrame } from "@/components/MobileFrame";
@@ -10,8 +11,23 @@ export const Route = createFileRoute("/_authenticated")({
 function AuthenticatedLayout() {
   const { loading, user } = useAuth();
   const { branches, loading: branchLoading } = useBranch();
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  if (loading) {
+  useEffect(() => {
+    if (loading) return;
+    if (!user) {
+      navigate({ to: "/login", replace: true });
+      return;
+    }
+    if (!branchLoading && branches.length === 0) {
+      if (!location.pathname.startsWith("/onboarding")) {
+        navigate({ to: "/onboarding", replace: true });
+      }
+    }
+  }, [loading, user, branchLoading, branches.length, location.pathname, navigate]);
+
+  if (loading || !user || (branchLoading && branches.length === 0)) {
     return (
       <MobileFrame>
         <div className="flex flex-1 items-center justify-center">
@@ -19,17 +35,6 @@ function AuthenticatedLayout() {
         </div>
       </MobileFrame>
     );
-  }
-
-  if (!user) {
-    // Throw redirect via router on next tick
-    throw redirect({ to: "/login" });
-  }
-
-  // First-time user → onboarding (no branches yet)
-  if (!branchLoading && branches.length === 0) {
-    const onOnboarding = window.location.pathname.startsWith("/onboarding");
-    if (!onOnboarding) throw redirect({ to: "/onboarding" });
   }
 
   return <Outlet />;
