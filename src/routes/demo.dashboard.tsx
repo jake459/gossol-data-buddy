@@ -55,7 +55,7 @@ function DemoDashboard() {
           </Button>
         </div>
       </main>
-      <BottomTabs tabs={demoTabs} />
+      <BottomTabs />
     </MobileFrame>
   );
 }
