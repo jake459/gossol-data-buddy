@@ -7,10 +7,13 @@ type Tab = {
   label: string;
   Icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
   /** Tailwind text color class for the icon (colorful, distinct per tab) */
-  color: string;
+  color?: string;
   /** Tailwind bg tint class for active state */
-  activeBg: string;
+  activeBg?: string;
 };
+
+const FALLBACK_COLOR = "text-[oklch(0.55_0.2_258)]";
+const FALLBACK_ACTIVE_BG = "bg-[oklch(0.95_0.05_258)]";
 
 const DEFAULT_TABS: Tab[] = [
   {
