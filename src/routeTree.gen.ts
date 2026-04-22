@@ -15,8 +15,15 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DemoDashboardRouteImport } from './routes/demo.dashboard'
+import { Route as AuthenticatedTenantsRouteImport } from './routes/_authenticated.tenants'
+import { Route as AuthenticatedScheduleRouteImport } from './routes/_authenticated.schedule'
+import { Route as AuthenticatedRoomsRouteImport } from './routes/_authenticated.rooms'
+import { Route as AuthenticatedRoomTypesRouteImport } from './routes/_authenticated.room-types'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated.onboarding'
+import { Route as AuthenticatedInvoicesRouteImport } from './routes/_authenticated.invoices'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
+import { Route as AuthenticatedBranchesRouteImport } from './routes/_authenticated.branches'
+import { Route as AuthenticatedTenantsNewRouteImport } from './routes/_authenticated.tenants.new'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -47,9 +54,34 @@ const DemoDashboardRoute = DemoDashboardRouteImport.update({
   path: '/demo/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedTenantsRoute = AuthenticatedTenantsRouteImport.update({
+  id: '/tenants',
+  path: '/tenants',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedScheduleRoute = AuthenticatedScheduleRouteImport.update({
+  id: '/schedule',
+  path: '/schedule',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedRoomsRoute = AuthenticatedRoomsRouteImport.update({
+  id: '/rooms',
+  path: '/rooms',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedRoomTypesRoute = AuthenticatedRoomTypesRouteImport.update({
+  id: '/room-types',
+  path: '/room-types',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedInvoicesRoute = AuthenticatedInvoicesRouteImport.update({
+  id: '/invoices',
+  path: '/invoices',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
@@ -57,24 +89,48 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedBranchesRoute = AuthenticatedBranchesRouteImport.update({
+  id: '/branches',
+  path: '/branches',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedTenantsNewRoute = AuthenticatedTenantsNewRouteImport.update({
+  id: '/new',
+  path: '/new',
+  getParentRoute: () => AuthenticatedTenantsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/branches': typeof AuthenticatedBranchesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/invoices': typeof AuthenticatedInvoicesRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/room-types': typeof AuthenticatedRoomTypesRoute
+  '/rooms': typeof AuthenticatedRoomsRoute
+  '/schedule': typeof AuthenticatedScheduleRoute
+  '/tenants': typeof AuthenticatedTenantsRouteWithChildren
   '/demo/dashboard': typeof DemoDashboardRoute
+  '/tenants/new': typeof AuthenticatedTenantsNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/branches': typeof AuthenticatedBranchesRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/invoices': typeof AuthenticatedInvoicesRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
+  '/room-types': typeof AuthenticatedRoomTypesRoute
+  '/rooms': typeof AuthenticatedRoomsRoute
+  '/schedule': typeof AuthenticatedScheduleRoute
+  '/tenants': typeof AuthenticatedTenantsRouteWithChildren
   '/demo/dashboard': typeof DemoDashboardRoute
+  '/tenants/new': typeof AuthenticatedTenantsNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -83,9 +139,16 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
+  '/_authenticated/branches': typeof AuthenticatedBranchesRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/invoices': typeof AuthenticatedInvoicesRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
+  '/_authenticated/room-types': typeof AuthenticatedRoomTypesRoute
+  '/_authenticated/rooms': typeof AuthenticatedRoomsRoute
+  '/_authenticated/schedule': typeof AuthenticatedScheduleRoute
+  '/_authenticated/tenants': typeof AuthenticatedTenantsRouteWithChildren
   '/demo/dashboard': typeof DemoDashboardRoute
+  '/_authenticated/tenants/new': typeof AuthenticatedTenantsNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -94,18 +157,32 @@ export interface FileRouteTypes {
     | '/login'
     | '/reset-password'
     | '/signup'
+    | '/branches'
     | '/dashboard'
+    | '/invoices'
     | '/onboarding'
+    | '/room-types'
+    | '/rooms'
+    | '/schedule'
+    | '/tenants'
     | '/demo/dashboard'
+    | '/tenants/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/login'
     | '/reset-password'
     | '/signup'
+    | '/branches'
     | '/dashboard'
+    | '/invoices'
     | '/onboarding'
+    | '/room-types'
+    | '/rooms'
+    | '/schedule'
+    | '/tenants'
     | '/demo/dashboard'
+    | '/tenants/new'
   id:
     | '__root__'
     | '/'
@@ -113,9 +190,16 @@ export interface FileRouteTypes {
     | '/login'
     | '/reset-password'
     | '/signup'
+    | '/_authenticated/branches'
     | '/_authenticated/dashboard'
+    | '/_authenticated/invoices'
     | '/_authenticated/onboarding'
+    | '/_authenticated/room-types'
+    | '/_authenticated/rooms'
+    | '/_authenticated/schedule'
+    | '/_authenticated/tenants'
     | '/demo/dashboard'
+    | '/_authenticated/tenants/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -171,11 +255,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemoDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/tenants': {
+      id: '/_authenticated/tenants'
+      path: '/tenants'
+      fullPath: '/tenants'
+      preLoaderRoute: typeof AuthenticatedTenantsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/schedule': {
+      id: '/_authenticated/schedule'
+      path: '/schedule'
+      fullPath: '/schedule'
+      preLoaderRoute: typeof AuthenticatedScheduleRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/rooms': {
+      id: '/_authenticated/rooms'
+      path: '/rooms'
+      fullPath: '/rooms'
+      preLoaderRoute: typeof AuthenticatedRoomsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/room-types': {
+      id: '/_authenticated/room-types'
+      path: '/room-types'
+      fullPath: '/room-types'
+      preLoaderRoute: typeof AuthenticatedRoomTypesRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/onboarding': {
       id: '/_authenticated/onboarding'
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof AuthenticatedOnboardingRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/invoices': {
+      id: '/_authenticated/invoices'
+      path: '/invoices'
+      fullPath: '/invoices'
+      preLoaderRoute: typeof AuthenticatedInvoicesRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/dashboard': {
@@ -185,17 +304,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/branches': {
+      id: '/_authenticated/branches'
+      path: '/branches'
+      fullPath: '/branches'
+      preLoaderRoute: typeof AuthenticatedBranchesRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/tenants/new': {
+      id: '/_authenticated/tenants/new'
+      path: '/new'
+      fullPath: '/tenants/new'
+      preLoaderRoute: typeof AuthenticatedTenantsNewRouteImport
+      parentRoute: typeof AuthenticatedTenantsRoute
+    }
   }
 }
 
+interface AuthenticatedTenantsRouteChildren {
+  AuthenticatedTenantsNewRoute: typeof AuthenticatedTenantsNewRoute
+}
+
+const AuthenticatedTenantsRouteChildren: AuthenticatedTenantsRouteChildren = {
+  AuthenticatedTenantsNewRoute: AuthenticatedTenantsNewRoute,
+}
+
+const AuthenticatedTenantsRouteWithChildren =
+  AuthenticatedTenantsRoute._addFileChildren(AuthenticatedTenantsRouteChildren)
+
 interface AuthenticatedRouteChildren {
+  AuthenticatedBranchesRoute: typeof AuthenticatedBranchesRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedInvoicesRoute: typeof AuthenticatedInvoicesRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
+  AuthenticatedRoomTypesRoute: typeof AuthenticatedRoomTypesRoute
+  AuthenticatedRoomsRoute: typeof AuthenticatedRoomsRoute
+  AuthenticatedScheduleRoute: typeof AuthenticatedScheduleRoute
+  AuthenticatedTenantsRoute: typeof AuthenticatedTenantsRouteWithChildren
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedBranchesRoute: AuthenticatedBranchesRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedInvoicesRoute: AuthenticatedInvoicesRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
+  AuthenticatedRoomTypesRoute: AuthenticatedRoomTypesRoute,
+  AuthenticatedRoomsRoute: AuthenticatedRoomsRoute,
+  AuthenticatedScheduleRoute: AuthenticatedScheduleRoute,
+  AuthenticatedTenantsRoute: AuthenticatedTenantsRouteWithChildren,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -213,3 +369,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}

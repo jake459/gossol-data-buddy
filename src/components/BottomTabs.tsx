@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { LayoutDashboard, CalendarDays, Users, Building2 } from "lucide-react";
+import { LayoutDashboard, CalendarDays, Users, DoorOpen } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Tab = {
@@ -8,14 +8,14 @@ type Tab = {
   Icon: React.ComponentType<{ className?: string }>;
 };
 
-export function BottomTabs({ tabs, basePath = "" }: { tabs?: Tab[]; basePath?: string }) {
+export function BottomTabs({ tabs }: { tabs?: Tab[] }) {
   const location = useLocation();
   const items: Tab[] =
     tabs ?? [
-      { to: `${basePath}/dashboard`, label: "대시보드", Icon: LayoutDashboard },
-      { to: `${basePath}/schedule`, label: "일정", Icon: CalendarDays },
-      { to: `${basePath}/tenants`, label: "입실자", Icon: Users },
-      { to: `${basePath}/branches`, label: "지점", Icon: Building2 },
+      { to: "/dashboard", label: "대시보드", Icon: LayoutDashboard },
+      { to: "/rooms", label: "호실", Icon: DoorOpen },
+      { to: "/tenants", label: "입실자", Icon: Users },
+      { to: "/schedule", label: "일정", Icon: CalendarDays },
     ];
 
   return (
