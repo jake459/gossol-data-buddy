@@ -58,10 +58,18 @@ function SettingsPage() {
   const toggle = async (key: keyof AutoSendSettings, value: boolean) => {
     if (!selected || !user) return;
     setSettings((s) => ({ ...s, [key]: value }));
+    const next = { ...settings, [key]: value };
     const { error } = await supabase
       .from("branch_settings")
       .upsert(
-        [{ branch_id: selected.id, owner_id: user.id, [key]: value }],
+        {
+          branch_id: selected.id,
+          owner_id: user.id,
+          auto_send_movein: next.auto_send_movein,
+          auto_send_moveout: next.auto_send_moveout,
+          auto_send_invoice: next.auto_send_invoice,
+          auto_send_contract: next.auto_send_contract,
+        },
         { onConflict: "branch_id" },
       );
     if (error) {
