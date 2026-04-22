@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { LayoutDashboard, CalendarDays, Users, DoorOpen } from "lucide-react";
+import { LayoutDashboard, DoorOpen, Users, CalendarDays, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Tab = {
@@ -16,13 +16,14 @@ export function BottomTabs({ tabs }: { tabs?: Tab[] }) {
       { to: "/rooms", label: "호실", Icon: DoorOpen },
       { to: "/tenants", label: "입실자", Icon: Users },
       { to: "/schedule", label: "일정", Icon: CalendarDays },
+      { to: "/settings", label: "설정", Icon: Settings },
     ];
 
   return (
     <div className="sticky bottom-0 z-30 mt-auto px-3 pb-[max(env(safe-area-inset-bottom),0.75rem)] pt-2">
       <nav
         aria-label="주요 탐색"
-        className="grid grid-cols-4 rounded-2xl border border-white/50 bg-white/80 p-1.5 shadow-[0_15px_40px_-10px_oklch(0.2_0.05_260/0.25)] backdrop-blur-xl"
+        className="grid grid-cols-5 rounded-2xl border border-white/50 bg-white/80 p-1.5 shadow-[0_15px_40px_-10px_oklch(0.2_0.05_260/0.25)] backdrop-blur-xl"
       >
         {items.map(({ to, label, Icon }) => {
           const active = location.pathname === to || location.pathname.startsWith(`${to}/`);
