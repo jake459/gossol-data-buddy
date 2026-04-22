@@ -68,6 +68,10 @@
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
   --color-app-shell: var(--app-shell);
+  --color-kakao: var(--kakao);
+  --color-kakao-foreground: var(--kakao-foreground);
+  --color-naver: var(--naver);
+  --color-naver-foreground: var(--naver-foreground);
   --font-display: var(--font-display);
 }
 
@@ -90,7 +94,11 @@
   --warning-foreground: oklch(0.25 0.05 80);
   --danger: oklch(0.6 0.22 22);
   --danger-foreground: oklch(0.99 0.005 247);
-  --app-shell: oklch(0.94 0.005 250);
+  --app-shell: oklch(0.97 0.004 250);
+  --kakao: oklch(0.92 0.18 95);
+  --kakao-foreground: oklch(0.18 0.02 80);
+  --naver: oklch(0.62 0.17 152);
+  --naver-foreground: oklch(0.99 0.005 247);
   --secondary: oklch(0.968 0.007 247.896);
   --secondary-foreground: oklch(0.208 0.042 265.755);
   --muted: oklch(0.968 0.007 247.896);
