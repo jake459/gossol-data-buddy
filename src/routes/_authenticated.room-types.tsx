@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useBranch } from "@/hooks/useBranch";
 import { toast } from "sonner";
+import { useConfirm } from "@/components/ConfirmModal";
 
 export const Route = createFileRoute("/_authenticated/room-types")({
   head: () => ({ meta: [{ title: "방 타입 관리 — Gossol" }] }),
@@ -29,6 +30,7 @@ function RoomTypesPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { selected } = useBranch();
+  const { confirm, ConfirmDialog } = useConfirm();
   const [items, setItems] = useState<RoomType[]>([]);
   const [loading, setLoading] = useState(true);
   const [edit, setEdit] = useState<Partial<RoomType> | null>(null);
@@ -73,7 +75,13 @@ function RoomTypesPage() {
   };
 
   const remove = async (id: string) => {
-    if (!confirm("이 방 타입을 삭제하시겠어요?")) return;
+    const ok = await confirm({
+      title: "이 방 타입을 삭제할까요?",
+      description: "타입을 사용 중인 호실은 '타입 없음'으로 변경됩니다.",
+      tone: "warning",
+      confirmLabel: "삭제",
+    });
+    if (!ok) return;
     const { error } = await supabase.from("room_types").delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("삭제되었습니다.");
