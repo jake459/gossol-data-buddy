@@ -68,8 +68,11 @@ function DashboardPage() {
     vacant: 0,
     occupied: 0,
     monthRevenue: 0,
-    overdue: 0,
+    overdueCount: 0,
+    overdueSum: 0,
+    overdueTenants: [],
     upcoming: [],
+    todayDue: 0,
   });
 
   useEffect(() => {
@@ -80,7 +83,7 @@ function DashboardPage() {
     const todayStr = today.toISOString().slice(0, 10);
 
     Promise.all([
-      supabase.from("rooms").select("status", { count: "exact" }).eq("branch_id", selected.id),
+      supabase.from("rooms").select("status").eq("branch_id", selected.id),
       supabase
         .from("invoices")
         .select("amount, status, due_date")
@@ -89,12 +92,28 @@ function DashboardPage() {
         .lte("due_date", monthEnd),
       supabase
         .from("events")
-        .select("id, title, event_date")
+        .select("id, title, event_date, kind")
         .eq("branch_id", selected.id)
         .gte("event_date", todayStr)
         .order("event_date")
-        .limit(3),
-    ]).then(([rooms, invs, evs]) => {
+        .limit(4),
+      // Overdue (unpaid past due_date OR status overdue) with tenant info
+      supabase
+        .from("invoices")
+        .select("id, amount, due_date, tenant_id, tenants(id, name, phone)")
+        .eq("branch_id", selected.id)
+        .in("status", ["unpaid", "overdue"])
+        .lte("due_date", todayStr)
+        .order("due_date", { ascending: true })
+        .limit(5),
+      // Today's payments due (unpaid scheduled today)
+      supabase
+        .from("invoices")
+        .select("amount", { count: "exact" })
+        .eq("branch_id", selected.id)
+        .eq("status", "unpaid")
+        .eq("due_date", todayStr),
+    ]).then(([rooms, invs, evs, overdue, todayDue]) => {
       const rs = (rooms.data ?? []) as { status: string }[];
       let vacant = 0,
         occupied = 0;
@@ -103,18 +122,36 @@ function DashboardPage() {
         if (r.status === "occupied") occupied++;
       });
       const ivs = (invs.data ?? []) as { amount: number; status: string }[];
-      let revenue = 0,
-        overdue = 0;
+      let revenue = 0;
       ivs.forEach((i) => {
         if (i.status === "paid") revenue += i.amount;
-        if (i.status === "unpaid" || i.status === "overdue") overdue += 1;
       });
+      const od = (overdue.data ?? []) as Array<{
+        id: string;
+        amount: number;
+        due_date: string;
+        tenant_id: string | null;
+        tenants: { id: string; name: string; phone: string | null } | null;
+      }>;
+      const overdueTenants: OverdueTenant[] = od
+        .filter((x) => x.tenants)
+        .map((x) => ({
+          id: x.tenants!.id,
+          name: x.tenants!.name,
+          phone: x.tenants!.phone,
+          amount: x.amount,
+          due_date: x.due_date,
+        }));
+      const overdueSum = od.reduce((s, x) => s + x.amount, 0);
       setStats({
         vacant,
         occupied,
         monthRevenue: revenue,
-        overdue,
-        upcoming: (evs.data ?? []) as Stats["upcoming"],
+        overdueCount: od.length,
+        overdueSum,
+        overdueTenants,
+        upcoming: (evs.data ?? []) as UpcomingMove[],
+        todayDue: todayDue.count ?? 0,
       });
     });
   }, [selected?.id]);
