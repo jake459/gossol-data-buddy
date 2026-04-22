@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { ChevronDown, HeadphonesIcon, Check } from "lucide-react";
+import { ChevronDown, HeadphonesIcon, Check, Bell } from "lucide-react";
+import { NotificationsModal } from "@/components/NotificationsModal";
 import { Button } from "@/components/ui/button";
 import { DEMO_BRANCHES } from "@/lib/demoData";
 import {
@@ -15,6 +16,7 @@ export function DemoTopBar() {
   const [selectedId, setSelectedId] = useState(DEMO_BRANCHES[0].id);
   const [open, setOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
+  const [notiOpen, setNotiOpen] = useState(false);
   const selected = DEMO_BRANCHES.find((b) => b.id === selectedId)!;
 
   return (
@@ -36,6 +38,17 @@ export function DemoTopBar() {
           type="button"
           variant="ghost"
           size="icon"
+          aria-label="알림"
+          onClick={() => setNotiOpen(true)}
+          className="relative text-[oklch(0.55_0.2_258)] hover:bg-[oklch(0.96_0.04_258)]"
+        >
+          <Bell className="h-5 w-5" />
+          <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-[oklch(0.6_0.2_30)]" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
           aria-label="고객센터"
           onClick={() => setSupportOpen(true)}
           className="text-[oklch(0.55_0.2_258)] hover:bg-[oklch(0.96_0.04_258)]"
@@ -43,6 +56,8 @@ export function DemoTopBar() {
           <HeadphonesIcon className="h-5 w-5" />
         </Button>
       </div>
+
+      <NotificationsModal open={notiOpen} onOpenChange={setNotiOpen} />
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="rounded-2xl">
