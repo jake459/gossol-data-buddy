@@ -363,6 +363,7 @@ function RoomsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <ConfirmDialog />
     </MobileFrame>
   );
 }
