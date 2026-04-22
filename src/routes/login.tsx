@@ -1,11 +1,13 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Sparkles, Mail } from "lucide-react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LegalModal, type LegalKind } from "@/components/LegalModal";
+import { InfoModal } from "@/components/InfoModal";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
@@ -28,6 +30,9 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [legalOpen, setLegalOpen] = useState<LegalKind | null>(null);
+  const [comingSoon, setComingSoon] = useState<null | "kakao" | "naver">(null);
+  const [findIdOpen, setFindIdOpen] = useState(false);
 
   useEffect(() => {
     if (!authLoading && session) {
@@ -61,14 +66,11 @@ function LoginPage() {
       if (result.error) toast.error(toKoreanAuthError(result.error.message));
       return;
     }
-    toast.info(
-      provider === "kakao" ? "카카오 로그인은 곧 지원됩니다." : "네이버 로그인은 곧 지원됩니다.",
-      { description: "현재 Google · Apple · 이메일로 로그인할 수 있어요." },
-    );
+    setComingSoon(provider);
   };
 
   const handleResetId = () => {
-    toast.info("가입한 이메일이 기억나지 않으면 고객센터로 문의해 주세요.");
+    setFindIdOpen(true);
   };
 
   const handleResetPw = async () => {
