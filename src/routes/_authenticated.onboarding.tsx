@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Building2, Sparkles, ArrowRight } from "lucide-react";
 import { MobileFrame } from "@/components/MobileFrame";
+import { BottomTabs } from "@/components/BottomTabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -139,6 +140,7 @@ function OnboardingPage() {
           나중에 [지점] 탭에서 추가·수정할 수 있어요.
         </p>
       </main>
+      <BottomTabs />
     </MobileFrame>
   );
 }
