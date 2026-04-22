@@ -3,19 +3,24 @@ import { useEffect, useState, useCallback } from "react";
 import {
   ChevronLeft,
   Phone,
-  Calendar,
-  DoorOpen,
-  Receipt,
-  AlertCircle,
   CheckCircle2,
   LogOut,
   Pencil,
   Trash2,
   MessageSquare,
-  Wallet,
   ShieldAlert,
   PhoneCall,
+  FileText,
+  FileSignature,
+  Wallet,
+  RotateCcw,
+  CalendarPlus,
+  Copy,
+  Plus,
+  Receipt,
+  MoreVertical,
 } from "lucide-react";
+import { toast as _toast } from "sonner";
 import { MobileFrame } from "@/components/MobileFrame";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
