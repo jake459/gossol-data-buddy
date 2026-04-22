@@ -99,20 +99,56 @@ function DashboardPage() {
     });
   }, [selected?.id]);
 
+  const totalRooms = stats.vacant + stats.occupied;
+  const occupancy = totalRooms > 0 ? Math.round((stats.occupied / totalRooms) * 100) : 0;
+  const hour = new Date().getHours();
+  const timeGreeting =
+    hour < 6 ? "늦은 밤이에요" : hour < 12 ? "좋은 아침이에요" : hour < 18 ? "활기찬 오후예요" : "수고 많으셨어요";
+  const dateLabel = new Date().toLocaleDateString("ko-KR", {
+    month: "long",
+    day: "numeric",
+    weekday: "short",
+  });
+
   return (
     <MobileFrame>
       <TopBar />
       <main className="flex-1 space-y-5 px-5 py-5">
-        <section className="rounded-2xl bg-gradient-to-br from-[oklch(0.46_0.18_258)] to-[oklch(0.32_0.16_262)] p-5 text-white shadow-[0_15px_35px_-12px_oklch(0.32_0.16_262/0.5)]">
-          <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-widest opacity-80">
-            <Sparkles className="h-3.5 w-3.5" /> 오늘의 한눈 요약
+        <section className="relative overflow-hidden rounded-[24px] bg-gradient-to-br from-[oklch(0.46_0.18_258)] via-[oklch(0.4_0.18_262)] to-[oklch(0.3_0.16_268)] p-5 text-white shadow-[0_18px_45px_-15px_oklch(0.32_0.16_262/0.55)]">
+          <div className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-white/15 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-16 -left-10 h-44 w-44 rounded-full bg-[oklch(0.7_0.2_205)]/30 blur-3xl" />
+          <div className="relative">
+            <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-widest opacity-85">
+              <span className="inline-flex items-center gap-1.5">
+                <Sparkles className="h-3.5 w-3.5" /> {timeGreeting}
+              </span>
+              <span className="opacity-80">{dateLabel}</span>
+            </div>
+            <h1 className="mt-2 text-[22px] font-bold leading-tight">
+              {greetingName} 님 👋
+            </h1>
+            <p className="mt-1 text-[13px] opacity-85">
+              {selected ? `${selected.name}의 운영 현황입니다.` : "지점을 선택하면 자세한 현황이 보여요."}
+            </p>
+            <div className="mt-4 flex items-end justify-between rounded-2xl bg-white/12 p-3.5 backdrop-blur-md ring-1 ring-white/20">
+              <div>
+                <div className="text-[11px] font-semibold uppercase tracking-wider opacity-80">입실률</div>
+                <div className="mt-1 text-[26px] font-black leading-none">{occupancy}%</div>
+                <div className="mt-1 text-[11.5px] opacity-80">
+                  {stats.occupied}/{totalRooms}실 입실 중
+                </div>
+              </div>
+              <div className="flex w-1/2 flex-col items-end gap-1.5">
+                <div className="h-2 w-full overflow-hidden rounded-full bg-white/20">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-white to-[oklch(0.85_0.15_205)] transition-all"
+                    style={{ width: `${occupancy}%` }}
+                  />
+                </div>
+                <div className="text-[11px] opacity-80">공실 {stats.vacant}실</div>
+              </div>
+            </div>
           </div>
-          <h1 className="mt-2 text-[22px] font-bold leading-tight">
-            {greetingName} 님, 좋은 하루예요 👋
-          </h1>
-          <p className="mt-1 text-[13px] opacity-85">
-            {selected ? `${selected.name} 운영 현황입니다.` : "지점을 선택하면 자세한 현황이 보여요."}
-          </p>
         </section>
 
         <section className="grid grid-cols-2 gap-3">
