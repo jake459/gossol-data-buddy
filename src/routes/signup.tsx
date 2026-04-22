@@ -199,6 +199,11 @@ function SignupPage() {
           </Link>
         </p>
       </main>
+      <LegalModal
+        kind={legalOpen ?? "terms"}
+        open={legalOpen !== null}
+        onOpenChange={(o) => !o && setLegalOpen(null)}
+      />
     </MobileFrame>
   );
 }
