@@ -24,6 +24,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useBranch } from "@/hooks/useBranch";
+import { EmptyState } from "@/components/EmptyState";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -211,13 +212,13 @@ function RoomsPage() {
         {loading ? (
           <p className="py-10 text-center text-sm text-muted-foreground">불러오는 중…</p>
         ) : filtered.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border p-8 text-center">
-            <DoorOpen className="mx-auto h-8 w-8 text-muted-foreground" />
-            <p className="mt-2 text-sm text-muted-foreground">조건에 맞는 호실이 없어요.</p>
-            <Button onClick={() => setEdit({ status: "vacant" })} className="mt-3 h-10 rounded-xl">
-              <Plus className="h-4 w-4" /> 호실 추가
-            </Button>
-          </div>
+          <EmptyState
+            icon={DoorOpen}
+            title="조건에 맞는 호실이 없어요"
+            description="필터를 초기화하거나 새 호실을 추가해 보세요."
+            actionLabel="호실 추가"
+            onAction={() => setEdit({ status: "vacant" })}
+          />
         ) : (
           <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
             {filtered.map((r) => {
