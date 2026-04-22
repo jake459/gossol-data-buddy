@@ -38,18 +38,32 @@ export function TopBar({
         <span className="truncate text-sm font-semibold text-foreground">{label}</span>
         <ChevronDown className="h-4 w-4 shrink-0 text-[oklch(0.55_0.18_258)]" />
       </button>
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        aria-label="고객센터"
-        onClick={handleSupport}
-        className="text-[oklch(0.55_0.2_258)] hover:bg-[oklch(0.96_0.04_258)] hover:text-[oklch(0.45_0.2_258)]"
-      >
-        <HeadphonesIcon className="h-5 w-5" />
-      </Button>
+      <div className="flex items-center gap-0.5">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          aria-label="알림"
+          onClick={() => setNotiOpen(true)}
+          className="relative text-[oklch(0.55_0.2_258)] hover:bg-[oklch(0.96_0.04_258)] hover:text-[oklch(0.45_0.2_258)]"
+        >
+          <Bell className="h-5 w-5" />
+          <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-[oklch(0.6_0.2_30)]" />
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          aria-label="고객센터"
+          onClick={handleSupport}
+          className="text-[oklch(0.55_0.2_258)] hover:bg-[oklch(0.96_0.04_258)] hover:text-[oklch(0.45_0.2_258)]"
+        >
+          <HeadphonesIcon className="h-5 w-5" />
+        </Button>
+      </div>
       <BranchSwitcher open={open} onOpenChange={setOpen} />
       <SupportModal open={supportOpen} onOpenChange={setSupportOpen} />
+      <NotificationsModal open={notiOpen} onOpenChange={setNotiOpen} />
     </header>
   );
 }
