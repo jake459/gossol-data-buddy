@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { LayoutDashboard, CalendarDays, Users, DoorOpen } from "lucide-react";
+import { LayoutDashboard, DoorOpen, Users, CalendarDays, Settings } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Tab = {
@@ -16,6 +16,7 @@ export function BottomTabs({ tabs }: { tabs?: Tab[] }) {
       { to: "/rooms", label: "호실", Icon: DoorOpen },
       { to: "/tenants", label: "입실자", Icon: Users },
       { to: "/schedule", label: "일정", Icon: CalendarDays },
+      { to: "/settings", label: "설정", Icon: Settings },
     ];
 
   return (
