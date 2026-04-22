@@ -1,5 +1,8 @@
+import { useState } from "react";
 import { toast } from "sonner";
+import { Sparkles } from "lucide-react";
 import { lovable } from "@/integrations/lovable/index";
+import { InfoModal } from "@/components/InfoModal";
 
 type Provider = "kakao" | "naver" | "google";
 
@@ -28,20 +31,17 @@ const GoogleIcon = () => (
 );
 
 export function SocialButtons({ redirectTo }: { redirectTo?: string }) {
+  const [comingSoon, setComingSoon] = useState<null | "kakao" | "naver">(null);
+
   const onClick = async (provider: Provider) => {
     if (provider === "google") {
       const result = await lovable.auth.signInWithOAuth("google", {
         redirect_uri: (redirectTo ?? window.location.origin) as string,
       });
-      if (result.error) {
-        toast.error(result.error.message ?? "로그인에 실패했습니다.");
-      }
+      if (result.error) toast.error(result.error.message ?? "로그인에 실패했습니다.");
       return;
     }
-    toast.info(
-      provider === "kakao" ? "카카오 로그인은 곧 지원됩니다." : "네이버 로그인은 곧 지원됩니다.",
-      { description: "현재는 Google 또는 이메일로 로그인할 수 있어요." },
-    );
+    setComingSoon(provider);
   };
 
   return (
@@ -70,6 +70,23 @@ export function SocialButtons({ redirectTo }: { redirectTo?: string }) {
         <GoogleIcon />
         Google로 시작
       </button>
+
+      <InfoModal
+        open={comingSoon !== null}
+        onOpenChange={(o) => !o && setComingSoon(null)}
+        title={comingSoon === "kakao" ? "카카오 로그인 준비 중" : "네이버 로그인 준비 중"}
+        description="더 많은 소셜 로그인을 곧 지원할 예정이에요."
+        icon={<Sparkles className="h-4 w-4" />}
+        tone="warning"
+        actionLabel="알겠어요"
+      >
+        <p>
+          현재는 <b>Google</b> 또는 <b>이메일</b>로 가입할 수 있어요.
+          {comingSoon === "kakao"
+            ? " 카카오 알림톡 연동과 함께 곧 오픈됩니다."
+            : " 네이버 OAuth 심사가 끝나는 대로 활성화됩니다."}
+        </p>
+      </InfoModal>
     </div>
   );
 }

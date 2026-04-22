@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import {
   ArrowRight,
   Sparkles,
@@ -11,6 +12,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { MobileFrame } from "@/components/MobileFrame";
+import { LegalModal, type LegalKind } from "@/components/LegalModal";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -31,6 +33,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Landing() {
+  const [legalOpen, setLegalOpen] = useState<LegalKind | null>(null);
   return (
     <MobileFrame>
       <main className="relative flex flex-1 flex-col">
@@ -212,12 +215,21 @@ function Landing() {
           <p className="mt-3">사업자등록번호 000-00-00000 · 대표 홍길동</p>
           <p>서울특별시 강남구 테헤란로 000</p>
           <div className="mt-3 flex gap-3 text-white/70">
-            <a href="#" className="hover:text-white">이용약관</a>
-            <a href="#" className="hover:text-white">개인정보처리방침</a>
+            <button type="button" onClick={() => setLegalOpen("terms")} className="hover:text-white hover:underline">
+              이용약관
+            </button>
+            <button type="button" onClick={() => setLegalOpen("privacy")} className="hover:text-white hover:underline">
+              개인정보처리방침
+            </button>
           </div>
           <p className="mt-4 text-white/30">© 2026 Gossol</p>
         </footer>
       </main>
+      <LegalModal
+        kind={legalOpen ?? "terms"}
+        open={legalOpen !== null}
+        onOpenChange={(o) => !o && setLegalOpen(null)}
+      />
     </MobileFrame>
   );
 }
