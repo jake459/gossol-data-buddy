@@ -59,7 +59,7 @@ function TenantsPage() {
   return (
     <MobileFrame>
       <TopBar />
-      <header className="border-b border-border bg-background px-4 py-3">
+      <header className="bg-gradient-to-b from-white/85 to-transparent px-4 pb-3 pt-3 backdrop-blur-sm">
         <div className="flex items-center justify-between">
           <h1 className="text-[15px] font-bold">입실자</h1>
           <Link to="/tenants/new">
