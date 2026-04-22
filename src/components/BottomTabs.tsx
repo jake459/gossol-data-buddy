@@ -123,7 +123,7 @@ export function BottomTabs({ tabs }: { tabs?: Tab[] }) {
         aria-label="주요 탐색"
         className="grid grid-cols-5 rounded-[22px] bg-white/85 p-1.5 shadow-[0_18px_45px_-18px_oklch(0.45_0.18_260/0.35)] ring-1 ring-[oklch(0.92_0.04_258)] backdrop-blur-xl"
       >
-        {items.map(({ to, label, Icon, color = FALLBACK_COLOR, activeBg = FALLBACK_ACTIVE_BG }) => {
+        {items.map(({ to, label, Icon, labelColor, activeBg }) => {
           const path = location.pathname;
           const active =
             to === "/dashboard"
@@ -140,16 +140,15 @@ export function BottomTabs({ tabs }: { tabs?: Tab[] }) {
             >
               <Icon
                 className={cn(
-                  "h-[20px] w-[20px] transition-transform",
-                  color,
-                  active ? "scale-110" : "opacity-70 group-hover:opacity-100",
+                  "h-[26px] w-[26px] transition-transform",
+                  active ? "scale-110 drop-shadow-sm" : "opacity-90 group-hover:opacity-100",
                 )}
-                strokeWidth={active ? 2.4 : 2}
+                active={active}
               />
               <span
                 className={cn(
                   "tracking-tight",
-                  active ? color : "text-muted-foreground",
+                  active ? labelColor : "text-muted-foreground",
                 )}
               >
                 {label}
