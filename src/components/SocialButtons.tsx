@@ -1,5 +1,8 @@
+import { useState } from "react";
 import { toast } from "sonner";
+import { Sparkles } from "lucide-react";
 import { lovable } from "@/integrations/lovable/index";
+import { InfoModal } from "@/components/InfoModal";
 
 type Provider = "kakao" | "naver" | "google";
 
