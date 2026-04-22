@@ -205,173 +205,221 @@ function TenantDetailPage() {
     );
   }
 
+  const contractEnd = (() => {
+    if (!tenant.move_in_date) return null;
+    const d = new Date(tenant.move_in_date);
+    d.setMonth(d.getMonth() + 1);
+    d.setDate(d.getDate() - 1);
+    return d.toISOString().slice(0, 10);
+  })();
+  const today = new Date();
+  const nextDueDay = tenant.payment_day ?? 1;
+  const nextDue = new Date(today.getFullYear(), today.getMonth(), Math.min(nextDueDay, 28));
+  if (nextDue < today) nextDue.setMonth(nextDue.getMonth() + 1);
+  const dDay = Math.ceil((nextDue.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+
   return (
     <MobileFrame>
-      <Header onBack={() => navigate({ to: "/tenants" })} title="입실자 상세" />
+      <Header onBack={() => navigate({ to: "/tenants" })} title={tenant.name} status={tenant.status} onEdit={() => setEditOpen(true)} />
 
-      <main className="flex-1 space-y-4 px-4 py-4 pb-24">
-        {/* Hero */}
-        <section className="relative overflow-hidden rounded-[20px] bg-gradient-to-br from-[oklch(0.46_0.18_258)] via-[oklch(0.4_0.18_262)] to-[oklch(0.32_0.16_268)] p-4 text-white shadow-[0_18px_40px_-15px_oklch(0.32_0.16_262/0.5)]">
-          <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-white/15 blur-3xl" />
-          <div className="relative flex items-center gap-3">
-            <div className="grid h-14 w-14 place-items-center rounded-full bg-white/15 text-[20px] font-bold ring-2 ring-white/30">
-              {tenant.name.slice(0, 1)}
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2">
-                <h1 className="text-[18px] font-bold">{tenant.name}</h1>
-                <StatusBadge kind="tenant" value={tenant.status} className="bg-white/20 text-white" />
-              </div>
-              <p className="mt-0.5 text-[12.5px] opacity-85">
-                {room ? `${room.floor ?? "-"}층 · ${room.room_number}호` : "호실 미배정"}
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-4 grid grid-cols-2 gap-2 text-[12px]">
-            <MiniStat label="월 이용료" value={formatKRW(tenant.monthly_rent ?? 0)} />
-            <MiniStat
-              label="결제일"
-              value={tenant.payment_day ? `매달 ${tenant.payment_day}일` : "—"}
-            />
-          </div>
-
-          {unpaidCount > 0 && (
-            <div className="mt-3 flex items-center gap-2 rounded-xl bg-rose-500/25 px-3 py-2 text-[12.5px] font-semibold ring-1 ring-rose-200/40">
-              <ShieldAlert className="h-4 w-4" />
-              미수금 {unpaidCount}건 · {formatKRW(unpaidSum)}
-            </div>
-          )}
-        </section>
-
-        {/* Quick Actions */}
-        <section className="grid grid-cols-4 gap-2">
-          <ActionTile
-            icon={PhoneCall}
-            label="전화"
-            color="text-emerald-600"
-            bg="bg-emerald-50"
-            onClick={() => {
-              if (!tenant.phone) return toast.info("등록된 연락처가 없어요.");
-              window.location.href = `tel:${tenant.phone}`;
-            }}
-          />
-          <ActionTile
-            icon={Receipt}
-            label="청구서"
-            color="text-[oklch(0.46_0.18_258)]"
-            bg="bg-[oklch(0.97_0.03_258)]"
-            onClick={() => setIssueOpen(true)}
-          />
-          <ActionTile
-            icon={MessageSquare}
-            label="메모"
-            color="text-amber-600"
-            bg="bg-amber-50"
-            onClick={() => setMemoOpen(true)}
-          />
-          <ActionTile
-            icon={LogOut}
-            label="퇴실"
-            color="text-rose-600"
-            bg="bg-rose-50"
-            disabled={tenant.status === "moved_out"}
-            onClick={() => setMoveOutOpen(true)}
-          />
-        </section>
-
-        {/* Info card */}
-        <section className="space-y-2 rounded-2xl border border-border bg-card p-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-[14px] font-bold">기본 정보</h2>
+      <main className="flex-1 space-y-3 bg-muted/30 px-3 py-3 pb-24">
+        {/* 계약 상태 관리 */}
+        <Card>
+          <CardHeader title="계약 상태 관리" right={
             <button
               type="button"
-              onClick={() => setEditOpen(true)}
-              className="inline-flex items-center gap-1 text-[12px] font-semibold text-brand"
+              disabled={tenant.status === "moved_out"}
+              onClick={() => setMoveOutOpen(true)}
+              className="rounded-lg bg-rose-500 px-2.5 py-1 text-[11px] font-bold text-white disabled:opacity-40"
             >
-              <Pencil className="h-3.5 w-3.5" /> 수정
+              퇴실 처리
             </button>
+          } />
+          <div className="grid grid-cols-2 gap-2 px-3 pb-3">
+            <StatusTile tone="blue" icon={FileText} title="계약서 전송" status="전송완료" detail="2026. 04. 18. 오후 05:50" />
+            <StatusTile tone="green" icon={FileSignature} title="계약 동의" status="동의완료" detail="2026. 04. 18. 오후 10:31" />
+            <StatusTile tone="purple" icon={Wallet} title="보증금 납입" status="청구완료" detail={tenant.move_in_date ? `(${tenant.move_in_date})` : "—"} badge="완료" />
+            <StatusTile tone="amber" icon={RotateCcw} title="보증금 반환" status="미반환" detail="" />
+            <StatusTile tone="gray" icon={CalendarPlus} title="연장신청" status="없음" detail="" />
+            <StatusTile tone="gray" icon={LogOut} title="퇴실신청" status={tenant.move_out_date ? "신청됨" : "없음"} detail={tenant.move_out_date ?? ""} />
           </div>
-          <InfoRow icon={Phone} label="연락처" value={tenant.phone ?? "—"} />
-          <InfoRow icon={ShieldAlert} label="비상 연락처" value={tenant.emergency_contact ?? "—"} />
-          <InfoRow
-            icon={Calendar}
-            label="입실일"
-            value={tenant.move_in_date ?? "—"}
-          />
-          {tenant.move_out_date && (
-            <InfoRow icon={LogOut} label="퇴실일" value={tenant.move_out_date} />
-          )}
-          <InfoRow
-            icon={Wallet}
-            label="선납금"
-            value={formatKRW(tenant.deposit ?? 0)}
-          />
-          <InfoRow
-            icon={DoorOpen}
-            label="배정 호실"
-            value={room ? `${room.room_number}호` : "미배정"}
-          />
-        </section>
+        </Card>
 
-        {/* Memo */}
-        {tenant.memo && (
-          <section className="rounded-2xl border border-amber-200 bg-amber-50/60 p-4">
-            <div className="flex items-center gap-2 text-[12px] font-bold text-amber-700">
-              <MessageSquare className="h-3.5 w-3.5" /> 원장님 메모
+        {/* 계약 정보 */}
+        <Card>
+          <CardHeader title="계약 정보" />
+          <div className="space-y-3 px-3 pb-3">
+            <div>
+              <p className="text-[11px] text-muted-foreground">건물 / 호실</p>
+              <p className="mt-0.5 text-[14px] font-bold">{room ? `${room.room_number}호` : "호실 미배정"}</p>
             </div>
-            <p className="mt-1.5 whitespace-pre-wrap text-[13px] leading-relaxed text-foreground">
-              {tenant.memo}
-            </p>
-          </section>
-        )}
+            <div className="border-t border-border pt-2.5">
+              <p className="text-[11px] text-muted-foreground">계약기간</p>
+              <p className="mt-0.5 text-[14px] font-bold">
+                {tenant.move_in_date ?? "—"}{contractEnd ? ` ~ ${contractEnd}` : ""}
+              </p>
+            </div>
+            <div className="grid grid-cols-3 gap-2 border-t border-border pt-2.5">
+              <KV label="월세" value={formatKRWMan(tenant.monthly_rent ?? 0)} />
+              <KV label="보증금" value={formatKRWMan(tenant.deposit ?? 0)} />
+              <KV label="월세 납부일" value={tenant.payment_day ? `매달 ${tenant.payment_day}일` : "—"} />
+            </div>
+            <div className="grid grid-cols-2 gap-2 pt-1">
+              <DocBtn icon={FileText} label="주거증명서" onClick={() => _toast.info("준비 중인 기능이에요.")} />
+              <DocBtn icon={FileText} label="계약서" onClick={() => _toast.info("준비 중인 기능이에요.")} />
+            </div>
+          </div>
+        </Card>
 
-        {/* Invoice history */}
-        <section className="overflow-hidden rounded-2xl border border-border bg-card">
-          <div className="flex items-center justify-between px-4 py-3">
-            <h2 className="text-[14px] font-bold">청구 내역</h2>
-            <span className="text-[12px] text-muted-foreground">최근 12건</span>
+        {/* 보증금 관리 */}
+        <Card>
+          <CardHeader title="보증금 관리" right={
+            <span className="rounded-md bg-amber-100 px-2 py-0.5 text-[10.5px] font-bold text-amber-700">입금 대기</span>
+          } />
+          <div className="space-y-2 px-3 pb-3">
+            <div className="flex items-center justify-between rounded-lg bg-muted/40 px-3 py-2 text-[12.5px]">
+              <span className="truncate text-muted-foreground">하나은행 190-910193-98007 (이상덕)</span>
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard?.writeText("190-910193-98007");
+                  _toast.success("계좌번호가 복사되었어요.");
+                }}
+                className="ml-2 grid h-7 w-7 shrink-0 place-items-center rounded-md hover:bg-accent"
+                aria-label="복사"
+              >
+                <Copy className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <div className="flex items-center justify-between border-t border-dashed border-border pt-2 text-[12.5px]">
+              <span className="text-muted-foreground">보증금</span>
+              <span className="font-bold">{formatKRWMan(tenant.deposit ?? 0)}</span>
+            </div>
+            <div className="flex items-center justify-between text-[13.5px]">
+              <span className="font-bold">최종 반환액</span>
+              <span className="font-bold text-[oklch(0.46_0.18_258)]">
+                {(tenant.deposit ?? 0).toLocaleString("ko-KR")}원
+              </span>
+            </div>
+          </div>
+        </Card>
+
+        {/* 청구서 내역 */}
+        <Card>
+          <div className="flex items-center justify-between px-3 py-2.5">
+            <div className="flex items-center gap-2">
+              <h2 className="text-[13.5px] font-bold">청구서 내역</h2>
+              <span className="text-[11.5px] text-muted-foreground">({invoices.length})</span>
+              <button
+                type="button"
+                onClick={() => setIssueOpen(true)}
+                className="ml-1 grid h-6 w-6 place-items-center rounded-md text-muted-foreground hover:bg-accent"
+                aria-label="추가"
+              >
+                <Plus className="h-3.5 w-3.5" />
+              </button>
+            </div>
+            <div className="flex items-center gap-1.5 text-[10.5px]">
+              <span className="text-muted-foreground">납부일: {nextDueDay}일</span>
+              <span className="rounded-md bg-rose-500 px-1.5 py-0.5 font-bold text-white">
+                D{dDay >= 0 ? `-${dDay}` : `+${-dDay}`}
+              </span>
+            </div>
           </div>
           {invoices.length === 0 ? (
-            <p className="border-t border-border px-4 py-6 text-center text-[12.5px] text-muted-foreground">
-              아직 청구 내역이 없어요.
+            <p className="border-t border-border px-3 py-6 text-center text-[12px] text-muted-foreground">
+              청구 내역이 없어요.
             </p>
           ) : (
             <ul className="divide-y divide-border border-t border-border">
               {invoices.map((iv) => {
                 const paid = iv.status === "paid";
                 return (
-                  <li key={iv.id} className="flex items-center gap-3 px-4 py-3">
-                    {paid ? (
-                      <CheckCircle2 className="h-5 w-5 text-emerald-600" />
-                    ) : (
-                      <AlertCircle className="h-5 w-5 text-rose-500" />
-                    )}
-                    <div className="min-w-0 flex-1">
-                      <p className={cn("text-[13px] font-semibold", paid && "opacity-60")}>
-                        {iv.due_date}
+                  <li key={iv.id} className="flex items-center justify-between px-3 py-2.5">
+                    <div className="min-w-0">
+                      <p className="text-[12.5px] font-semibold">
+                        {iv.due_date} <span className="text-muted-foreground">월세</span>
                       </p>
-                      <p className="text-[11px] text-muted-foreground">
-                        {paid ? `수금일 ${iv.paid_at?.slice(0, 10) ?? ""}` : "미납"}
+                      <div className="mt-1 flex gap-1">
+                        <Tag>{paid ? "청구" : "미청구"}</Tag>
+                        <Tag>계좌이체</Tag>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-[13.5px] font-bold">{formatKRWMan(iv.amount)}</p>
+                      <p className={cn("text-[11px] font-semibold", paid ? "text-emerald-600" : "text-amber-600")}>
+                        {paid ? "납부완료" : "대기"}
                       </p>
                     </div>
-                    <p className={cn("text-[13.5px] font-bold", paid ? "text-muted-foreground" : "text-foreground")}>
-                      {formatKRW(iv.amount)}
-                    </p>
                   </li>
                 );
               })}
             </ul>
           )}
-        </section>
+        </Card>
 
-        {/* Danger zone */}
+        {/* 첨부파일 */}
+        <Card>
+          <div className="flex items-center justify-between px-3 py-2.5">
+            <h2 className="text-[13.5px] font-bold">첨부파일</h2>
+            <button
+              type="button"
+              onClick={() => _toast.info("준비 중인 기능이에요.")}
+              className="inline-flex items-center gap-1 rounded-lg bg-[oklch(0.96_0.02_258)] px-2.5 py-1 text-[11.5px] font-bold text-[oklch(0.46_0.18_258)]"
+            >
+              <Plus className="h-3 w-3" /> 파일 추가
+            </button>
+          </div>
+          <p className="border-t border-border px-3 py-5 text-center text-[12px] text-muted-foreground">
+            첨부된 파일이 없어요.
+          </p>
+        </Card>
+
+        {/* 메모 */}
+        {tenant.memo && (
+          <Card>
+            <div className="flex items-center justify-between px-3 py-2.5">
+              <h2 className="text-[13.5px] font-bold">원장님 메모</h2>
+              <button
+                type="button"
+                onClick={() => setMemoOpen(true)}
+                className="inline-flex items-center gap-1 text-[11.5px] font-semibold text-[oklch(0.46_0.18_258)]"
+              >
+                <Pencil className="h-3 w-3" /> 수정
+              </button>
+            </div>
+            <p className="whitespace-pre-wrap border-t border-border px-3 py-2.5 text-[12.5px] leading-relaxed">
+              {tenant.memo}
+            </p>
+          </Card>
+        )}
+
+        {/* Quick actions */}
+        <div className="grid grid-cols-3 gap-2 pt-1">
+          <ActionMini
+            icon={PhoneCall}
+            label="전화"
+            onClick={() => {
+              if (!tenant.phone) return _toast.info("등록된 연락처가 없어요.");
+              window.location.href = `tel:${tenant.phone}`;
+            }}
+          />
+          <ActionMini icon={Receipt} label="청구서 발행" onClick={() => setIssueOpen(true)} />
+          <ActionMini icon={MessageSquare} label="메모" onClick={() => setMemoOpen(true)} />
+        </div>
+
+        {tenant.emergency_contact && (
+          <p className="px-1 text-[11px] text-muted-foreground">
+            비상 연락처: <span className="font-semibold text-foreground">{tenant.emergency_contact}</span>
+          </p>
+        )}
+
         <button
           type="button"
           onClick={handleDelete}
-          className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl py-3 text-[12.5px] font-semibold text-rose-600 hover:bg-rose-50"
+          className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl py-3 text-[12px] font-semibold text-rose-600 hover:bg-rose-50"
         >
-          <Trash2 className="h-4 w-4" /> 입실자 정보 완전 삭제
+          <Trash2 className="h-3.5 w-3.5" /> 입실자 정보 완전 삭제
         </button>
       </main>
 
