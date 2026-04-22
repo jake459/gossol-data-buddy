@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { ChevronDown, HeadphonesIcon, Check } from "lucide-react";
+import { ChevronDown, HeadphonesIcon, Check, Bell } from "lucide-react";
+import { NotificationsModal } from "@/components/NotificationsModal";
 import { Button } from "@/components/ui/button";
 import { DEMO_BRANCHES } from "@/lib/demoData";
 import {
