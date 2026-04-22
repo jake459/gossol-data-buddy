@@ -27,6 +27,7 @@ import { useBranch } from "@/hooks/useBranch";
 import { EmptyState } from "@/components/EmptyState";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { useConfirm } from "@/components/ConfirmModal";
 
 export const Route = createFileRoute("/_authenticated/rooms")({
   head: () => ({ meta: [{ title: "호실 현황 — Gossol" }] }),
