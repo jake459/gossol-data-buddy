@@ -1,0 +1,16 @@
+import * as React from "react";
+import { cn } from "@/lib/utils";
+
+export function MobileFrame({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <div className="mobile-shell">
+      <div className={cn("mobile-frame", className)}>{children}</div>
+    </div>
+  );
+}
