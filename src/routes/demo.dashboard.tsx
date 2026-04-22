@@ -1,84 +1,166 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import {
+  Building2, Users, Receipt, AlertCircle, Sparkles, CalendarClock, ArrowRight,
+  DoorOpen, TrendingUp, ClipboardList, Megaphone, Phone, LogIn, LogOut,
+} from "lucide-react";
 import { MobileFrame } from "@/components/MobileFrame";
-import { TopBar } from "@/components/TopBar";
-import { BottomTabs } from "@/components/BottomTabs";
-import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { DemoTopBar } from "@/components/DemoTopBar";
+import { DemoBottomTabs } from "@/components/DemoBottomTabs";
+import { DEMO_STATS, DEMO_INVOICES, DEMO_EVENTS, DEMO_ROOMS } from "@/lib/demoData";
+import { formatKRW, formatKRWShort } from "@/components/StatusBadge";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/demo/dashboard")({
   head: () => ({ meta: [{ title: "데모 대시보드 — Gossol" }] }),
   component: DemoDashboard,
 });
 
-
 function DemoDashboard() {
+  const totalRooms = DEMO_ROOMS.length;
+  const occupancy = Math.round((DEMO_STATS.occupied / totalRooms) * 100);
+  const today = new Date();
+  const dateLabel = today.toLocaleDateString("ko-KR", { month: "long", day: "numeric", weekday: "short" });
+  const overdue = DEMO_INVOICES.filter((i) => i.status === "overdue").slice(0, 4);
+  const upcoming = DEMO_EVENTS.slice(0, 4);
+
   return (
     <MobileFrame>
-      <TopBar branchName="강남 1호점 (데모)" />
-      <main className="flex-1 space-y-4 bg-app-shell px-4 py-5">
-        <div className="rounded-2xl bg-gradient-to-br from-brand to-[oklch(0.32_0.15_265)] p-5 text-primary-foreground shadow-md">
-          <p className="text-xs font-medium text-white/70">이번 달 매출</p>
-          <p className="mt-1 text-3xl font-bold tracking-tight">₩ 12,480,000</p>
-          <p className="mt-1 text-xs text-white/70">전월 대비 +8.2%</p>
-        </div>
+      <DemoTopBar />
+      <main className="flex-1 space-y-5 px-5 py-5">
+        <section className="relative overflow-hidden rounded-[24px] bg-gradient-to-br from-[oklch(0.46_0.18_258)] via-[oklch(0.4_0.18_262)] to-[oklch(0.3_0.16_268)] p-5 text-white shadow-[0_18px_45px_-15px_oklch(0.32_0.16_262/0.55)]">
+          <div className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-white/15 blur-3xl" />
+          <div className="relative">
+            <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-widest opacity-85">
+              <span className="inline-flex items-center gap-1.5"><Sparkles className="h-3.5 w-3.5" /> 데모 모드</span>
+              <span className="opacity-80">{dateLabel}</span>
+            </div>
+            <h1 className="mt-2 text-[22px] font-bold leading-tight">원장님 👋</h1>
+            <p className="mt-1 text-[13px] opacity-85">강남 1호점 운영 현황입니다.</p>
+            <div className="mt-4 flex items-end justify-between rounded-2xl bg-white/12 p-3.5 backdrop-blur-md ring-1 ring-white/20">
+              <div>
+                <div className="text-[11px] font-semibold uppercase tracking-wider opacity-80">방 가동률</div>
+                <div className="mt-1 text-[26px] font-black leading-none">{occupancy}%</div>
+                <div className="mt-1 text-[11.5px] opacity-80">전체 {totalRooms}실 중 {DEMO_STATS.occupied}실 입실</div>
+              </div>
+              <div className="flex w-1/2 flex-col items-end gap-1.5">
+                <div className="h-2 w-full overflow-hidden rounded-full bg-white/20">
+                  <div className="h-full rounded-full bg-gradient-to-r from-white to-[oklch(0.85_0.15_205)]" style={{ width: `${occupancy}%` }} />
+                </div>
+                <div className="text-[11px] opacity-80">빈 방 {DEMO_STATS.vacant}실</div>
+              </div>
+            </div>
+          </div>
+        </section>
 
-        <div className="grid grid-cols-2 gap-3">
-          <StatTile label="입실 호실" value="38" sub="/ 42실" tone="success" />
-          <StatTile label="공실" value="4" sub="즉시 입실 가능" tone="danger" />
-          <StatTile label="미납자" value="3" sub="확인 필요" tone="danger" />
-          <StatTile label="오늘 룸투어" value="2" sub="14:00 / 17:00" tone="warning" />
-        </div>
+        <section className="grid grid-cols-2 gap-3">
+          <Tile to="/demo/rooms" icon={DoorOpen} label="빈 방" value={`${DEMO_STATS.vacant}실`} tone="danger" />
+          <Tile to="/demo/tenants" icon={Users} label="입실 인원" value={`${DEMO_STATS.occupied}명`} tone="brand" />
+          <Tile to="/demo/invoices" icon={Receipt} label="이번 달 월세 수납" value={formatKRWShort(DEMO_STATS.monthRevenue)} tone="success" />
+          <Tile to="/demo/invoices" icon={AlertCircle} label="월세 미납" value={`${DEMO_STATS.overdueCount}건`} tone="danger" />
+        </section>
 
-        <Card className="rounded-2xl">
-          <CardContent className="p-4">
-            <p className="text-sm font-semibold">오늘의 할 일</p>
-            <ul className="mt-3 space-y-2.5 text-sm">
-              <li className="flex justify-between"><span>302호 청소 확인</span><span className="text-warning">진행중</span></li>
-              <li className="flex justify-between"><span>김철수 님 청구서 발송</span><span className="text-muted-foreground">대기</span></li>
-              <li className="flex justify-between"><span>박영희 님 미납 안내</span><span className="text-danger font-semibold">긴급</span></li>
+        <section className="rounded-2xl border border-border bg-card p-4">
+          <h2 className="text-[14px] font-bold">오늘 할 일</h2>
+          <div className="mt-3 space-y-2 text-[13px]">
+            <TodoRow icon={Receipt} color="text-amber-600" bg="bg-amber-50" label={`오늘 월세 납부 예정 ${DEMO_STATS.todayDue}건`} to="/demo/invoices" />
+            <TodoRow icon={AlertCircle} color="text-rose-600" bg="bg-rose-50" label={`월세 미납 ${DEMO_STATS.overdueCount}건 · ${formatKRW(DEMO_STATS.overdueSum)}`} to="/demo/invoices" />
+            <TodoRow icon={DoorOpen} color="text-emerald-600" bg="bg-emerald-50" label={`빈 방 ${DEMO_STATS.vacant}실 — 입실 모집 가능`} to="/demo/rooms" />
+          </div>
+        </section>
+
+        {overdue.length > 0 && (
+          <section className="rounded-2xl border border-rose-200 bg-rose-50/40 p-4">
+            <div className="flex items-center justify-between">
+              <h2 className="inline-flex items-center gap-1.5 text-[14px] font-bold text-rose-700">
+                <AlertCircle className="h-4 w-4" /> 월세 독촉이 필요한 입실자
+              </h2>
+              <Link to="/demo/invoices" className="text-[12px] font-semibold text-rose-700">전체</Link>
+            </div>
+            <ul className="mt-2 divide-y divide-rose-100">
+              {overdue.map((t) => (
+                <li key={t.id} className="flex items-center gap-2 py-2">
+                  <Link to="/demo/tenants/$tenantId" params={{ tenantId: t.tenant_id }} className="min-w-0 flex-1">
+                    <p className="truncate text-[13px] font-semibold text-foreground">{t.tenant_name}</p>
+                    <p className="text-[11.5px] text-rose-700">{t.due_date} 납부 예정일 경과 · {formatKRW(t.amount)}</p>
+                  </Link>
+                  <span className="grid h-9 w-9 place-items-center rounded-full bg-white text-rose-600 ring-1 ring-rose-200">
+                    <Phone className="h-4 w-4" />
+                  </span>
+                </li>
+              ))}
             </ul>
-          </CardContent>
-        </Card>
+          </section>
+        )}
+
+        <section className="rounded-2xl border border-border bg-card p-5">
+          <div className="flex items-center justify-between">
+            <h2 className="text-[15px] font-bold">입·퇴실 예정</h2>
+            <Link to="/demo/schedule" className="text-[12px] font-semibold text-brand">전체 보기</Link>
+          </div>
+          <ul className="mt-3 space-y-2 text-[13px]">
+            {upcoming.map((e) => {
+              const Icon = e.kind === "move_in" ? LogIn : e.kind === "move_out" ? LogOut : CalendarClock;
+              const color = e.kind === "move_in" ? "text-emerald-600" : e.kind === "move_out" ? "text-rose-600" : "text-brand";
+              return (
+                <li key={e.id} className="flex items-center gap-2">
+                  <Icon className={cn("h-4 w-4", color)} />
+                  <span className="font-medium text-foreground">{e.title}</span>
+                  <span className="ml-auto text-[12px] text-muted-foreground">{e.event_date}</span>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+
+        <section className="grid grid-cols-2 gap-3">
+          <QuickLink to="/demo/applications" icon={ClipboardList} label="룸투어·입실 문의" />
+          <QuickLink to="/demo/stats" icon={TrendingUp} label="운영 통계" />
+          <QuickLink to="/demo/community" icon={Megaphone} label="원장님 커뮤니티" />
+          <QuickLink to="/demo/branches" icon={Building2} label="지점 관리" />
+        </section>
 
         <div className="rounded-2xl border border-dashed border-brand/40 bg-brand/5 p-4 text-center">
           <p className="text-sm font-semibold text-brand">데모 모드입니다</p>
           <p className="mt-1 text-xs text-muted-foreground">회원가입하고 실제 데이터로 시작해 보세요.</p>
-          <Button asChild className="mt-3 h-10 rounded-xl">
-            <Link to="/signup">무료로 회원가입</Link>
-          </Button>
+          <Link to="/signup" className="mt-3 inline-flex h-10 items-center rounded-xl bg-brand px-4 text-[13px] font-semibold text-white">
+            무료로 회원가입
+          </Link>
         </div>
       </main>
-      <BottomTabs />
+      <DemoBottomTabs />
     </MobileFrame>
   );
 }
 
-function StatTile({
-  label,
-  value,
-  sub,
-  tone,
-}: {
-  label: string;
-  value: string;
-  sub: string;
-  tone: "success" | "danger" | "warning" | "default";
-}) {
-  const toneClass =
-    tone === "danger"
-      ? "text-danger"
-      : tone === "warning"
-        ? "text-warning"
-        : tone === "success"
-          ? "text-success"
-          : "text-foreground";
+function TodoRow({ icon: Icon, color, bg, label, to }: { icon: React.ComponentType<{ className?: string }>; color: string; bg: string; label: string; to: string }) {
   return (
-    <Card className="rounded-2xl">
-      <CardContent className="p-4">
-        <p className="text-xs font-medium text-muted-foreground">{label}</p>
-        <p className={`mt-1 text-2xl font-bold ${toneClass}`}>{value}</p>
-        <p className="mt-0.5 text-[11px] text-muted-foreground">{sub}</p>
-      </CardContent>
-    </Card>
+    <Link to={to} className="flex items-center gap-2.5 rounded-xl px-3 py-2.5 transition hover:bg-accent/40">
+      <span className={cn("grid h-7 w-7 place-items-center rounded-full", bg)}>
+        <Icon className={cn("h-3.5 w-3.5", color)} />
+      </span>
+      <span className="flex-1 text-[13px] font-semibold">{label}</span>
+      <ArrowRight className="h-4 w-4 text-muted-foreground" />
+    </Link>
+  );
+}
+
+function Tile({ to, icon: Icon, label, value, tone }: { to: string; icon: React.ComponentType<{ className?: string }>; label: string; value: string; tone: "brand" | "success" | "danger" }) {
+  const toneClass = tone === "danger" ? "text-rose-600" : tone === "success" ? "text-emerald-600" : "text-brand";
+  return (
+    <Link to={to} className="rounded-2xl border border-border bg-card p-4 transition hover:bg-accent/40">
+      <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+        <Icon className={cn("h-3.5 w-3.5", toneClass)} /> {label}
+      </div>
+      <div className={cn("mt-2 text-2xl font-bold", toneClass)}>{value}</div>
+    </Link>
+  );
+}
+
+function QuickLink({ to, icon: Icon, label }: { to: string; icon: React.ComponentType<{ className?: string }>; label: string }) {
+  return (
+    <Link to={to} className="flex items-center justify-between rounded-2xl border border-border bg-card p-4 text-[13.5px] font-semibold transition hover:bg-accent/40">
+      <span className="flex items-center gap-2"><Icon className="h-4 w-4 text-brand" /> {label}</span>
+      <ArrowRight className="h-4 w-4 text-muted-foreground" />
+    </Link>
   );
 }
