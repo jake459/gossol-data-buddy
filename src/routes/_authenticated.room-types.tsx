@@ -194,6 +194,7 @@ function RoomTypesPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <ConfirmDialog />
     </MobileFrame>
   );
 }
