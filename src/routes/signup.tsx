@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
+import { toKoreanAuthError } from "@/lib/auth-errors";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({ meta: [{ title: "회원가입 — Gossol" }] }),
@@ -23,6 +25,7 @@ const schema = z.object({
 
 function SignupPage() {
   const navigate = useNavigate();
+  const { session, loading: authLoading } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,10 +34,10 @@ function SignupPage() {
   const [agreeAll, setAgreeAll] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/dashboard" });
-    });
-  }, [navigate]);
+    if (!authLoading && session) {
+      navigate({ to: "/dashboard" });
+    }
+  }, [authLoading, session, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,11 +61,11 @@ function SignupPage() {
     });
     setLoading(false);
     if (error) {
-      toast.error(error.message ?? "회원가입에 실패했습니다.");
+      toast.error(toKoreanAuthError(error.message));
       return;
     }
     toast.success("회원가입이 완료되었습니다.");
-    navigate({ to: "/dashboard" });
+    // navigation handled by useEffect watching session
   };
 
   return (
