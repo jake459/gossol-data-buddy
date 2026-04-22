@@ -97,25 +97,32 @@ function TenantsPage() {
               return (
                 <li
                   key={t.id}
-                  className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3.5"
+                  className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3.5 transition hover:bg-accent/40"
                 >
-                  <span className="grid h-11 w-11 place-items-center rounded-full bg-brand/10 text-[13px] font-bold text-brand">
-                    {t.name.slice(0, 1)}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <p className="truncate text-[14px] font-semibold">{t.name}</p>
-                      <StatusBadge kind="tenant" value={t.status} />
+                  <Link
+                    to="/tenants/$tenantId"
+                    params={{ tenantId: t.id }}
+                    className="flex min-w-0 flex-1 items-center gap-3"
+                  >
+                    <span className="grid h-11 w-11 place-items-center rounded-full bg-brand/10 text-[13px] font-bold text-brand">
+                      {t.name.slice(0, 1)}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className="truncate text-[14px] font-semibold">{t.name}</p>
+                        <StatusBadge kind="tenant" value={t.status} />
+                      </div>
+                      <p className="mt-0.5 truncate text-[12px] text-muted-foreground">
+                        {room ? `${room.room_number}호` : "미배정"} · 월 {formatKRW(t.monthly_rent ?? 0)}
+                        {t.payment_day ? ` · 매달 ${t.payment_day}일` : ""}
+                      </p>
                     </div>
-                    <p className="mt-0.5 truncate text-[12px] text-muted-foreground">
-                      {room ? `${room.room_number}호` : "미배정"} · 월 {formatKRW(t.monthly_rent ?? 0)}
-                      {t.payment_day ? ` · 매달 ${t.payment_day}일` : ""}
-                    </p>
-                  </div>
+                  </Link>
                   {t.phone && (
                     <a
                       href={`tel:${t.phone}`}
-                      className="grid h-9 w-9 place-items-center rounded-full bg-muted text-foreground hover:bg-accent"
+                      onClick={(e) => e.stopPropagation()}
+                      className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-muted text-foreground hover:bg-accent"
                       aria-label="전화"
                     >
                       <Phone className="h-4 w-4" />

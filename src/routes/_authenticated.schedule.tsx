@@ -26,6 +26,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useBranch } from "@/hooks/useBranch";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { useConfirm } from "@/components/ConfirmModal";
 
 export const Route = createFileRoute("/_authenticated/schedule")({
   head: () => ({ meta: [{ title: "일정 — Gossol" }] }),
@@ -67,6 +68,7 @@ function ymd(d: Date) {
 function SchedulePage() {
   const { user } = useAuth();
   const { selected } = useBranch();
+  const { confirm, ConfirmDialog } = useConfirm();
   const today = new Date();
   const [cursor, setCursor] = useState(new Date(today.getFullYear(), today.getMonth(), 1));
   const [selectedDate, setSelectedDate] = useState<string>(ymd(today));
@@ -310,7 +312,12 @@ function SchedulePage() {
                 variant="ghost"
                 className="text-destructive"
                 onClick={async () => {
-                  if (!confirm("삭제할까요?")) return;
+                  const ok = await confirm({
+                    title: "이 일정을 삭제할까요?",
+                    tone: "danger",
+                    confirmLabel: "삭제",
+                  });
+                  if (!ok) return;
                   const { error } = await supabase.from("events").delete().eq("id", edit.id!);
                   if (error) return toast.error(error.message);
                   toast.success("삭제되었습니다.");
@@ -329,6 +336,7 @@ function SchedulePage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <ConfirmDialog />
     </MobileFrame>
   );
 }

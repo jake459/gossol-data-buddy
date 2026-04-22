@@ -12,6 +12,9 @@ import {
   TrendingUp,
   ClipboardList,
   Megaphone,
+  Phone,
+  LogIn,
+  LogOut,
 } from "lucide-react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { TopBar } from "@/components/TopBar";
@@ -19,7 +22,7 @@ import { BottomTabs } from "@/components/BottomTabs";
 import { useAuth } from "@/hooks/useAuth";
 import { useBranch } from "@/hooks/useBranch";
 import { supabase } from "@/integrations/supabase/client";
-import { formatKRWShort } from "@/components/StatusBadge";
+import { formatKRW, formatKRWShort } from "@/components/StatusBadge";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -27,12 +30,29 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
 });
 
+type OverdueTenant = {
+  id: string;
+  name: string;
+  phone: string | null;
+  amount: number;
+  due_date: string;
+};
+type UpcomingMove = {
+  id: string;
+  title: string;
+  event_date: string;
+  kind: "move_in" | "move_out" | "inspection" | "room_tour" | "memo";
+};
+
 type Stats = {
   vacant: number;
   occupied: number;
   monthRevenue: number;
-  overdue: number;
-  upcoming: { id: string; title: string; event_date: string }[];
+  overdueCount: number;
+  overdueSum: number;
+  overdueTenants: OverdueTenant[];
+  upcoming: UpcomingMove[];
+  todayDue: number;
 };
 
 function DashboardPage() {
@@ -48,8 +68,11 @@ function DashboardPage() {
     vacant: 0,
     occupied: 0,
     monthRevenue: 0,
-    overdue: 0,
+    overdueCount: 0,
+    overdueSum: 0,
+    overdueTenants: [],
     upcoming: [],
+    todayDue: 0,
   });
 
   useEffect(() => {
@@ -60,7 +83,7 @@ function DashboardPage() {
     const todayStr = today.toISOString().slice(0, 10);
 
     Promise.all([
-      supabase.from("rooms").select("status", { count: "exact" }).eq("branch_id", selected.id),
+      supabase.from("rooms").select("status").eq("branch_id", selected.id),
       supabase
         .from("invoices")
         .select("amount, status, due_date")
@@ -69,12 +92,28 @@ function DashboardPage() {
         .lte("due_date", monthEnd),
       supabase
         .from("events")
-        .select("id, title, event_date")
+        .select("id, title, event_date, kind")
         .eq("branch_id", selected.id)
         .gte("event_date", todayStr)
         .order("event_date")
-        .limit(3),
-    ]).then(([rooms, invs, evs]) => {
+        .limit(4),
+      // Overdue (unpaid past due_date OR status overdue) with tenant info
+      supabase
+        .from("invoices")
+        .select("id, amount, due_date, tenant_id, tenants(id, name, phone)")
+        .eq("branch_id", selected.id)
+        .in("status", ["unpaid", "overdue"])
+        .lte("due_date", todayStr)
+        .order("due_date", { ascending: true })
+        .limit(5),
+      // Today's payments due (unpaid scheduled today)
+      supabase
+        .from("invoices")
+        .select("amount", { count: "exact" })
+        .eq("branch_id", selected.id)
+        .eq("status", "unpaid")
+        .eq("due_date", todayStr),
+    ]).then(([rooms, invs, evs, overdue, todayDue]) => {
       const rs = (rooms.data ?? []) as { status: string }[];
       let vacant = 0,
         occupied = 0;
@@ -83,18 +122,36 @@ function DashboardPage() {
         if (r.status === "occupied") occupied++;
       });
       const ivs = (invs.data ?? []) as { amount: number; status: string }[];
-      let revenue = 0,
-        overdue = 0;
+      let revenue = 0;
       ivs.forEach((i) => {
         if (i.status === "paid") revenue += i.amount;
-        if (i.status === "unpaid" || i.status === "overdue") overdue += 1;
       });
+      const od = (overdue.data ?? []) as Array<{
+        id: string;
+        amount: number;
+        due_date: string;
+        tenant_id: string | null;
+        tenants: { id: string; name: string; phone: string | null } | null;
+      }>;
+      const overdueTenants: OverdueTenant[] = od
+        .filter((x) => x.tenants)
+        .map((x) => ({
+          id: x.tenants!.id,
+          name: x.tenants!.name,
+          phone: x.tenants!.phone,
+          amount: x.amount,
+          due_date: x.due_date,
+        }));
+      const overdueSum = od.reduce((s, x) => s + x.amount, 0);
       setStats({
         vacant,
         occupied,
         monthRevenue: revenue,
-        overdue,
-        upcoming: (evs.data ?? []) as Stats["upcoming"],
+        overdueCount: od.length,
+        overdueSum,
+        overdueTenants,
+        upcoming: (evs.data ?? []) as UpcomingMove[],
+        todayDue: todayDue.count ?? 0,
       });
     });
   }, [selected?.id]);
@@ -157,12 +214,92 @@ function DashboardPage() {
           <Tile
             to="/invoices"
             icon={Receipt}
-            label="이번 달 매출"
+            label="이번 달 수금"
             value={formatKRWShort(stats.monthRevenue)}
             tone="success"
           />
-          <Tile to="/invoices" icon={AlertCircle} label="미납" value={`${stats.overdue}건`} tone="danger" />
+          <Tile
+            to="/invoices"
+            icon={AlertCircle}
+            label="미수금"
+            value={`${stats.overdueCount}건`}
+            tone="danger"
+          />
         </section>
+
+        {/* Today's tasks — owner action panel */}
+        <section className="rounded-2xl border border-border bg-card p-4">
+          <h2 className="text-[14px] font-bold">오늘 할 일</h2>
+          <div className="mt-3 space-y-2 text-[13px]">
+            <TodoRow
+              icon={Receipt}
+              color="text-amber-600"
+              bg="bg-amber-50"
+              label={`오늘 결제 예정 ${stats.todayDue}건`}
+              empty={stats.todayDue === 0}
+              to="/invoices"
+            />
+            <TodoRow
+              icon={AlertCircle}
+              color="text-rose-600"
+              bg="bg-rose-50"
+              label={
+                stats.overdueCount > 0
+                  ? `미수금 ${stats.overdueCount}건 · ${formatKRW(stats.overdueSum)}`
+                  : "미수금이 없어요"
+              }
+              empty={stats.overdueCount === 0}
+              to="/invoices"
+            />
+            <TodoRow
+              icon={DoorOpen}
+              color="text-emerald-600"
+              bg="bg-emerald-50"
+              label={stats.vacant > 0 ? `공실 ${stats.vacant}실 — 입실 모집 가능` : "전 호실 입실 중"}
+              empty={stats.vacant === 0}
+              to="/rooms"
+            />
+          </div>
+        </section>
+
+        {/* Overdue tenants — quick contact */}
+        {stats.overdueTenants.length > 0 && (
+          <section className="rounded-2xl border border-rose-200 bg-rose-50/40 p-4">
+            <div className="flex items-center justify-between">
+              <h2 className="inline-flex items-center gap-1.5 text-[14px] font-bold text-rose-700">
+                <AlertCircle className="h-4 w-4" /> 연락이 필요한 입실자
+              </h2>
+              <Link to="/invoices" className="text-[12px] font-semibold text-rose-700">
+                전체
+              </Link>
+            </div>
+            <ul className="mt-2 divide-y divide-rose-100">
+              {stats.overdueTenants.slice(0, 4).map((t) => (
+                <li key={`${t.id}-${t.due_date}`} className="flex items-center gap-2 py-2">
+                  <Link
+                    to="/tenants/$tenantId"
+                    params={{ tenantId: t.id }}
+                    className="min-w-0 flex-1"
+                  >
+                    <p className="truncate text-[13px] font-semibold text-foreground">{t.name}</p>
+                    <p className="text-[11.5px] text-rose-700">
+                      {t.due_date} 미납 · {formatKRW(t.amount)}
+                    </p>
+                  </Link>
+                  {t.phone && (
+                    <a
+                      href={`tel:${t.phone}`}
+                      className="grid h-9 w-9 place-items-center rounded-full bg-white text-rose-600 ring-1 ring-rose-200"
+                      aria-label="전화"
+                    >
+                      <Phone className="h-4 w-4" />
+                    </a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
 
         <section className="rounded-2xl border border-border bg-card p-5">
           <div className="flex items-center justify-between">
@@ -177,13 +314,23 @@ function DashboardPage() {
                 <CalendarClock className="h-4 w-4 text-brand" /> 예정된 일정이 없어요.
               </li>
             ) : (
-              stats.upcoming.map((e) => (
-                <li key={e.id} className="flex items-center gap-2">
-                  <CalendarClock className="h-4 w-4 text-brand" />
-                  <span className="font-medium text-foreground">{e.title}</span>
-                  <span className="ml-auto text-[12px] text-muted-foreground">{e.event_date}</span>
-                </li>
-              ))
+              stats.upcoming.map((e) => {
+                const Icon =
+                  e.kind === "move_in" ? LogIn : e.kind === "move_out" ? LogOut : CalendarClock;
+                const color =
+                  e.kind === "move_in"
+                    ? "text-emerald-600"
+                    : e.kind === "move_out"
+                      ? "text-rose-600"
+                      : "text-brand";
+                return (
+                  <li key={e.id} className="flex items-center gap-2">
+                    <Icon className={cn("h-4 w-4", color)} />
+                    <span className="font-medium text-foreground">{e.title}</span>
+                    <span className="ml-auto text-[12px] text-muted-foreground">{e.event_date}</span>
+                  </li>
+                );
+              })
             )}
           </ul>
         </section>
@@ -197,6 +344,38 @@ function DashboardPage() {
       </main>
       <BottomTabs />
     </MobileFrame>
+  );
+}
+
+function TodoRow({
+  icon: Icon,
+  color,
+  bg,
+  label,
+  empty,
+  to,
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  color: string;
+  bg: string;
+  label: string;
+  empty: boolean;
+  to: string;
+}) {
+  return (
+    <Link
+      to={to}
+      className={cn(
+        "flex items-center gap-2.5 rounded-xl px-3 py-2.5 transition hover:bg-accent/40",
+        empty && "opacity-60",
+      )}
+    >
+      <span className={cn("grid h-7 w-7 place-items-center rounded-full", bg)}>
+        <Icon className={cn("h-3.5 w-3.5", color)} />
+      </span>
+      <span className="flex-1 text-[13px] font-semibold">{label}</span>
+      <ArrowRight className="h-4 w-4 text-muted-foreground" />
+    </Link>
   );
 }
 

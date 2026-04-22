@@ -18,6 +18,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useBranch } from "@/hooks/useBranch";
 import { toast } from "sonner";
+import { useConfirm } from "@/components/ConfirmModal";
 
 export const Route = createFileRoute("/_authenticated/branches")({
   head: () => ({ meta: [{ title: "지점 관리 — Gossol" }] }),
@@ -28,6 +29,7 @@ function BranchesPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { branches, refresh, setSelectedId, selectedId } = useBranch();
+  const { confirm, ConfirmDialog } = useConfirm();
   const [edit, setEdit] = useState<{ id?: string; name?: string; address?: string; phone?: string } | null>(null);
 
   useEffect(() => {
@@ -58,7 +60,13 @@ function BranchesPage() {
   };
 
   const remove = async (id: string) => {
-    if (!confirm("이 지점과 연결된 모든 데이터가 사라질 수 있어요. 정말 삭제할까요?")) return;
+    const ok = await confirm({
+      title: "이 지점을 삭제할까요?",
+      description: "지점과 연결된 모든 데이터(호실·입실자·청구서·일정)가 사라집니다. 되돌릴 수 없어요.",
+      tone: "danger",
+      confirmLabel: "삭제하기",
+    });
+    if (!ok) return;
     const { error } = await supabase.from("branches").delete().eq("id", id);
     if (error) return toast.error(error.message);
     toast.success("삭제되었습니다.");
@@ -136,6 +144,7 @@ function BranchesPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <ConfirmDialog />
     </MobileFrame>
   );
 }
