@@ -7,6 +7,7 @@ import { SocialButtons } from "@/components/SocialButtons";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { LegalModal, type LegalKind } from "@/components/LegalModal";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
@@ -32,6 +33,7 @@ function SignupPage() {
   const [showPw, setShowPw] = useState(false);
   const [loading, setLoading] = useState(false);
   const [agreeAll, setAgreeAll] = useState(false);
+  const [legalOpen, setLegalOpen] = useState<LegalKind | null>(null);
 
   useEffect(() => {
     if (!authLoading && session) {
@@ -145,22 +147,41 @@ function SignupPage() {
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setAgreeAll((v) => !v)}
-            className="flex w-full items-center gap-3 rounded-2xl border border-border bg-card px-4 py-3 text-left"
-          >
-            <span
-              className={`flex h-6 w-6 items-center justify-center rounded-full transition ${
-                agreeAll ? "bg-brand text-primary-foreground" : "bg-muted text-muted-foreground"
-              }`}
+          <div className="rounded-2xl border border-border bg-card px-4 py-3">
+            <button
+              type="button"
+              onClick={() => setAgreeAll((v) => !v)}
+              className="flex w-full items-center gap-3 text-left"
             >
-              <Check className="h-4 w-4" />
-            </span>
-            <span className="flex-1 text-sm font-medium text-foreground">
-              이용약관·개인정보처리방침 전체 동의
-            </span>
-          </button>
+              <span
+                className={`flex h-6 w-6 items-center justify-center rounded-full transition ${
+                  agreeAll ? "bg-brand text-primary-foreground" : "bg-muted text-muted-foreground"
+                }`}
+              >
+                <Check className="h-4 w-4" />
+              </span>
+              <span className="flex-1 text-sm font-medium text-foreground">
+                이용약관·개인정보처리방침 전체 동의
+              </span>
+            </button>
+            <div className="mt-2 flex gap-3 pl-9 text-[12px] text-muted-foreground">
+              <button
+                type="button"
+                onClick={() => setLegalOpen("terms")}
+                className="underline-offset-2 hover:text-foreground hover:underline"
+              >
+                이용약관 보기
+              </button>
+              <span>·</span>
+              <button
+                type="button"
+                onClick={() => setLegalOpen("privacy")}
+                className="underline-offset-2 hover:text-foreground hover:underline"
+              >
+                개인정보처리방침 보기
+              </button>
+            </div>
+          </div>
 
           <Button
             type="submit"
