@@ -90,7 +90,7 @@ function BranchesPage() {
             </span>
             <button
               type="button"
-              onClick={() => setEdit(b)}
+              onClick={() => setEdit({ id: b.id, name: b.name, address: b.address ?? "", phone: "" })}
               className="min-w-0 flex-1 text-left"
             >
               <p className="truncate text-[14px] font-semibold">
