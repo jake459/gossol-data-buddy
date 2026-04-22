@@ -41,12 +41,13 @@ export function TopBar({
         variant="ghost"
         size="icon"
         aria-label="고객센터"
-        onClick={onSupportClick}
+        onClick={handleSupport}
         className="text-[oklch(0.55_0.2_258)] hover:bg-[oklch(0.96_0.04_258)] hover:text-[oklch(0.45_0.2_258)]"
       >
         <HeadphonesIcon className="h-5 w-5" />
       </Button>
       <BranchSwitcher open={open} onOpenChange={setOpen} />
+      <SupportModal open={supportOpen} onOpenChange={setSupportOpen} />
     </header>
   );
 }
