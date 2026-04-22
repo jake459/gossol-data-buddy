@@ -9,6 +9,9 @@ import {
   CalendarClock,
   ArrowRight,
   DoorOpen,
+  TrendingUp,
+  ClipboardList,
+  Megaphone,
 } from "lucide-react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { TopBar } from "@/components/TopBar";
