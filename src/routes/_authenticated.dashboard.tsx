@@ -12,6 +12,9 @@ import {
   TrendingUp,
   ClipboardList,
   Megaphone,
+  Phone,
+  LogIn,
+  LogOut,
 } from "lucide-react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { TopBar } from "@/components/TopBar";
@@ -19,7 +22,7 @@ import { BottomTabs } from "@/components/BottomTabs";
 import { useAuth } from "@/hooks/useAuth";
 import { useBranch } from "@/hooks/useBranch";
 import { supabase } from "@/integrations/supabase/client";
-import { formatKRWShort } from "@/components/StatusBadge";
+import { formatKRW, formatKRWShort } from "@/components/StatusBadge";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/dashboard")({
@@ -27,12 +30,29 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
   component: DashboardPage,
 });
 
+type OverdueTenant = {
+  id: string;
+  name: string;
+  phone: string | null;
+  amount: number;
+  due_date: string;
+};
+type UpcomingMove = {
+  id: string;
+  title: string;
+  event_date: string;
+  kind: "move_in" | "move_out" | "inspection" | "room_tour" | "memo";
+};
+
 type Stats = {
   vacant: number;
   occupied: number;
   monthRevenue: number;
-  overdue: number;
-  upcoming: { id: string; title: string; event_date: string }[];
+  overdueCount: number;
+  overdueSum: number;
+  overdueTenants: OverdueTenant[];
+  upcoming: UpcomingMove[];
+  todayDue: number;
 };
 
 function DashboardPage() {
