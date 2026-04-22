@@ -32,7 +32,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/applications")({
-  head: () => ({ meta: [{ title: "입주 신청 — Gossol" }] }),
+  head: () => ({ meta: [{ title: "입실 신청 — Gossol" }] }),
   component: ApplicationsPage,
 });
 
@@ -117,7 +117,7 @@ function ApplicationsPage() {
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
-        <h1 className="flex-1 text-[15px] font-bold">입주 신청</h1>
+        <h1 className="flex-1 text-[15px] font-bold">입실 신청</h1>
         <Button size="sm" onClick={() => setEdit({ kind: "room_tour" })} className="h-9 rounded-xl">
           <Plus className="h-4 w-4" /> 신규
         </Button>
@@ -139,7 +139,7 @@ function ApplicationsPage() {
           <EmptyState
             icon={Plus}
             title="신청 내역이 없어요"
-            description="새 입주 문의나 방 보기 신청을 등록해 관리해 보세요."
+            description="새 입실 문의나 방 둘러보기 신청을 등록해 관리해 보세요."
             actionLabel="신청 등록"
             onAction={() => setEdit({ kind: "room_tour" })}
           />
@@ -158,7 +158,7 @@ function ApplicationsPage() {
                           : "bg-purple-100 text-purple-700",
                       )}
                     >
-                      {a.kind === "room_tour" ? "방 보기" : "입주 신청"}
+                      {a.kind === "room_tour" ? "방 둘러보기" : "입실 신청"}
                     </span>
                     <StatusBadge kind="application" value={a.status} />
                   </div>
@@ -215,7 +215,7 @@ function ApplicationsPage() {
       <Dialog open={!!edit} onOpenChange={(o) => !o && setEdit(null)}>
         <DialogContent className="rounded-2xl">
           <DialogHeader>
-            <DialogTitle>입주 신청 등록</DialogTitle>
+            <DialogTitle>입실 신청 등록</DialogTitle>
           </DialogHeader>
           <div className="space-y-3">
             <div className="space-y-1.5">
@@ -244,8 +244,8 @@ function ApplicationsPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="room_tour">방 보기</SelectItem>
-                  <SelectItem value="move_in">입주 신청</SelectItem>
+                  <SelectItem value="room_tour">방 둘러보기</SelectItem>
+                  <SelectItem value="move_in">입실 신청</SelectItem>
                 </SelectContent>
               </Select>
             </div>

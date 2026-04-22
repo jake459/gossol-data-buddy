@@ -153,7 +153,7 @@ function DashboardPage() {
         </section>
 
         <section className="grid grid-cols-2 gap-3">
-          <QuickLink to="/applications" icon={ClipboardList} label="입주 신청" />
+          <QuickLink to="/applications" icon={ClipboardList} label="입실 신청" />
           <QuickLink to="/stats" icon={TrendingUp} label="운영 통계" />
           <QuickLink to="/community" icon={Megaphone} label="커뮤니티" />
           <QuickLink to="/branches" icon={Building2} label="지점 관리" />

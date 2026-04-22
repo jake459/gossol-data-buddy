@@ -64,7 +64,7 @@ function TenantsPage() {
           <h1 className="text-[15px] font-bold">입실자</h1>
           <Link to="/tenants/new">
             <Button size="sm" className="h-9 rounded-xl">
-              <Plus className="h-4 w-4" /> 입주 등록
+              <Plus className="h-4 w-4" /> 입실 등록
             </Button>
           </Link>
         </div>
@@ -87,7 +87,7 @@ function TenantsPage() {
             icon={UserRound}
             title={q ? "검색 결과가 없어요" : "아직 등록된 입실자가 없어요"}
             description={q ? "다른 이름이나 연락처로 검색해 보세요." : "첫 입실자를 등록해 운영을 시작해 보세요."}
-            actionLabel="입주 등록"
+            actionLabel="입실 등록"
             actionTo="/tenants/new"
           />
         ) : (

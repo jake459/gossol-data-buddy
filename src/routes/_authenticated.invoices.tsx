@@ -101,7 +101,7 @@ function InvoicesPage() {
           amount: t.monthly_rent ?? 0,
           due_date: due.toISOString().slice(0, 10),
           status: "unpaid" as const,
-          memo: `${monthLabel} 월세`,
+          memo: `${monthLabel} 월 이용료`,
         };
       });
     if (toInsert.length === 0) {

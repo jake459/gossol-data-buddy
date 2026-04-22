@@ -112,7 +112,7 @@ function SettingsPage() {
 
         <NavSection title="운영">
           <NavItem to="/branches" icon={Building2} label="지점 관리" />
-          <NavItem to="/applications" icon={ClipboardList} label="입주 신청서" />
+          <NavItem to="/applications" icon={ClipboardList} label="입실 신청서" />
           <NavItem to="/community" icon={Megaphone} label="커뮤니티" />
           <NavItem to="/stats" icon={TrendingUp} label="운영 통계" />
         </NavSection>
@@ -120,7 +120,7 @@ function SettingsPage() {
         <NavSection title="자동 발송 알림">
           <ToggleRow
             icon={Bell}
-            label="입주 안내"
+            label="입실 안내"
             description="입실 등록 시 자동 안내"
             value={settings.auto_send_movein}
             onChange={(v) => toggle("auto_send_movein", v)}
@@ -141,8 +141,8 @@ function SettingsPage() {
           />
           <ToggleRow
             icon={Bell}
-            label="계약서 발송"
-            description="입주 승인 후 자동 전송"
+            label="이용 계약서 발송"
+            description="입실 승인 후 자동 전송"
             value={settings.auto_send_contract}
             onChange={(v) => toggle("auto_send_contract", v)}
           />

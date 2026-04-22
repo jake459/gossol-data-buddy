@@ -18,7 +18,7 @@ import { useBranch } from "@/hooks/useBranch";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/tenants/new")({
-  head: () => ({ meta: [{ title: "입주 등록 — Gossol" }] }),
+  head: () => ({ meta: [{ title: "입실 등록 — Gossol" }] }),
   component: NewTenantPage,
 });
 
@@ -107,7 +107,7 @@ function NewTenantPage() {
       await supabase.from("events").insert({
         owner_id: user.id,
         branch_id: selected.id,
-        title: `${name} 입주`,
+        title: `${name} 입실`,
         kind: "move_in",
         event_date: moveIn,
         room_id: roomId,
@@ -115,7 +115,7 @@ function NewTenantPage() {
       });
     }
     setLoading(false);
-    toast.success("입주 등록이 완료되었습니다.");
+    toast.success("입실 등록이 완료되었습니다.");
     navigate({ to: "/tenants" });
   };
 
@@ -129,12 +129,12 @@ function NewTenantPage() {
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
-        <h1 className="flex-1 text-[15px] font-bold">입주 등록</h1>
+        <h1 className="flex-1 text-[15px] font-bold">입실 등록</h1>
       </header>
 
       <main className="flex-1 px-5 py-5">
         <form onSubmit={submit} className="space-y-4">
-          <Section title="입주자 정보">
+          <Section title="입실자 정보">
             <Field label="이름 *">
               <Input value={name} onChange={(e) => setName(e.target.value)} className="h-11 rounded-xl" />
             </Field>
@@ -162,14 +162,14 @@ function NewTenantPage() {
                 </SelectContent>
               </Select>
             </Field>
-            <Field label="입주일">
+            <Field label="입실일">
               <Input type="date" value={moveIn} onChange={(e) => setMoveIn(e.target.value)} className="h-11 rounded-xl" />
             </Field>
             <div className="grid grid-cols-2 gap-3">
-              <Field label="월세(원)">
+              <Field label="월 이용료(원)">
                 <Input type="number" value={rent} onChange={(e) => setRent(Number(e.target.value))} className="h-11 rounded-xl" />
               </Field>
-              <Field label="보증금(원)">
+              <Field label="선납금(원)">
                 <Input type="number" value={deposit} onChange={(e) => setDeposit(Number(e.target.value))} className="h-11 rounded-xl" />
               </Field>
             </div>
@@ -189,7 +189,7 @@ function NewTenantPage() {
           </Section>
 
           <Button type="submit" disabled={loading} className="h-12 w-full rounded-xl text-[15px] font-semibold">
-            {loading ? "등록 중..." : "입주 등록"}
+            {loading ? "등록 중..." : "입실 등록"}
           </Button>
         </form>
       </main>
