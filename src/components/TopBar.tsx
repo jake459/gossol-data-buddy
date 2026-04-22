@@ -16,6 +16,7 @@ export function TopBar({
 }) {
   const [open, setOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
+  const [notiOpen, setNotiOpen] = useState(false);
   const { selected, branches } = useBranch();
   const label = branchName ?? selected?.name ?? (branches.length === 0 ? "지점 없음" : "지점 선택");
 
