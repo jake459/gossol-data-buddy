@@ -95,8 +95,8 @@ export function NotificationsModal({
               알림 {unreadCount > 0 && <span className="ml-1 text-[11px] font-bold text-[oklch(0.55_0.2_30)]">{unreadCount}</span>}
             </DialogTitle>
           </div>
-          <DialogDescription className="text-[12.5px] text-muted-foreground">
-            입퇴실, 청구, 점검·청소 등 운영 알림을 한곳에서 확인하세요.
+          <DialogDescription className="break-keep text-[12.5px] leading-relaxed text-muted-foreground">
+            입퇴실·청구·점검 등 운영 알림을 한곳에서 확인하세요.
           </DialogDescription>
         </DialogHeader>
 
