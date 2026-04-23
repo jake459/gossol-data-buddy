@@ -511,7 +511,7 @@ function TenantDetailPage() {
         )}
 
         {/* Quick actions */}
-        <div className="grid grid-cols-3 gap-2 pt-1">
+        <div className="grid grid-cols-4 gap-2 pt-1">
           <ActionMini
             icon={PhoneCall}
             label="전화"
@@ -520,8 +520,9 @@ function TenantDetailPage() {
               window.location.href = `tel:${tenant.phone}`;
             }}
           />
-          <ActionMini icon={Receipt} label="청구서 발행" onClick={() => setIssueOpen(true)} />
+          <ActionMini icon={Receipt} label="청구서" onClick={() => setIssueOpen(true)} />
           <ActionMini icon={MessageSquare} label="메모" onClick={() => setMemoOpen(true)} />
+          <ActionMini icon={Copy} label="앱 초대" onClick={handleInviteTenant} />
         </div>
 
         {tenant.emergency_contact && (
