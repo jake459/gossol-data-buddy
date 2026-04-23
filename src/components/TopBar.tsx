@@ -1,10 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown, HeadphonesIcon, Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BranchSwitcher } from "@/components/BranchSwitcher";
 import { SupportModal } from "@/components/SupportModal";
 import { NotificationsModal } from "@/components/NotificationsModal";
 import { useBranch } from "@/hooks/useBranch";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 export function TopBar({
   branchName,
