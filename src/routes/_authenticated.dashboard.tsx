@@ -181,8 +181,8 @@ function DashboardPage() {
   return (
     <MobileFrame>
       <TopBar />
-      <main className="flex-1 space-y-5 px-5 py-5">
-        <section className="relative overflow-hidden rounded-[24px] bg-gradient-to-br from-[oklch(0.46_0.18_258)] via-[oklch(0.4_0.18_262)] to-[oklch(0.3_0.16_268)] p-5 text-white shadow-[0_18px_45px_-15px_oklch(0.32_0.16_262/0.55)]">
+      <main className="flex-1 space-y-3 px-4 py-3">
+        <section className="relative overflow-hidden rounded-[20px] bg-gradient-to-br from-[oklch(0.46_0.18_258)] via-[oklch(0.4_0.18_262)] to-[oklch(0.3_0.16_268)] p-4 text-white shadow-[0_14px_35px_-15px_oklch(0.32_0.16_262/0.55)]">
           <div className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-white/15 blur-3xl" />
           <div className="pointer-events-none absolute -bottom-16 -left-10 h-44 w-44 rounded-full bg-[oklch(0.7_0.2_205)]/30 blur-3xl" />
           <div className="relative">
@@ -192,40 +192,39 @@ function DashboardPage() {
               </span>
               <span className="opacity-80">{dateLabel}</span>
             </div>
-            <h1 className="mt-2 text-[22px] font-bold leading-tight">
+            <h1 className="mt-1.5 text-[19px] font-bold leading-tight">
               {greetingName} 님 👋
             </h1>
-            <p className="mt-1 text-[13px] opacity-85">
+            <p className="mt-0.5 text-[12px] opacity-85">
               {selected ? `${selected.name} 운영 현황입니다.` : "지점을 선택하면 자세한 현황이 보여요."}
             </p>
-            <div className="mt-4 flex items-end justify-between rounded-2xl bg-white/12 p-3.5 backdrop-blur-md ring-1 ring-white/20">
+            <div className="mt-3 flex items-end justify-between rounded-xl bg-white/12 p-3 backdrop-blur-md ring-1 ring-white/20">
               <div>
-                <div className="text-[11px] font-semibold uppercase tracking-wider opacity-80">방 가동률</div>
-                <div className="mt-1 text-[26px] font-black leading-none">{occupancy}%</div>
-                <div className="mt-1 text-[11.5px] opacity-80">
+                <div className="text-[10px] font-semibold uppercase tracking-wider opacity-80">방 가동률</div>
+                <div className="mt-0.5 text-[22px] font-black leading-none">{occupancy}%</div>
+                <div className="mt-0.5 text-[11px] opacity-80">
                   전체 {totalRooms}실 중 {stats.occupied}실 입실
                 </div>
               </div>
               <div className="flex w-1/2 flex-col items-end gap-1.5">
-                <div className="h-2 w-full overflow-hidden rounded-full bg-white/20">
+                <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/20">
                   <div
                     className="h-full rounded-full bg-gradient-to-r from-white to-[oklch(0.85_0.15_205)] transition-all"
                     style={{ width: `${occupancy}%` }}
                   />
                 </div>
-                <div className="text-[11px] opacity-80">공실 {stats.vacant}실</div>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="grid grid-cols-2 gap-3">
+        <section className="grid grid-cols-2 gap-2">
           <Tile to="/rooms" icon={DoorOpen} label="공실" value={`${stats.vacant}실`} tone="danger" />
-          <Tile to="/tenants" icon={Users} label="입실 인원" value={`${stats.occupied}명`} tone="brand" />
+          <Tile to="/tenants" icon={Users} label="입실 현황" value={`${stats.occupied}명`} tone="brand" />
           <Tile
             to="/invoices"
             icon={Receipt}
-            label="이번 달 월세 수납"
+            label="이번 달 수익"
             value={formatKRWShort(stats.monthRevenue)}
             tone="success"
           />
@@ -239,9 +238,9 @@ function DashboardPage() {
         </section>
 
         {/* Today's tasks — owner action panel */}
-        <section className="rounded-2xl border border-border bg-card p-4">
-          <h2 className="text-[14px] font-bold">오늘 할 일</h2>
-          <div className="mt-3 space-y-2 text-[13px]">
+        <section className="rounded-2xl border border-border bg-card p-3">
+          <h2 className="text-[13px] font-bold">오늘 할 일</h2>
+          <div className="mt-2 space-y-1 text-[12.5px]">
             <TodoRow
               icon={Receipt}
               color="text-amber-600"
@@ -262,48 +261,46 @@ function DashboardPage() {
               empty={stats.overdueCount === 0}
               to="/invoices"
             />
-            <TodoRow
-              icon={DoorOpen}
-              color="text-emerald-600"
-              bg="bg-emerald-50"
-              label={stats.vacant > 0 ? `공실 ${stats.vacant}건 · 입실 모집 가능` : "전 호실 입실 완료"}
-              empty={stats.vacant === 0}
-              to="/rooms"
-            />
           </div>
         </section>
 
         {/* Overdue tenants — quick contact */}
         {stats.overdueTenants.length > 0 && (
-          <section className="rounded-2xl border border-rose-200 bg-rose-50/40 p-4">
+          <section className="rounded-2xl border border-rose-200 bg-rose-50/40 p-3">
             <div className="flex items-center justify-between">
-              <h2 className="inline-flex items-center gap-1.5 text-[14px] font-bold text-rose-700">
-                <AlertCircle className="h-4 w-4" /> 월세 독촉이 필요한 입실자
+              <h2 className="inline-flex items-center gap-1.5 text-[13px] font-bold text-rose-700">
+                <AlertCircle className="h-4 w-4" /> 미납자 현황
+                <span className="rounded-full bg-rose-600 px-1.5 py-0.5 text-[10px] font-bold text-white">
+                  {stats.overdueTenants.length}명
+                </span>
               </h2>
-              <Link to="/invoices" className="text-[12px] font-semibold text-rose-700">
+              <Link to="/invoices" className="text-[11.5px] font-semibold text-rose-700">
                 전체
               </Link>
             </div>
-            <ul className="mt-2 divide-y divide-rose-100">
-              {stats.overdueTenants.slice(0, 4).map((t) => (
-                <li key={`${t.id}-${t.due_date}`} className="flex items-center gap-2 py-2">
+            <p className="mt-1 text-center text-[11.5px] text-rose-600">
+              총 미납액: {formatKRW(stats.overdueSum)}
+            </p>
+            <ul className="mt-1.5 divide-y divide-rose-100">
+              {stats.overdueTenants.slice(0, 3).map((t) => (
+                <li key={`${t.id}-${t.due_date}`} className="flex items-center gap-2 py-1.5">
                   <Link
                     to="/tenants/$tenantId"
                     params={{ tenantId: t.id }}
                     className="min-w-0 flex-1"
                   >
-                    <p className="truncate text-[13px] font-semibold text-foreground">{t.name}</p>
-                    <p className="text-[11.5px] text-rose-700">
-                      {t.due_date} 납부 예정일 경과 · {formatKRW(t.amount)}
+                    <p className="truncate text-[12.5px] font-semibold text-foreground">{t.name}</p>
+                    <p className="text-[11px] text-rose-700">
+                      {formatKRW(t.amount)} · {t.due_date}
                     </p>
                   </Link>
                   {t.phone && (
                     <a
                       href={`tel:${t.phone}`}
-                      className="grid h-9 w-9 place-items-center rounded-full bg-white text-rose-600 ring-1 ring-rose-200"
+                      className="grid h-8 w-8 place-items-center rounded-full bg-white text-rose-600 ring-1 ring-rose-200"
                       aria-label="전화"
                     >
-                      <Phone className="h-4 w-4" />
+                      <Phone className="h-3.5 w-3.5" />
                     </a>
                   )}
                 </li>
@@ -312,14 +309,14 @@ function DashboardPage() {
           </section>
         )}
 
-        <section className="rounded-2xl border border-border bg-card p-5">
+        <section className="rounded-2xl border border-border bg-card p-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-[15px] font-bold">입·퇴실 예정</h2>
-            <Link to="/schedule" className="text-[12px] font-semibold text-brand">
-              전체 보기
+            <h2 className="text-[13px] font-bold">입·퇴실 예정</h2>
+            <Link to="/schedule" className="text-[11.5px] font-semibold text-brand">
+              전체
             </Link>
           </div>
-          <ul className="mt-3 space-y-2 text-[13px]">
+          <ul className="mt-2 space-y-1.5 text-[12.5px]">
             {stats.upcoming.length === 0 ? (
               <li className="flex items-center gap-2 text-muted-foreground">
                 <CalendarClock className="h-4 w-4 text-brand" /> 예정된 입·퇴실이 없어요.
@@ -346,7 +343,7 @@ function DashboardPage() {
           </ul>
         </section>
 
-        <section className="grid grid-cols-2 gap-3">
+        <section className="grid grid-cols-2 gap-2">
           <QuickLink to="/applications" icon={ClipboardList} label="룸투어·입실 문의" />
           <QuickLink to="/stats" icon={TrendingUp} label="운영 통계" />
           <QuickLink to="/community" icon={Megaphone} label="원장님 커뮤니티" />
@@ -377,15 +374,15 @@ function TodoRow({
     <Link
       to={to}
       className={cn(
-        "flex items-center gap-2.5 rounded-xl px-3 py-2.5 transition hover:bg-accent/40",
+        "flex items-center gap-2 rounded-lg px-2.5 py-2 transition hover:bg-accent/40",
         empty && "opacity-60",
       )}
     >
-      <span className={cn("grid h-7 w-7 place-items-center rounded-full", bg)}>
-        <Icon className={cn("h-3.5 w-3.5", color)} />
+      <span className={cn("grid h-6 w-6 place-items-center rounded-full", bg)}>
+        <Icon className={cn("h-3 w-3", color)} />
       </span>
-      <span className="flex-1 text-[13px] font-semibold">{label}</span>
-      <ArrowRight className="h-4 w-4 text-muted-foreground" />
+      <span className="flex-1 text-[12.5px] font-semibold">{label}</span>
+      <ArrowRight className="h-3.5 w-3.5 text-muted-foreground" />
     </Link>
   );
 }
@@ -408,12 +405,12 @@ function Tile({
   return (
     <Link
       to={to}
-      className="rounded-2xl border border-border bg-card p-4 transition hover:bg-accent/40"
+      className="rounded-xl border border-border bg-card p-3 transition hover:bg-accent/40"
     >
-      <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-        <Icon className={cn("h-3.5 w-3.5", toneClass)} /> {label}
+      <div className="flex items-center gap-1 text-[10.5px] font-semibold uppercase tracking-wide text-muted-foreground">
+        <Icon className={cn("h-3 w-3", toneClass)} /> {label}
       </div>
-      <div className={cn("mt-2 text-2xl font-bold", toneClass)}>{value}</div>
+      <div className={cn("mt-1 text-[20px] font-bold leading-tight", toneClass)}>{value}</div>
     </Link>
   );
 }
@@ -430,12 +427,13 @@ function QuickLink({
   return (
     <Link
       to={to}
-      className="flex items-center justify-between rounded-2xl border border-border bg-card p-4 text-[13.5px] font-semibold transition hover:bg-accent/40"
+      className="flex items-center justify-between rounded-xl border border-border bg-card p-2.5 text-[12px] font-semibold transition hover:bg-accent/40"
     >
-      <span className="flex items-center gap-2">
-        <Icon className="h-4 w-4 text-brand" /> {label}
+      <span className="flex min-w-0 items-center gap-1.5">
+        <Icon className="h-3.5 w-3.5 shrink-0 text-brand" />
+        <span className="truncate">{label}</span>
       </span>
-      <ArrowRight className="h-4 w-4 text-muted-foreground" />
+      <ArrowRight className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
     </Link>
   );
 }
