@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useBranch } from "@/hooks/useBranch";
 import { toast } from "sonner";
+import { notifyValidation } from "@/components/ValidationModal";
 import { useConfirm } from "@/components/ConfirmModal";
 
 export const Route = createFileRoute("/_authenticated/room-types")({
@@ -55,7 +56,7 @@ function RoomTypesPage() {
   const save = async () => {
     if (!selected || !user || !edit) return;
     if (!edit.name?.trim()) {
-      toast.error("타입 이름을 입력해 주세요.");
+      notifyValidation("타입 이름을 입력해 주세요.");
       return;
     }
     const payload = {

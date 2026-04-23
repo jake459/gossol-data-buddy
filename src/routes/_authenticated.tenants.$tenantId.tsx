@@ -20,6 +20,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { toast as _toast } from "sonner";
+import { notifyValidation } from "@/components/ValidationModal";
 import { MobileFrame } from "@/components/MobileFrame";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -785,7 +786,7 @@ function EditTenantModal({
   useEffect(() => setForm(tenant), [tenant, open]);
 
   const save = async () => {
-    if (!form.name.trim()) return toast.error("이름을 입력해 주세요.");
+    if (!form.name.trim()) return notifyValidation("이름을 입력해 주세요.");
     const { error } = await supabase
       .from("tenants")
       .update({

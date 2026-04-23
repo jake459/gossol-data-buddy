@@ -32,6 +32,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useBranch } from "@/hooks/useBranch";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { notifyValidation } from "@/components/ValidationModal";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({ meta: [{ title: "설정 — Gossol" }] }),
@@ -259,7 +260,7 @@ function StaffInviteRow() {
 
   const submit = async () => {
     if (!user || !selected) return;
-    if (!email.trim() || !email.includes("@")) return toast.error("올바른 이메일을 입력해 주세요.");
+    if (!email.trim() || !email.includes("@")) return notifyValidation("올바른 이메일을 입력해 주세요.");
     setLoading(true);
     const { data, error } = await supabase
       .from("staff_invites")

@@ -29,6 +29,7 @@ import { useBranch } from "@/hooks/useBranch";
 import { EmptyState } from "@/components/EmptyState";
 import { StatusBadge } from "@/components/StatusBadge";
 import { toast } from "sonner";
+import { notifyValidation } from "@/components/ValidationModal";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/applications")({
@@ -79,7 +80,7 @@ function ApplicationsPage() {
 
   const save = async () => {
     if (!user || !selected || !edit?.applicant_name?.trim()) {
-      return toast.error("이름을 입력해 주세요.");
+      return notifyValidation("이름을 입력해 주세요.");
     }
     const payload = {
       applicant_name: edit.applicant_name.trim(),

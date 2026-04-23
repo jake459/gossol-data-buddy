@@ -17,6 +17,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useBranch } from "@/hooks/useBranch";
 import { notify } from "@/lib/notifications";
 import { toast } from "sonner";
+import { notifyValidation } from "@/components/ValidationModal";
 
 export const Route = createFileRoute("/_authenticated/tenants/new")({
   head: () => ({ meta: [{ title: "입실 등록 — Gossol" }] }),
@@ -77,7 +78,7 @@ function NewTenantPage() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user || !selected) return;
-    if (!name.trim()) return toast.error("이름을 입력해 주세요.");
+    if (!name.trim()) return notifyValidation("이름을 입력해 주세요.");
     setLoading(true);
     const { data: tenant, error } = await supabase
       .from("tenants")

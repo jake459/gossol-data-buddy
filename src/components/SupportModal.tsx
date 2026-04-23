@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
+import { notifyValidation } from "@/components/ValidationModal";
 
 /**
  * 고시원 원장님을 위한 고객센터 모달.
@@ -51,7 +52,7 @@ export function SupportModal({
       return;
     }
     if (!subject.trim() || !message.trim()) {
-      toast.error("제목과 내용을 모두 입력해 주세요.");
+      notifyValidation("제목과 내용을 모두 입력해 주세요.");
       return;
     }
     setSubmitting(true);

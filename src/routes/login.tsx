@@ -11,6 +11,7 @@ import { InfoModal } from "@/components/InfoModal";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
+import { notifyValidation } from "@/components/ValidationModal";
 import { useAuth } from "@/hooks/useAuth";
 import { toKoreanAuthError } from "@/lib/auth-errors";
 
@@ -75,7 +76,7 @@ function LoginPage() {
 
   const handleResetPw = async () => {
     if (!email) {
-      toast.error("이메일을 먼저 입력해 주세요.");
+      notifyValidation("이메일을 먼저 입력해 주세요.");
       return;
     }
     const { error } = await supabase.auth.resetPasswordForEmail(email, {

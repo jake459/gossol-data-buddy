@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { LegalModal, type LegalKind } from "@/components/LegalModal";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { notifyValidation } from "@/components/ValidationModal";
 import { useAuth } from "@/hooks/useAuth";
 import { toKoreanAuthError } from "@/lib/auth-errors";
 
@@ -83,12 +84,12 @@ function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!agreeAll) {
-      toast.error("약관에 동의해 주세요.");
+      notifyValidation("약관에 동의해 주세요.");
       return;
     }
     const parsed = schema.safeParse({ name, email, password });
     if (!parsed.success) {
-      toast.error(parsed.error.issues[0]?.message ?? "입력값을 확인해 주세요.");
+      notifyValidation(parsed.error.issues[0]?.message ?? "입력값을 확인해 주세요.");
       return;
     }
     setLoading(true);

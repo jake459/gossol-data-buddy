@@ -2,6 +2,7 @@ import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/r
 import { Toaster } from "@/components/ui/sonner";
 import { AuthProvider } from "@/hooks/useAuth";
 import { BranchProvider } from "@/hooks/useBranch";
+import { ValidationModalHost } from "@/components/ValidationModal";
 
 import appCss from "../styles.css?url";
 
@@ -77,6 +78,7 @@ function RootComponent() {
       <BranchProvider>
         <Outlet />
         <Toaster position="top-center" richColors />
+        <ValidationModalHost />
       </BranchProvider>
     </AuthProvider>
   );

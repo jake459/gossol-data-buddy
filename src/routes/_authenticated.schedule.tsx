@@ -25,6 +25,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useBranch } from "@/hooks/useBranch";
 import { toast } from "sonner";
+import { notifyValidation } from "@/components/ValidationModal";
 import { cn } from "@/lib/utils";
 import { useConfirm } from "@/components/ConfirmModal";
 
@@ -124,7 +125,7 @@ function SchedulePage() {
 
   const save = async () => {
     if (!user || !selected || !edit) return;
-    if (!edit.title?.trim()) return toast.error("제목을 입력해 주세요.");
+    if (!edit.title?.trim()) return notifyValidation("제목을 입력해 주세요.");
     const payload = {
       title: edit.title!.trim(),
       event_date: edit.event_date ?? selectedDate,
