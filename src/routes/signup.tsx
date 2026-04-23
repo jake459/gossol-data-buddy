@@ -123,7 +123,7 @@ function SignupPage() {
 
       <main className="flex flex-1 flex-col px-6 pb-8">
         <h1 className="mt-2 text-[28px] font-bold leading-tight tracking-tight">
-          시작하기
+          회원가입
         </h1>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-4">
