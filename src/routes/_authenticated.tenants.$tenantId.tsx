@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/dialog";
 import { StatusBadge, formatKRW } from "@/components/StatusBadge";
 import { useConfirm } from "@/components/ConfirmModal";
+import { ProcessTimeline, type TimelineTrack } from "@/components/ProcessTimeline";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -297,6 +298,9 @@ function TenantDetailPage() {
       <Header onBack={() => navigate({ to: "/tenants" })} title={tenant.name} status={tenant.status} onEdit={() => setEditOpen(true)} />
 
       <main className="flex-1 space-y-3 bg-muted/30 px-3 py-3 pb-24">
+        {/* 입퇴실 프로세스 타임라인 */}
+        <ProcessTimeline tracks={buildTenantTimeline(tenant, invoices)} />
+
         {/* 계약 상태 관리 */}
         <Card>
           <CardHeader title="계약 상태 관리" right={
