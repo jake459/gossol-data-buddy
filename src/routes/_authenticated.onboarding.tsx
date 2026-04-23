@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { BottomTabs } from "@/components/BottomTabs";
+import { InfoModal } from "@/components/InfoModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -36,11 +37,12 @@ function OnboardingPage() {
   const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
+  const [warnOpen, setWarnOpen] = useState(false);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      toast.error("지점 이름을 입력해 주세요.");
+      setWarnOpen(true);
       return;
     }
     if (!user) return;
@@ -122,6 +124,14 @@ function OnboardingPage() {
         )}
       </main>
       <BottomTabs />
+      <InfoModal
+        open={warnOpen}
+        onOpenChange={setWarnOpen}
+        title="지점 이름을 입력해 주세요"
+        description="첫 지점을 등록하려면 이름이 필요해요."
+        tone="warning"
+        actionLabel="알겠어요"
+      />
     </MobileFrame>
   );
 }

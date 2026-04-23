@@ -19,6 +19,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useBranch } from "@/hooks/useBranch";
 import { toast } from "sonner";
 import { useConfirm } from "@/components/ConfirmModal";
+import { InfoModal } from "@/components/InfoModal";
 
 export const Route = createFileRoute("/_authenticated/branches")({
   head: () => ({ meta: [{ title: "지점 관리 — Gossol" }] }),
@@ -31,6 +32,7 @@ function BranchesPage() {
   const { branches, refresh, setSelectedId, selectedId } = useBranch();
   const { confirm, ConfirmDialog } = useConfirm();
   const [edit, setEdit] = useState<{ id?: string; name?: string; address?: string; phone?: string } | null>(null);
+  const [nameWarnOpen, setNameWarnOpen] = useState(false);
 
   useEffect(() => {
     refresh();
@@ -38,7 +40,11 @@ function BranchesPage() {
   }, []);
 
   const save = async () => {
-    if (!user || !edit?.name?.trim()) return toast.error("지점 이름을 입력해 주세요.");
+    if (!user) return;
+    if (!edit?.name?.trim()) {
+      setNameWarnOpen(true);
+      return;
+    }
     const payload = {
       name: edit.name.trim(),
       address: edit.address?.trim() || null,
@@ -145,6 +151,14 @@ function BranchesPage() {
         </DialogContent>
       </Dialog>
       <ConfirmDialog />
+      <InfoModal
+        open={nameWarnOpen}
+        onOpenChange={setNameWarnOpen}
+        title="지점 이름을 입력해 주세요"
+        description="지점을 저장하려면 이름이 필요해요."
+        tone="warning"
+        actionLabel="알겠어요"
+      />
     </MobileFrame>
   );
 }
