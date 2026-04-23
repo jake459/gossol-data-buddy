@@ -233,10 +233,10 @@ function TenantsPage() {
                     key={t.id}
                     className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3 transition hover:bg-accent/40"
                   >
-                    <Link
-                      to="/tenants/$tenantId"
-                      params={{ tenantId: t.id }}
-                      className="flex min-w-0 flex-1 items-center gap-3"
+                    <button
+                      type="button"
+                      onClick={() => setDetailId(t.id)}
+                      className="flex min-w-0 flex-1 items-center gap-3 text-left"
                     >
                       <span className="grid h-10 w-10 place-items-center rounded-full bg-brand/10 text-[13px] font-bold text-brand">
                         {t.name.slice(0, 1)}
@@ -251,7 +251,7 @@ function TenantsPage() {
                           {t.payment_day ? ` · 매달 ${t.payment_day}일` : ""}
                         </p>
                       </div>
-                    </Link>
+                    </button>
                     {t.phone && (
                       <a
                         href={`tel:${t.phone}`}
@@ -270,6 +270,12 @@ function TenantsPage() {
           </>
         )}
       </main>
+
+      <TenantDetailModal
+        tenantId={detailId}
+        open={!!detailId}
+        onOpenChange={(o) => !o && setDetailId(null)}
+      />
 
       <BottomTabs />
 
