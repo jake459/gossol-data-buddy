@@ -58,6 +58,12 @@ type Tenant = {
   payment_day: number | null;
   move_in_date: string | null;
   move_out_date: string | null;
+  contract_start: string | null;
+  contract_end: string | null;
+  deposit_paid_at: string | null;
+  deposit_returned_at: string | null;
+  extension_requested_at: string | null;
+  moveout_requested_at: string | null;
   status: TenantStatus;
   memo: string | null;
 };
