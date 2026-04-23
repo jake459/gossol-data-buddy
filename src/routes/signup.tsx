@@ -122,20 +122,17 @@ function SignupPage() {
       </header>
 
       <main className="flex flex-1 flex-col px-6 pb-8">
-        <h1 className="mt-2 text-[26px] font-bold leading-tight tracking-tight">
-          고쏠 시작하기
+        <h1 className="mt-2 text-[28px] font-bold leading-tight tracking-tight">
+          시작하기
         </h1>
-        <p className="mt-1.5 text-sm text-muted-foreground">
-          소셜로 30초 만에 가입하거나 이메일로 직접 시작하세요.
-        </p>
 
-        <div className="mt-7">
+        <div className="mt-8">
           <SocialButtons />
         </div>
 
         <div className="my-7 flex items-center gap-3 text-[11px] font-medium text-muted-foreground">
           <div className="h-px flex-1 bg-border" />
-          이메일로 가입
+          이메일
           <div className="h-px flex-1 bg-border" />
         </div>
 
