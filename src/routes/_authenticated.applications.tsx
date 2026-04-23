@@ -224,14 +224,25 @@ function ApplicationsPage() {
                 </div>
               )}
               {a.status === "approved" && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="mt-3 w-full rounded-xl"
-                  onClick={() => updateStatus(a.id, "completed")}
-                >
-                  완료 처리
-                </Button>
+                <div className="mt-3 flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="flex-1 rounded-xl"
+                    onClick={() => updateStatus(a.id, "completed")}
+                  >
+                    완료
+                  </Button>
+                  {a.kind === "move_in" && (
+                    <Button
+                      size="sm"
+                      className="flex-1 rounded-xl"
+                      onClick={() => convertToTenant(a)}
+                    >
+                      입실자 등록
+                    </Button>
+                  )}
+                </div>
               )}
             </article>
           ))
