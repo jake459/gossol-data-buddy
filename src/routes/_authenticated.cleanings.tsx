@@ -25,23 +25,34 @@ type Cleaning = {
   requested_at: string | null;
   completed_at: string | null;
   memo: string | null;
-  rooms?: { room_number: string } | null;
 };
+
+const STATUS = { assigned: "배정", requested: "요청", completed: "완료" } as const;
 
 function CleaningsPage() {
   const navigate = useNavigate();
   const { selected } = useBranch();
   const [items, setItems] = useState<Cleaning[]>([]);
+  const [rooms, setRooms] = useState<Record<string, string>>({});
   const [tab, setTab] = useState<"assigned" | "requested" | "completed">("assigned");
 
   const load = async () => {
     if (!selected) return;
     const { data } = await supabase
       .from("cleanings")
-      .select("*, rooms(room_number)")
+      .select("id, room_id, status, scheduled_date, requested_at, completed_at, memo")
       .eq("branch_id", selected.id)
       .order("scheduled_date", { ascending: true, nullsFirst: false });
-    setItems((data ?? []) as Cleaning[]);
+    const list = (data ?? []) as Cleaning[];
+    setItems(list);
+    const roomIds = [...new Set(list.map((i) => i.room_id).filter(Boolean))];
+    if (roomIds.length) {
+      const { data: r } = await supabase
+        .from("rooms")
+        .select("id, room_number")
+        .in("id", roomIds);
+      setRooms(Object.fromEntries((r ?? []).map((x) => [x.id, x.room_number])));
+    }
   };
 
   useEffect(() => {
@@ -49,8 +60,8 @@ function CleaningsPage() {
   }, [selected?.id]);
 
   const advance = async (it: Cleaning) => {
-    const next = it.status === "assigned" ? "requested" : "completed";
-    const patch: Partial<Cleaning> = { status: next };
+    const next: "requested" | "completed" = it.status === "assigned" ? "requested" : "completed";
+    const patch: { status: typeof next; requested_at?: string } = { status: next };
     if (next === "requested") patch.requested_at = new Date().toISOString();
     await supabase.from("cleanings").update(patch).eq("id", it.id);
     toast.success(next === "requested" ? "청소 요청됨" : "청소 완료 처리");
@@ -91,7 +102,7 @@ function CleaningsPage() {
             <article key={it.id} className="rounded-2xl border border-border bg-card p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-[14px] font-bold">{it.rooms?.room_number ?? "-"}호</h3>
+                  <h3 className="text-[14px] font-bold">{rooms[it.room_id] ?? "-"}호</h3>
                   <p className="mt-0.5 text-[11.5px] text-muted-foreground">
                     {it.scheduled_date ?? "일정 미정"}
                   </p>
@@ -124,5 +135,3 @@ function CleaningsPage() {
     </MobileFrame>
   );
 }
-
-const STATUS = { assigned: "배정", requested: "요청", completed: "완료" } as const;

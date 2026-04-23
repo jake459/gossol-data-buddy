@@ -26,24 +26,40 @@ type Inspection = {
   requested_at: string | null;
   completed_at: string | null;
   memo: string | null;
-  rooms?: { room_number: string } | null;
-  tenants?: { name: string } | null;
 };
+
+const STATUS = { assigned: "배정", requested: "요청", completed: "완료" } as const;
 
 function InspectionsPage() {
   const navigate = useNavigate();
   const { selected } = useBranch();
   const [items, setItems] = useState<Inspection[]>([]);
+  const [rooms, setRooms] = useState<Record<string, string>>({});
+  const [tenants, setTenants] = useState<Record<string, string>>({});
   const [tab, setTab] = useState<"assigned" | "requested" | "completed">("assigned");
 
   const load = async () => {
     if (!selected) return;
     const { data } = await supabase
       .from("inspections")
-      .select("*, rooms(room_number), tenants(name)")
+      .select("id, room_id, tenant_id, status, scheduled_date, requested_at, completed_at, memo")
       .eq("branch_id", selected.id)
       .order("scheduled_date", { ascending: true, nullsFirst: false });
-    setItems((data ?? []) as Inspection[]);
+    const list = (data ?? []) as Inspection[];
+    setItems(list);
+    const roomIds = [...new Set(list.map((i) => i.room_id).filter(Boolean))];
+    const tenantIds = [...new Set(list.map((i) => i.tenant_id).filter(Boolean) as string[])];
+    if (roomIds.length) {
+      const { data: r } = await supabase
+        .from("rooms")
+        .select("id, room_number")
+        .in("id", roomIds);
+      setRooms(Object.fromEntries((r ?? []).map((x) => [x.id, x.room_number])));
+    }
+    if (tenantIds.length) {
+      const { data: t } = await supabase.from("tenants").select("id, name").in("id", tenantIds);
+      setTenants(Object.fromEntries((t ?? []).map((x) => [x.id, x.name])));
+    }
   };
 
   useEffect(() => {
@@ -51,8 +67,8 @@ function InspectionsPage() {
   }, [selected?.id]);
 
   const advance = async (it: Inspection) => {
-    const next = it.status === "assigned" ? "requested" : "completed";
-    const patch: Partial<Inspection> = { status: next };
+    const next: "requested" | "completed" = it.status === "assigned" ? "requested" : "completed";
+    const patch: { status: typeof next; requested_at?: string } = { status: next };
     if (next === "requested") patch.requested_at = new Date().toISOString();
     await supabase.from("inspections").update(patch).eq("id", it.id);
     toast.success(next === "requested" ? "검수 요청됨" : "검수 완료 처리");
@@ -94,7 +110,8 @@ function InspectionsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-[14px] font-bold">
-                    {it.rooms?.room_number ?? "-"}호 · {it.tenants?.name ?? "퇴실자 미연결"}
+                    {rooms[it.room_id] ?? "-"}호 ·{" "}
+                    {it.tenant_id ? (tenants[it.tenant_id] ?? "퇴실자") : "퇴실자 미연결"}
                   </h3>
                   <p className="mt-0.5 text-[11.5px] text-muted-foreground">
                     {it.scheduled_date ?? "일정 미정"} · {STATUS[it.status]}
@@ -128,5 +145,3 @@ function InspectionsPage() {
     </MobileFrame>
   );
 }
-
-const STATUS = { assigned: "배정", requested: "요청", completed: "완료" } as const;
