@@ -398,12 +398,12 @@ function Tile({
   return (
     <Link
       to={to}
-      className="rounded-lg border border-border bg-card p-2 transition hover:bg-accent/40"
+      className="rounded-xl border border-border bg-card p-2.5 transition hover:bg-accent/40"
     >
-      <div className="flex items-center gap-1 text-[9.5px] font-semibold uppercase tracking-wide text-muted-foreground">
-        <Icon className={cn("h-3 w-3", toneClass)} /> {label}
+      <div className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+        <Icon className={cn("h-3.5 w-3.5", toneClass)} /> {label}
       </div>
-      <div className={cn("mt-0.5 text-[15px] font-bold leading-tight", toneClass)}>{value}</div>
+      <div className={cn("mt-1 text-[17px] font-bold leading-tight", toneClass)}>{value}</div>
     </Link>
   );
 }
@@ -420,9 +420,9 @@ function QuickLink({
   return (
     <Link
       to={to}
-      className="flex flex-col items-center gap-1 rounded-lg border border-border bg-card p-2 text-[11px] font-semibold transition hover:bg-accent/40"
+      className="flex flex-col items-center gap-1 rounded-xl border border-border bg-card p-2.5 text-[11.5px] font-semibold transition hover:bg-accent/40"
     >
-      <Icon className="h-4 w-4 text-brand" />
+      <Icon className="h-4.5 w-4.5 text-brand" />
       <span className="truncate">{label}</span>
     </Link>
   );
