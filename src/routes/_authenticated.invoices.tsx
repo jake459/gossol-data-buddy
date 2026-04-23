@@ -6,6 +6,7 @@ import { TopBar } from "@/components/TopBar";
 import { BottomTabs } from "@/components/BottomTabs";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/EmptyState";
+import { Pager } from "@/components/Pager";
 import { formatKRW, formatKRWShort } from "@/components/StatusBadge";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -41,6 +42,8 @@ function InvoicesPage() {
   const [loading, setLoading] = useState(true);
   const [issuing, setIssuing] = useState(false);
   const [month] = useState(new Date());
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 6;
 
   const monthLabel = `${month.getFullYear()}년 ${month.getMonth() + 1}월`;
   const monthStart = new Date(month.getFullYear(), month.getMonth(), 1);
@@ -163,38 +166,46 @@ function InvoicesPage() {
             onAction={issueMonthly}
           />
         ) : (
-          <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
-            {invoices.map((iv) => {
-              const t = tenants.find((x) => x.id === iv.tenant_id);
-              const paid = iv.status === "paid";
-              return (
-                <li key={iv.id}>
-                  <button
-                    type="button"
-                    onClick={() => togglePaid(iv)}
-                    className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-accent/50"
-                  >
-                    {paid ? (
-                      <CheckCircle2 className="h-6 w-6 shrink-0 text-emerald-600" />
-                    ) : (
-                      <Circle className="h-6 w-6 shrink-0 text-muted-foreground" />
-                    )}
-                    <div className="min-w-0 flex-1">
-                      <p className={cn("truncate text-[14px] font-semibold", paid && "line-through opacity-60")}>
-                        {t?.name ?? "—"}
+          <>
+            <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
+              {invoices.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map((iv) => {
+                const t = tenants.find((x) => x.id === iv.tenant_id);
+                const paid = iv.status === "paid";
+                return (
+                  <li key={iv.id}>
+                    <button
+                      type="button"
+                      onClick={() => togglePaid(iv)}
+                      className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-accent/50"
+                    >
+                      {paid ? (
+                        <CheckCircle2 className="h-6 w-6 shrink-0 text-emerald-600" />
+                      ) : (
+                        <Circle className="h-6 w-6 shrink-0 text-muted-foreground" />
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <p className={cn("truncate text-[14px] font-semibold", paid && "line-through opacity-60")}>
+                          {t?.name ?? "—"}
+                        </p>
+                        <p className="text-[12px] text-muted-foreground">
+                          {iv.due_date} {paid ? "· 수금완료" : "· 미납"}
+                        </p>
+                      </div>
+                      <p className={cn("text-[15px] font-bold", paid ? "text-muted-foreground" : "text-foreground")}>
+                        {formatKRW(iv.amount)}
                       </p>
-                      <p className="text-[12px] text-muted-foreground">
-                        {iv.due_date} {paid ? "· 수금완료" : "· 미납"}
-                      </p>
-                    </div>
-                    <p className={cn("text-[15px] font-bold", paid ? "text-muted-foreground" : "text-foreground")}>
-                      {formatKRW(iv.amount)}
-                    </p>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+            <Pager
+              page={page}
+              totalPages={Math.max(1, Math.ceil(invoices.length / PAGE_SIZE))}
+              onChange={setPage}
+              total={invoices.length}
+            />
+          </>
         )}
       </main>
 
