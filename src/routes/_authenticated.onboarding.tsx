@@ -124,6 +124,14 @@ function OnboardingPage() {
         )}
       </main>
       <BottomTabs />
+      <InfoModal
+        open={warnOpen}
+        onOpenChange={setWarnOpen}
+        title="지점 이름을 입력해 주세요"
+        description="첫 지점을 등록하려면 이름이 필요해요."
+        tone="warning"
+        actionLabel="알겠어요"
+      />
     </MobileFrame>
   );
 }
