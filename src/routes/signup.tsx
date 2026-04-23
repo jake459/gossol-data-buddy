@@ -126,17 +126,7 @@ function SignupPage() {
           시작하기
         </h1>
 
-        <div className="mt-8">
-          <SocialButtons />
-        </div>
-
-        <div className="my-7 flex items-center gap-3 text-[11px] font-medium text-muted-foreground">
-          <div className="h-px flex-1 bg-border" />
-          이메일
-          <div className="h-px flex-1 bg-border" />
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="name">이름</Label>
             <Input
@@ -227,6 +217,14 @@ function SignupPage() {
             {loading ? "가입 중..." : "가입 완료"}
           </Button>
         </form>
+
+        <div className="my-7 flex items-center gap-3 text-[11px] font-medium text-muted-foreground">
+          <div className="h-px flex-1 bg-border" />
+          소셜 계정
+          <div className="h-px flex-1 bg-border" />
+        </div>
+
+        <SocialButtons />
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
           이미 계정이 있나요?{" "}
