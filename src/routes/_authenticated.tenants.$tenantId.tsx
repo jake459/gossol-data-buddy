@@ -194,7 +194,15 @@ function TenantDetailPage() {
     if (!tenant) return;
     const current = tenant[column];
     const next = current ? null : new Date().toISOString();
-    const { error } = await supabase.from("tenants").update({ [column]: next }).eq("id", tenant.id);
+    const patch =
+      column === "deposit_paid_at"
+        ? { deposit_paid_at: next }
+        : column === "deposit_returned_at"
+          ? { deposit_returned_at: next }
+          : column === "extension_requested_at"
+            ? { extension_requested_at: next }
+            : { moveout_requested_at: next };
+    const { error } = await supabase.from("tenants").update(patch).eq("id", tenant.id);
     if (error) return toast.error(error.message);
     toast.success(next ? `${label} 완료로 표시했어요.` : `${label} 표시를 해제했어요.`);
     load();
