@@ -182,7 +182,7 @@ function SettingsPage() {
 function NavSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
-      <h2 className="mb-2 px-1 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+      <h2 className="mb-1.5 px-1 text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">
         {title}
       </h2>
       <div className="overflow-hidden rounded-2xl border border-border bg-card divide-y divide-border">
