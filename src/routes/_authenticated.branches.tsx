@@ -151,6 +151,14 @@ function BranchesPage() {
         </DialogContent>
       </Dialog>
       <ConfirmDialog />
+      <InfoModal
+        open={nameWarnOpen}
+        onOpenChange={setNameWarnOpen}
+        title="지점 이름을 입력해 주세요"
+        description="지점을 저장하려면 이름이 필요해요."
+        tone="warning"
+        actionLabel="알겠어요"
+      />
     </MobileFrame>
   );
 }
