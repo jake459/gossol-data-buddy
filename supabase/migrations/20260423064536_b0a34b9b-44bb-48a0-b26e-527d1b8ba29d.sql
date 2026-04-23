@@ -1,0 +1,12 @@
+UPDATE branches SET owner_id = 'c1eecea5-6121-4d07-a3a4-57cf033e657e' WHERE owner_id = 'c23a8325-210c-4b9f-8e32-bce44b591e34';
+UPDATE branch_settings SET owner_id = 'c1eecea5-6121-4d07-a3a4-57cf033e657e' WHERE owner_id = 'c23a8325-210c-4b9f-8e32-bce44b591e34';
+UPDATE rooms SET owner_id = 'c1eecea5-6121-4d07-a3a4-57cf033e657e' WHERE owner_id = 'c23a8325-210c-4b9f-8e32-bce44b591e34';
+UPDATE room_types SET owner_id = 'c1eecea5-6121-4d07-a3a4-57cf033e657e' WHERE owner_id = 'c23a8325-210c-4b9f-8e32-bce44b591e34';
+UPDATE tenants SET owner_id = 'c1eecea5-6121-4d07-a3a4-57cf033e657e' WHERE owner_id = 'c23a8325-210c-4b9f-8e32-bce44b591e34';
+UPDATE invoices SET owner_id = 'c1eecea5-6121-4d07-a3a4-57cf033e657e' WHERE owner_id = 'c23a8325-210c-4b9f-8e32-bce44b591e34';
+UPDATE applications SET owner_id = 'c1eecea5-6121-4d07-a3a4-57cf033e657e' WHERE owner_id = 'c23a8325-210c-4b9f-8e32-bce44b591e34';
+UPDATE events SET owner_id = 'c1eecea5-6121-4d07-a3a4-57cf033e657e' WHERE owner_id = 'c23a8325-210c-4b9f-8e32-bce44b591e34';
+UPDATE cleanings SET owner_id = 'c1eecea5-6121-4d07-a3a4-57cf033e657e' WHERE owner_id = 'c23a8325-210c-4b9f-8e32-bce44b591e34';
+UPDATE inspections SET owner_id = 'c1eecea5-6121-4d07-a3a4-57cf033e657e' WHERE owner_id = 'c23a8325-210c-4b9f-8e32-bce44b591e34';
+UPDATE staff_invites SET owner_id = 'c1eecea5-6121-4d07-a3a4-57cf033e657e' WHERE owner_id = 'c23a8325-210c-4b9f-8e32-bce44b591e34';
+UPDATE tenant_invites SET owner_id = 'c1eecea5-6121-4d07-a3a4-57cf033e657e' WHERE owner_id = 'c23a8325-210c-4b9f-8e32-bce44b591e34';
