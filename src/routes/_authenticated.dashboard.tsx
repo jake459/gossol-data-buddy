@@ -398,12 +398,13 @@ function Tile({
   return (
     <Link
       to={to}
-      className="rounded-xl border border-border bg-card p-2.5 transition hover:bg-accent/40"
+      className="flex h-[68px] flex-col justify-between rounded-xl border border-border bg-card px-2.5 py-2 transition hover:bg-accent/40"
     >
       <div className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-        <Icon className={cn("h-3.5 w-3.5", toneClass)} /> {label}
+        <Icon className={cn("h-3.5 w-3.5 shrink-0", toneClass)} />
+        <span className="truncate">{label}</span>
       </div>
-      <div className={cn("mt-1 text-[17px] font-bold leading-tight", toneClass)}>{value}</div>
+      <div className={cn("truncate text-[17px] font-bold leading-tight", toneClass)}>{value}</div>
     </Link>
   );
 }
