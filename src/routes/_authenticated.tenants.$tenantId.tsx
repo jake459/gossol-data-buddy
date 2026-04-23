@@ -20,6 +20,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { toast as _toast } from "sonner";
+import { notifyValidation } from "@/components/ValidationModal";
 import { MobileFrame } from "@/components/MobileFrame";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

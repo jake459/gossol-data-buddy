@@ -11,6 +11,7 @@ import { InfoModal } from "@/components/InfoModal";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { toast } from "sonner";
+import { notifyValidation } from "@/components/ValidationModal";
 import { useAuth } from "@/hooks/useAuth";
 import { toKoreanAuthError } from "@/lib/auth-errors";
 

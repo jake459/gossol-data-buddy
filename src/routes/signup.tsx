@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { LegalModal, type LegalKind } from "@/components/LegalModal";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { notifyValidation } from "@/components/ValidationModal";
 import { useAuth } from "@/hooks/useAuth";
 import { toKoreanAuthError } from "@/lib/auth-errors";
 

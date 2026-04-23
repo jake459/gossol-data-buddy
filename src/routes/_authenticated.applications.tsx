@@ -29,6 +29,7 @@ import { useBranch } from "@/hooks/useBranch";
 import { EmptyState } from "@/components/EmptyState";
 import { StatusBadge } from "@/components/StatusBadge";
 import { toast } from "sonner";
+import { notifyValidation } from "@/components/ValidationModal";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/applications")({

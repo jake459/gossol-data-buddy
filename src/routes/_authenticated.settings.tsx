@@ -32,6 +32,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useBranch } from "@/hooks/useBranch";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { notifyValidation } from "@/components/ValidationModal";
 
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({ meta: [{ title: "설정 — Gossol" }] }),

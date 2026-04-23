@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { notifyValidation } from "@/components/ValidationModal";
 
 export const Route = createFileRoute("/reset-password")({
   head: () => ({ meta: [{ title: "비밀번호 재설정 — Gossol" }] }),
