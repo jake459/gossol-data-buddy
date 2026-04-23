@@ -54,9 +54,9 @@ function Landing() {
           </header>
 
           {/* Headline */}
-          <div className="relative mt-10">
+          <div className="relative mt-12">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] font-medium backdrop-blur">
-              <Sparkles className="h-3 w-3" /> 2026 · 고시원 운영 OS
+              <Sparkles className="h-3 w-3" /> Gossol · 고시원 운영 OS
             </span>
             <h1 className="mt-4 text-[2.4rem] font-bold leading-[1.05] tracking-[-0.03em]">
               운영의 무게,
@@ -64,7 +64,7 @@ function Landing() {
               <span className="shimmer-text">가볍게</span> 덜다.
             </h1>
             <p className="mt-3 max-w-[20rem] text-[14px] leading-relaxed text-white/75">
-              호실·입실자·청구서·일정까지. 한 화면에서 완성하는 모바일 고시원 운영.
+              호실·입실자·청구서·일정. 한 화면에서 끝내는 모바일 운영.
             </p>
           </div>
 
@@ -74,7 +74,7 @@ function Landing() {
               to="/signup"
               className="group flex h-14 w-full items-center justify-between rounded-2xl bg-white px-5 text-[15px] font-semibold text-[oklch(0.22_0.12_268)] shadow-[0_10px_30px_-8px_oklch(0_0_0/0.45)] transition active:scale-[0.99]"
             >
-              <span>30초 만에 무료 가입</span>
+              <span>시작하기</span>
               <span className="grid h-9 w-9 place-items-center rounded-xl bg-[oklch(0.32_0.16_263)] text-white transition group-hover:translate-x-0.5">
                 <ArrowRight className="h-4 w-4" />
               </span>
