@@ -1,12 +1,15 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, Pin, Megaphone, Lightbulb, Sparkles, CalendarDays } from "lucide-react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { TopBar } from "@/components/TopBar";
 import { BottomTabs } from "@/components/BottomTabs";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Pager } from "@/components/Pager";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+
+const PAGE_SIZE = 6;
 
 export const Route = createFileRoute("/_authenticated/community")({
   head: () => ({ meta: [{ title: "커뮤니티 — Gossol" }] }),
@@ -35,6 +38,7 @@ function CommunityPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [tab, setTab] = useState<"all" | Post["category"]>("all");
   const [opened, setOpened] = useState<Post | null>(null);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     supabase
@@ -45,7 +49,13 @@ function CommunityPage() {
       .then(({ data }) => setPosts((data ?? []) as Post[]));
   }, []);
 
-  const filtered = tab === "all" ? posts : posts.filter((p) => p.category === tab);
+  const filtered = useMemo(
+    () => (tab === "all" ? posts : posts.filter((p) => p.category === tab)),
+    [posts, tab],
+  );
+  useEffect(() => setPage(1), [tab]);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const pageItems = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
     <MobileFrame>
@@ -79,35 +89,38 @@ function CommunityPage() {
             게시글이 아직 없어요.
           </p>
         ) : (
-          filtered.map((p) => {
-            const cat = CATEGORY[p.category];
-            const Icon = cat.Icon;
-            return (
-              <button
-                key={p.id}
-                type="button"
-                onClick={() => setOpened(p)}
-                className="w-full rounded-2xl border border-border bg-card p-4 text-left transition hover:bg-accent/40"
-              >
-                <div className="flex items-center gap-2">
-                  {p.pinned && <Pin className="h-3.5 w-3.5 text-brand" />}
-                  <span
-                    className={cn(
-                      "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10.5px] font-semibold",
-                      cat.color,
-                    )}
-                  >
-                    <Icon className="h-3 w-3" /> {cat.label}
-                  </span>
-                  <span className="ml-auto text-[11px] text-muted-foreground">
-                    {p.published_at.slice(0, 10)}
-                  </span>
-                </div>
-                <h3 className="mt-2 line-clamp-1 text-[14px] font-bold">{p.title}</h3>
-                <p className="mt-1 line-clamp-2 text-[12.5px] text-muted-foreground">{p.content}</p>
-              </button>
-            );
-          })
+          <>
+            {pageItems.map((p) => {
+              const cat = CATEGORY[p.category];
+              const Icon = cat.Icon;
+              return (
+                <button
+                  key={p.id}
+                  type="button"
+                  onClick={() => setOpened(p)}
+                  className="w-full rounded-2xl border border-border bg-card p-4 text-left transition hover:bg-accent/40"
+                >
+                  <div className="flex items-center gap-2">
+                    {p.pinned && <Pin className="h-3.5 w-3.5 text-brand" />}
+                    <span
+                      className={cn(
+                        "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10.5px] font-semibold",
+                        cat.color,
+                      )}
+                    >
+                      <Icon className="h-3 w-3" /> {cat.label}
+                    </span>
+                    <span className="ml-auto text-[11px] text-muted-foreground">
+                      {p.published_at.slice(0, 10)}
+                    </span>
+                  </div>
+                  <h3 className="mt-2 line-clamp-1 text-[14px] font-bold">{p.title}</h3>
+                  <p className="mt-1 line-clamp-2 text-[12.5px] text-muted-foreground">{p.content}</p>
+                </button>
+              );
+            })}
+            <Pager page={page} totalPages={totalPages} onChange={setPage} total={filtered.length} />
+          </>
         )}
       </main>
 
