@@ -355,6 +355,11 @@ function DashboardPage() {
           <QuickLink to="/branches" icon={Building2} label="지점" />
         </section>
       </main>
+      <TenantDetailModal
+        tenantId={detailId}
+        open={!!detailId}
+        onOpenChange={(o) => !o && setDetailId(null)}
+      />
       <BottomTabs />
     </MobileFrame>
   );
