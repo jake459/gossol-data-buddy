@@ -88,6 +88,8 @@ function RoomsPage() {
 
   const [fStatus, setFStatus] = useState<RoomStatus | "all">("all");
   const [fCategory, setFCategory] = useState<string>("all");
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 10;
 
   const load = async () => {
     if (!selected) return;
@@ -118,6 +120,10 @@ function RoomsPage() {
       (fStatus === "all" || r.status === fStatus) &&
       (fCategory === "all" || r.room_category === fCategory),
   );
+
+  useEffect(() => setPage(1), [fStatus, fCategory, selected?.id]);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const pageItems = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const counts = useMemo(() => {
     const c: Record<RoomStatus, number> = { vacant: 0, occupied: 0, cleaning: 0, maintenance: 0 };
