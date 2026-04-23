@@ -281,7 +281,13 @@ function SchedulePage() {
               dayEvents.map((e) => (
                 <li
                   key={e.id}
-                  onClick={() => setEdit(e)}
+                  onClick={() => {
+                    if (e.readonly) {
+                      toast.info("입실/퇴실 일정은 입실자 화면에서 수정할 수 있어요.");
+                      return;
+                    }
+                    setEdit(e);
+                  }}
                   className="flex cursor-pointer items-start gap-3 rounded-2xl border border-border bg-card p-3.5"
                 >
                   <span className={cn("mt-1 h-2.5 w-2.5 shrink-0 rounded-full", KIND_TONE[e.kind])} />
