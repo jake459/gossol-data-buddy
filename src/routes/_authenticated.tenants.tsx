@@ -64,6 +64,7 @@ function TenantsPage() {
   const [q, setQ] = useState("");
   const [page, setPage] = useState(1);
   const [openNew, setOpenNew] = useState(false);
+  const [detailId, setDetailId] = useState<string | null>(null);
 
   // New-tenant modal form state
   const [name, setName] = useState("");
