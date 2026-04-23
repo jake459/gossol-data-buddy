@@ -942,6 +942,14 @@ export type Database = {
         Args: { _branch_id: string; _user_id: string }
         Returns: boolean
       }
+      is_branch_member_direct: {
+        Args: { _branch_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_branch_owner: {
+        Args: { _branch_id: string; _user_id: string }
+        Returns: boolean
+      }
       mark_overdue_invoices: { Args: never; Returns: number }
       notify_moveout_week: { Args: never; Returns: number }
     }
