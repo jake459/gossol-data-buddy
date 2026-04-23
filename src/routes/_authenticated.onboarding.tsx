@@ -10,6 +10,7 @@ import {
   CalendarCheck,
 } from "lucide-react";
 import { MobileFrame } from "@/components/MobileFrame";
+import { BottomTabs } from "@/components/BottomTabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -70,7 +71,7 @@ function OnboardingPage() {
 
   return (
     <MobileFrame>
-      <main className="relative flex flex-1 flex-col overflow-hidden bg-gradient-to-b from-[oklch(0.98_0.02_268)] via-background to-background">
+      <main className="relative flex flex-1 flex-col overflow-y-auto bg-gradient-to-b from-[oklch(0.98_0.02_268)] via-background to-background">
         {/* Ambient gradient blobs */}
         <div
           aria-hidden
@@ -82,7 +83,7 @@ function OnboardingPage() {
         />
 
         {/* Top bar — back option when on form step */}
-        <div className="relative z-10 flex items-center justify-between px-5 pt-5">
+        <div className="relative z-10 flex items-center justify-between gap-2 px-5 pt-5">
           {step === "form" ? (
             <button
               type="button"
@@ -96,9 +97,9 @@ function OnboardingPage() {
           )}
           <Link
             to="/dashboard"
-            className="text-[12px] font-medium text-muted-foreground/80 underline-offset-2 hover:text-foreground hover:underline"
+            className="inline-flex items-center gap-1.5 rounded-full border-2 border-brand/30 bg-white/80 px-4 py-2 text-[12.5px] font-semibold text-brand shadow-sm backdrop-blur transition hover:border-brand/50 hover:bg-white"
           >
-            나중에 할게요
+            나중에 할게요 <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
 
@@ -120,6 +121,7 @@ function OnboardingPage() {
           />
         )}
       </main>
+      <BottomTabs />
     </MobileFrame>
   );
 }
@@ -187,9 +189,17 @@ function WelcomeStep({
           첫 지점 등록하기
           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
         </Button>
-        <p className="mt-3 text-center text-[11.5px] text-muted-foreground">
-          지점은 언제든 [설정] 메뉴에서 추가하거나 수정할 수 있어요.
-        </p>
+        <div className="mt-4 flex items-start gap-2.5 rounded-2xl border-2 border-dashed border-brand/25 bg-brand/[0.04] p-3.5">
+          <div className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-brand/10 text-brand">
+            <CheckCircle2 className="h-4 w-4" />
+          </div>
+          <div className="text-[12px] leading-relaxed text-foreground/80">
+            <p className="font-semibold text-foreground">지금 안 해도 괜찮아요.</p>
+            <p className="mt-0.5 text-muted-foreground">
+              상단의 <span className="font-semibold text-brand">‘나중에 할게요’</span>를 누르면 대시보드로 이동하고, 지점은 [설정]에서 언제든 추가할 수 있어요.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
   );
