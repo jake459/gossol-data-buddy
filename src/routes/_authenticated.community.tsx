@@ -9,7 +9,7 @@ import { Pager } from "@/components/Pager";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 5;
 
 export const Route = createFileRoute("/_authenticated/community")({
   head: () => ({ meta: [{ title: "커뮤니티 — Gossol" }] }),
