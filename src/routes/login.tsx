@@ -28,8 +28,9 @@ const schema = z.object({
 function LoginPage() {
   const navigate = useNavigate();
   const { session, loading: authLoading } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  // 테스트 빌드: 예시 데이터가 연결된 데모 계정으로 자동 채움
+  const [email, setEmail] = useState("demo@gossol.test");
+  const [password, setPassword] = useState("demo1234!");
   const [loading, setLoading] = useState(false);
   const [legalOpen, setLegalOpen] = useState<LegalKind | null>(null);
   const [comingSoon, setComingSoon] = useState<null | "kakao" | "naver">(null);
