@@ -279,30 +279,38 @@ function DashboardPage() {
               </Link>
             </div>
             <ul className="mt-1.5 divide-y divide-rose-100">
-              {stats.overdueTenants.slice(0, 2).map((t) => (
-                <li key={`${t.id}-${t.due_date}`} className="flex items-center gap-2 py-1.5">
-                  <Link
-                    to="/tenants/$tenantId"
-                    params={{ tenantId: t.id }}
-                    className="min-w-0 flex-1"
-                  >
-                    <p className="truncate text-[13px] font-semibold text-foreground">{t.name}</p>
-                    <p className="text-[11px] text-rose-700">
-                      {formatKRW(t.amount)} · {t.due_date}
-                    </p>
-                  </Link>
-                  {t.phone && (
-                    <a
-                      href={`tel:${t.phone}`}
-                      className="grid h-8 w-8 place-items-center rounded-full bg-white text-rose-600 ring-1 ring-rose-200"
-                      aria-label="전화"
+              {stats.overdueTenants
+                .slice((overduePage - 1) * OVERDUE_PAGE_SIZE, overduePage * OVERDUE_PAGE_SIZE)
+                .map((t) => (
+                  <li key={`${t.id}-${t.due_date}`} className="flex items-center gap-2 py-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setDetailId(t.id)}
+                      className="min-w-0 flex-1 text-left"
                     >
-                      <Phone className="h-3.5 w-3.5" />
-                    </a>
-                  )}
-                </li>
-              ))}
+                      <p className="truncate text-[13px] font-semibold text-foreground">{t.name}</p>
+                      <p className="text-[11px] text-rose-700">
+                        {formatKRW(t.amount)} · {t.due_date}
+                      </p>
+                    </button>
+                    {t.phone && (
+                      <a
+                        href={`tel:${t.phone}`}
+                        className="grid h-8 w-8 place-items-center rounded-full bg-white text-rose-600 ring-1 ring-rose-200"
+                        aria-label="전화"
+                      >
+                        <Phone className="h-3.5 w-3.5" />
+                      </a>
+                    )}
+                  </li>
+                ))}
             </ul>
+            <Pager
+              page={overduePage}
+              totalPages={Math.max(1, Math.ceil(stats.overdueTenants.length / OVERDUE_PAGE_SIZE))}
+              onChange={setOverduePage}
+              total={stats.overdueTenants.length}
+            />
           </section>
         )}
 
