@@ -1148,5 +1148,3 @@ function buildTenantTimeline(t: Tenant, invs: Invoice[]): TimelineTrack[] {
     },
   ];
 }
-  );
-}
