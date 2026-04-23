@@ -19,8 +19,20 @@ export function TopBar({
   const [open, setOpen] = useState(false);
   const [supportOpen, setSupportOpen] = useState(false);
   const [notiOpen, setNotiOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
   const { selected, branches } = useBranch();
+  const { user } = useAuth();
   const label = branchName ?? selected?.name ?? (branches.length === 0 ? "지점 없음" : "지점 선택");
+
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from("notifications")
+      .select("id", { count: "exact", head: true })
+      .eq("recipient_id", user.id)
+      .is("read_at", null)
+      .then(({ count }) => setUnreadCount(count ?? 0));
+  }, [user, notiOpen]);
 
   const handleSupport = () => {
     if (onSupportClick) onSupportClick();
@@ -50,7 +62,9 @@ export function TopBar({
           className="relative text-[oklch(0.55_0.2_258)] hover:bg-[oklch(0.96_0.04_258)] hover:text-[oklch(0.45_0.2_258)]"
         >
           <Bell className="h-5 w-5" />
-          <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-[oklch(0.6_0.2_30)]" />
+          {unreadCount > 0 && (
+            <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-[oklch(0.6_0.2_30)]" />
+          )}
         </Button>
         <Button
           type="button"
