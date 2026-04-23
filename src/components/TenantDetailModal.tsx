@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { Phone, MessageSquare, Wallet, CalendarClock, DoorOpen, ArrowRight } from "lucide-react";
 import {
   Dialog,
@@ -43,6 +43,7 @@ export function TenantDetailModal({
   open: boolean;
   onOpenChange: (o: boolean) => void;
 }) {
+  const navigate = useNavigate();
   const [tenant, setTenant] = useState<Detail | null>(null);
   const [room, setRoom] = useState<Room | null>(null);
   const [invoices, setInvoices] = useState<InvoiceMini[]>([]);
@@ -149,10 +150,14 @@ export function TenantDetailModal({
               <ActionBtn
                 icon={ArrowRight}
                 label="상세"
-                to={`/tenants/${tenant.id}`}
-                onClose={() => onOpenChange(false)}
+                onClick={() => {
+                  onOpenChange(false);
+                  navigate({ to: "/tenants/$tenantId", params: { tenantId: tenant.id } });
+                }}
               />
             </div>
+
+
 
             <div className="space-y-3 bg-muted/30 p-3">
               {/* 연락처 */}
@@ -234,45 +239,39 @@ function HeroStat({ label, value, highlight }: { label: string; value: string; h
   return (
     <div
       className={cn(
-        "rounded-xl bg-white/12 px-2.5 py-2 ring-1 ring-white/20 backdrop-blur",
+        "flex h-[60px] flex-col items-center justify-center rounded-xl bg-white/12 px-2 py-2 text-center ring-1 ring-white/20 backdrop-blur",
         highlight && "bg-rose-500/40 ring-rose-200/40",
       )}
     >
       <p className="text-[10px] font-semibold uppercase tracking-wider opacity-80">{label}</p>
-      <p className="mt-0.5 text-[15px] font-bold leading-tight">{value}</p>
+      <p className="mt-0.5 text-[14px] font-bold leading-tight tabular-nums">{value}</p>
     </div>
   );
 }
+
+
 
 function ActionBtn({
   icon: Icon,
   label,
   onClick,
-  to,
-  onClose,
   disabled,
 }: {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
   onClick?: () => void;
-  to?: string;
-  onClose?: () => void;
   disabled?: boolean;
 }) {
-  const cls = cn(
-    "flex flex-col items-center justify-center gap-1 rounded-xl border border-border bg-card py-2 text-[11.5px] font-semibold transition hover:bg-accent",
-    disabled && "pointer-events-none opacity-40",
-  );
-  if (to) {
-    return (
-      <Link to={to} onClick={onClose} className={cls}>
-        <Icon className="h-4 w-4 text-brand" />
-        {label}
-      </Link>
-    );
-  }
   return (
-    <button type="button" onClick={onClick} disabled={disabled} className={cls}>
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className={cn(
+        "flex flex-col items-center justify-center gap-1 rounded-xl border border-border bg-card py-2 text-[11.5px] font-semibold transition hover:bg-accent",
+        disabled && "pointer-events-none opacity-40",
+      )}
+    >
       <Icon className="h-4 w-4 text-brand" />
       {label}
     </button>

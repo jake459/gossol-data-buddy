@@ -88,6 +88,7 @@ function DashboardPage() {
     todayDue: 0,
   });
   const [overduePage, setOverduePage] = useState(1);
+  const [overdueOpen, setOverdueOpen] = useState(false);
   const [detailId, setDetailId] = useState<string | null>(null);
   const OVERDUE_PAGE_SIZE = 6;
 
@@ -266,51 +267,63 @@ function DashboardPage() {
 
         {/* Overdue tenants — quick contact */}
         {stats.overdueTenants.length > 0 && (
-          <section className="rounded-2xl border border-rose-200 bg-rose-50/40 p-3.5">
-            <div className="flex items-center justify-between">
+          <section className="rounded-2xl border border-rose-200 bg-rose-50/40">
+            <button
+              type="button"
+              onClick={() => setOverdueOpen((v) => !v)}
+              className="flex w-full items-center justify-between p-3.5 text-left"
+              aria-expanded={overdueOpen}
+            >
               <h2 className="inline-flex items-center gap-1.5 text-[13px] font-bold text-rose-700">
                 <AlertCircle className="h-4 w-4" /> 미납자 현황
                 <span className="rounded-full bg-rose-600 px-1.5 py-0.5 text-[10px] font-bold text-white">
                   {stats.overdueTenants.length}
                 </span>
               </h2>
-              <Link to="/invoices" className="text-[12px] font-semibold text-rose-700">
-                전체
-              </Link>
-            </div>
-            <ul className="mt-1.5 divide-y divide-rose-100">
-              {stats.overdueTenants
-                .slice((overduePage - 1) * OVERDUE_PAGE_SIZE, overduePage * OVERDUE_PAGE_SIZE)
-                .map((t) => (
-                  <li key={`${t.id}-${t.due_date}`} className="flex items-center gap-2 py-1.5">
-                    <button
-                      type="button"
-                      onClick={() => setDetailId(t.id)}
-                      className="min-w-0 flex-1 text-left"
-                    >
-                      <p className="truncate text-[13px] font-semibold text-foreground">{t.name}</p>
-                      <p className="text-[11px] text-rose-700">
-                        {formatKRW(t.amount)} · {t.due_date}
-                      </p>
-                    </button>
-                    {t.phone && (
-                      <a
-                        href={`tel:${t.phone}`}
-                        className="grid h-8 w-8 place-items-center rounded-full bg-white text-rose-600 ring-1 ring-rose-200"
-                        aria-label="전화"
-                      >
-                        <Phone className="h-3.5 w-3.5" />
-                      </a>
-                    )}
-                  </li>
-                ))}
-            </ul>
-            <Pager
-              page={overduePage}
-              totalPages={Math.max(1, Math.ceil(stats.overdueTenants.length / OVERDUE_PAGE_SIZE))}
-              onChange={setOverduePage}
-              total={stats.overdueTenants.length}
-            />
+              <span className="text-[12px] font-semibold text-rose-700">
+                {overdueOpen ? "접기" : "펼치기"}
+              </span>
+            </button>
+            {overdueOpen && (
+              <div className="px-3.5 pb-3.5">
+                <ul className="divide-y divide-rose-100">
+                  {stats.overdueTenants
+                    .slice((overduePage - 1) * OVERDUE_PAGE_SIZE, overduePage * OVERDUE_PAGE_SIZE)
+                    .map((t) => (
+                      <li key={`${t.id}-${t.due_date}`} className="flex items-center gap-2 py-1.5">
+                        <button
+                          type="button"
+                          onClick={() => setDetailId(t.id)}
+                          className="min-w-0 flex-1 text-left"
+                        >
+                          <p className="truncate text-[13px] font-semibold text-foreground">{t.name}</p>
+                          <p className="text-[11px] text-rose-700">
+                            {formatKRW(t.amount)} · {t.due_date}
+                          </p>
+                        </button>
+                        {t.phone && (
+                          <a
+                            href={`tel:${t.phone}`}
+                            className="grid h-8 w-8 place-items-center rounded-full bg-white text-rose-600 ring-1 ring-rose-200"
+                            aria-label="전화"
+                          >
+                            <Phone className="h-3.5 w-3.5" />
+                          </a>
+                        )}
+                      </li>
+                    ))}
+                </ul>
+                <Pager
+                  page={overduePage}
+                  totalPages={Math.max(1, Math.ceil(stats.overdueTenants.length / OVERDUE_PAGE_SIZE))}
+                  onChange={setOverduePage}
+                  total={stats.overdueTenants.length}
+                />
+                <Link to="/invoices" className="mt-2 block text-right text-[12px] font-semibold text-rose-700">
+                  전체 보기 →
+                </Link>
+              </div>
+            )}
           </section>
         )}
 
