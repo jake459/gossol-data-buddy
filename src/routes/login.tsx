@@ -75,7 +75,7 @@ function LoginPage() {
 
   const handleResetPw = async () => {
     if (!email) {
-      toast.error("이메일을 먼저 입력해 주세요.");
+      notifyValidation("이메일을 먼저 입력해 주세요.");
       return;
     }
     const { error } = await supabase.auth.resetPasswordForEmail(email, {

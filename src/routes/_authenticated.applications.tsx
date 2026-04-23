@@ -79,7 +79,7 @@ function ApplicationsPage() {
 
   const save = async () => {
     if (!user || !selected || !edit?.applicant_name?.trim()) {
-      return toast.error("이름을 입력해 주세요.");
+      return notifyValidation("이름을 입력해 주세요.");
     }
     const payload = {
       applicant_name: edit.applicant_name.trim(),

@@ -785,7 +785,7 @@ function EditTenantModal({
   useEffect(() => setForm(tenant), [tenant, open]);
 
   const save = async () => {
-    if (!form.name.trim()) return toast.error("이름을 입력해 주세요.");
+    if (!form.name.trim()) return notifyValidation("이름을 입력해 주세요.");
     const { error } = await supabase
       .from("tenants")
       .update({

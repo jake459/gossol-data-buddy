@@ -133,9 +133,9 @@ function RoomsPage() {
 
   const save = async () => {
     if (!selected || !user || !edit) return;
-    if (!edit.room_number?.trim()) return toast.error("호실 번호를 입력해 주세요.");
-    if (!edit.room_category) return toast.error("대분류를 선택해 주세요.");
-    if (!edit.window_type) return toast.error("창문 종류를 선택해 주세요.");
+    if (!edit.room_number?.trim()) return notifyValidation("호실 번호를 입력해 주세요.");
+    if (!edit.room_category) return notifyValidation("대분류를 선택해 주세요.");
+    if (!edit.window_type) return notifyValidation("창문 종류를 선택해 주세요.");
 
     const auto_name = buildAutoRoomName({
       category: edit.room_category,

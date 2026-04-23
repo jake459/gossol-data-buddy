@@ -51,7 +51,7 @@ export function SupportModal({
       return;
     }
     if (!subject.trim() || !message.trim()) {
-      toast.error("제목과 내용을 모두 입력해 주세요.");
+      notifyValidation("제목과 내용을 모두 입력해 주세요.");
       return;
     }
     setSubmitting(true);

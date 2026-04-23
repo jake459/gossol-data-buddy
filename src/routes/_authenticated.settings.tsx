@@ -259,7 +259,7 @@ function StaffInviteRow() {
 
   const submit = async () => {
     if (!user || !selected) return;
-    if (!email.trim() || !email.includes("@")) return toast.error("올바른 이메일을 입력해 주세요.");
+    if (!email.trim() || !email.includes("@")) return notifyValidation("올바른 이메일을 입력해 주세요.");
     setLoading(true);
     const { data, error } = await supabase
       .from("staff_invites")

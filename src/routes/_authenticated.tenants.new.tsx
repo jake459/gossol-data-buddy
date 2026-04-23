@@ -17,6 +17,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useBranch } from "@/hooks/useBranch";
 import { notify } from "@/lib/notifications";
 import { toast } from "sonner";
+import { notifyValidation } from "@/components/ValidationModal";
 
 export const Route = createFileRoute("/_authenticated/tenants/new")({
   head: () => ({ meta: [{ title: "입실 등록 — Gossol" }] }),

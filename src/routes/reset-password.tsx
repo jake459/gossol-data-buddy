@@ -32,11 +32,11 @@ function ResetPasswordPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password.length < 6) {
-      toast.error("비밀번호는 6자 이상이어야 합니다.");
+      notifyValidation("비밀번호는 6자 이상이어야 합니다.");
       return;
     }
     if (password !== confirm) {
-      toast.error("비밀번호가 일치하지 않습니다.");
+      notifyValidation("비밀번호가 일치하지 않습니다.");
       return;
     }
     setLoading(true);

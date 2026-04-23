@@ -55,7 +55,7 @@ function RoomTypesPage() {
   const save = async () => {
     if (!selected || !user || !edit) return;
     if (!edit.name?.trim()) {
-      toast.error("타입 이름을 입력해 주세요.");
+      notifyValidation("타입 이름을 입력해 주세요.");
       return;
     }
     const payload = {
