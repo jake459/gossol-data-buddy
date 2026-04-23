@@ -587,6 +587,7 @@ function StatusTile({
   status,
   detail,
   badge,
+  onClick,
 }: {
   tone: keyof typeof TILE_TONES;
   icon: React.ComponentType<{ className?: string }>;
@@ -594,9 +595,19 @@ function StatusTile({
   status: string;
   detail: string;
   badge?: string;
+  onClick?: () => void;
 }) {
+  const Wrapper: React.ElementType = onClick ? "button" : "div";
   return (
-    <div className={cn("relative rounded-xl border p-2.5", TILE_TONES[tone])}>
+    <Wrapper
+      type={onClick ? "button" : undefined}
+      onClick={onClick}
+      className={cn(
+        "relative w-full rounded-xl border p-2.5 text-left transition",
+        TILE_TONES[tone],
+        onClick && "active:scale-[0.98] hover:brightness-[0.98]",
+      )}
+    >
       <div className="flex items-center gap-1.5">
         <Icon className="h-3.5 w-3.5 text-foreground/70" />
         <p className="text-[12px] font-bold">{title}</p>
@@ -608,7 +619,7 @@ function StatusTile({
       </div>
       <p className="mt-1 text-[11.5px] font-semibold text-foreground/80">{status}</p>
       {detail && <p className="mt-0.5 text-[10.5px] text-muted-foreground">{detail}</p>}
-    </div>
+    </Wrapper>
   );
 }
 
