@@ -2,16 +2,13 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState, useCallback } from "react";
 import {
   ChevronLeft,
-  Phone,
   CheckCircle2,
   LogOut,
   Pencil,
   Trash2,
   MessageSquare,
-  ShieldAlert,
   PhoneCall,
   FileText,
-  FileSignature,
   Wallet,
   RotateCcw,
   CalendarPlus,
@@ -19,6 +16,8 @@ import {
   Plus,
   Receipt,
   MoreVertical,
+  ClipboardCheck,
+  Sparkles,
 } from "lucide-react";
 import { toast as _toast } from "sonner";
 import { MobileFrame } from "@/components/MobileFrame";
@@ -58,6 +57,12 @@ type Tenant = {
   payment_day: number | null;
   move_in_date: string | null;
   move_out_date: string | null;
+  contract_start: string | null;
+  contract_end: string | null;
+  deposit_paid_at: string | null;
+  deposit_returned_at: string | null;
+  extension_requested_at: string | null;
+  moveout_requested_at: string | null;
   status: TenantStatus;
   memo: string | null;
 };
@@ -91,7 +96,7 @@ function TenantDetailPage() {
     const { data: t } = await supabase
       .from("tenants")
       .select(
-        "id, branch_id, name, phone, emergency_contact, room_id, monthly_rent, deposit, payment_day, move_in_date, move_out_date, status, memo",
+        "id, branch_id, name, phone, emergency_contact, room_id, monthly_rent, deposit, payment_day, move_in_date, move_out_date, contract_start, contract_end, deposit_paid_at, deposit_returned_at, extension_requested_at, moveout_requested_at, status, memo",
       )
       .eq("id", tenantId)
       .maybeSingle();
@@ -182,6 +187,62 @@ function TenantDetailPage() {
     load();
   };
 
+  const toggleTimestamp = async (
+    column: "deposit_paid_at" | "deposit_returned_at" | "extension_requested_at" | "moveout_requested_at",
+    label: string,
+  ) => {
+    if (!tenant) return;
+    const current = tenant[column];
+    const next = current ? null : new Date().toISOString();
+    const patch =
+      column === "deposit_paid_at"
+        ? { deposit_paid_at: next }
+        : column === "deposit_returned_at"
+          ? { deposit_returned_at: next }
+          : column === "extension_requested_at"
+            ? { extension_requested_at: next }
+            : { moveout_requested_at: next };
+    const { error } = await supabase.from("tenants").update(patch).eq("id", tenant.id);
+    if (error) return toast.error(error.message);
+    toast.success(next ? `${label} 완료로 표시했어요.` : `${label} 표시를 해제했어요.`);
+    load();
+  };
+  const handleToggleDepositPaid = () => toggleTimestamp("deposit_paid_at", "보증금 납입");
+  const handleToggleDepositReturned = () => toggleTimestamp("deposit_returned_at", "보증금 반환");
+  const handleToggleExtension = () => toggleTimestamp("extension_requested_at", "연장 신청");
+  const handleToggleMoveoutRequest = () => toggleTimestamp("moveout_requested_at", "퇴실 신청");
+
+  const handleCreateInspection = async () => {
+    if (!tenant || !user || !tenant.room_id) {
+      return toast.info("호실이 배정된 입실자만 점검을 등록할 수 있어요.");
+    }
+    const { error } = await supabase.from("inspections").insert({
+      owner_id: user.id,
+      branch_id: tenant.branch_id,
+      room_id: tenant.room_id,
+      tenant_id: tenant.id,
+      status: "requested",
+      requested_at: new Date().toISOString(),
+    });
+    if (error) return toast.error(error.message);
+    toast.success("점검이 요청되었습니다.");
+  };
+
+  const handleCreateCleaning = async () => {
+    if (!tenant || !user || !tenant.room_id) {
+      return toast.info("호실이 배정된 입실자만 청소를 등록할 수 있어요.");
+    }
+    const { error } = await supabase.from("cleanings").insert({
+      owner_id: user.id,
+      branch_id: tenant.branch_id,
+      room_id: tenant.room_id,
+      status: "requested",
+      requested_at: new Date().toISOString(),
+    });
+    if (error) return toast.error(error.message);
+    toast.success("청소가 요청되었습니다.");
+  };
+
   if (loading) {
     return (
       <MobileFrame>
@@ -236,12 +297,54 @@ function TenantDetailPage() {
             </button>
           } />
           <div className="grid grid-cols-2 gap-2 px-3 pb-3">
-            <StatusTile tone="blue" icon={FileText} title="계약서 전송" status="전송완료" detail="2026. 04. 18. 오후 05:50" />
-            <StatusTile tone="green" icon={FileSignature} title="계약 동의" status="동의완료" detail="2026. 04. 18. 오후 10:31" />
-            <StatusTile tone="purple" icon={Wallet} title="보증금 납입" status="청구완료" detail={tenant.move_in_date ? `(${tenant.move_in_date})` : "—"} badge="완료" />
-            <StatusTile tone="amber" icon={RotateCcw} title="보증금 반환" status="미반환" detail="" />
-            <StatusTile tone="gray" icon={CalendarPlus} title="연장신청" status="없음" detail="" />
-            <StatusTile tone="gray" icon={LogOut} title="퇴실신청" status={tenant.move_out_date ? "신청됨" : "없음"} detail={tenant.move_out_date ?? ""} />
+            <StatusTile
+              tone={tenant.deposit_paid_at ? "green" : "amber"}
+              icon={Wallet}
+              title="보증금 납입"
+              status={tenant.deposit_paid_at ? "납입완료" : "대기"}
+              detail={tenant.deposit_paid_at ? new Date(tenant.deposit_paid_at).toLocaleDateString("ko-KR") : "탭하여 표시"}
+              onClick={() => handleToggleDepositPaid()}
+            />
+            <StatusTile
+              tone={tenant.deposit_returned_at ? "green" : "gray"}
+              icon={RotateCcw}
+              title="보증금 반환"
+              status={tenant.deposit_returned_at ? "반환완료" : "미반환"}
+              detail={tenant.deposit_returned_at ? new Date(tenant.deposit_returned_at).toLocaleDateString("ko-KR") : "탭하여 표시"}
+              onClick={() => handleToggleDepositReturned()}
+            />
+            <StatusTile
+              tone={tenant.extension_requested_at ? "purple" : "gray"}
+              icon={CalendarPlus}
+              title="연장신청"
+              status={tenant.extension_requested_at ? "신청됨" : "없음"}
+              detail={tenant.extension_requested_at ? new Date(tenant.extension_requested_at).toLocaleDateString("ko-KR") : "탭하여 신청"}
+              onClick={() => handleToggleExtension()}
+            />
+            <StatusTile
+              tone={tenant.moveout_requested_at ? "amber" : "gray"}
+              icon={LogOut}
+              title="퇴실신청"
+              status={tenant.moveout_requested_at ? "신청됨" : "없음"}
+              detail={tenant.moveout_requested_at ? new Date(tenant.moveout_requested_at).toLocaleDateString("ko-KR") : "탭하여 신청"}
+              onClick={() => handleToggleMoveoutRequest()}
+            />
+            <StatusTile
+              tone="blue"
+              icon={ClipboardCheck}
+              title="점검 요청"
+              status="등록"
+              detail="청소 전 점검"
+              onClick={() => handleCreateInspection()}
+            />
+            <StatusTile
+              tone="purple"
+              icon={Sparkles}
+              title="청소 등록"
+              status="등록"
+              detail="배정·요청"
+              onClick={() => handleCreateCleaning()}
+            />
           </div>
         </Card>
 
@@ -540,6 +643,7 @@ function StatusTile({
   status,
   detail,
   badge,
+  onClick,
 }: {
   tone: keyof typeof TILE_TONES;
   icon: React.ComponentType<{ className?: string }>;
@@ -547,9 +651,19 @@ function StatusTile({
   status: string;
   detail: string;
   badge?: string;
+  onClick?: () => void;
 }) {
+  const Wrapper: React.ElementType = onClick ? "button" : "div";
   return (
-    <div className={cn("relative rounded-xl border p-2.5", TILE_TONES[tone])}>
+    <Wrapper
+      type={onClick ? "button" : undefined}
+      onClick={onClick}
+      className={cn(
+        "relative w-full rounded-xl border p-2.5 text-left transition",
+        TILE_TONES[tone],
+        onClick && "active:scale-[0.98] hover:brightness-[0.98]",
+      )}
+    >
       <div className="flex items-center gap-1.5">
         <Icon className="h-3.5 w-3.5 text-foreground/70" />
         <p className="text-[12px] font-bold">{title}</p>
@@ -561,7 +675,7 @@ function StatusTile({
       </div>
       <p className="mt-1 text-[11.5px] font-semibold text-foreground/80">{status}</p>
       {detail && <p className="mt-0.5 text-[10.5px] text-muted-foreground">{detail}</p>}
-    </div>
+    </Wrapper>
   );
 }
 

@@ -15,6 +15,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useBranch } from "@/hooks/useBranch";
+import { notify } from "@/lib/notifications";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/tenants/new")({
@@ -114,6 +115,64 @@ function NewTenantPage() {
         tenant_id: tenant.id,
       });
     }
+
+    // Auto-issue invoices: deposit (if any) + first month rent
+    const moveInDate = moveIn ? new Date(moveIn) : new Date();
+    const firstDueDay = Math.min(Math.max(paymentDay, 1), 28);
+    const firstDue = new Date(moveInDate.getFullYear(), moveInDate.getMonth(), firstDueDay);
+    if (firstDue < moveInDate) firstDue.setMonth(firstDue.getMonth() + 1);
+    const cycleMonth = `${firstDue.getFullYear()}-${String(firstDue.getMonth() + 1).padStart(2, "0")}-01`;
+    const autoInvoices: Array<{
+      owner_id: string;
+      branch_id: string;
+      tenant_id: string;
+      amount: number;
+      due_date: string;
+      kind: "deposit" | "first_rent" | "monthly";
+      status: "unpaid";
+      memo: string;
+      cycle_month?: string;
+    }> = [];
+    if (deposit > 0) {
+      autoInvoices.push({
+        owner_id: user.id,
+        branch_id: selected.id,
+        tenant_id: tenant.id,
+        amount: deposit,
+        due_date: moveIn || new Date().toISOString().slice(0, 10),
+        kind: "deposit",
+        status: "unpaid",
+        memo: "보증금",
+      });
+    }
+    if (rent > 0) {
+      autoInvoices.push({
+        owner_id: user.id,
+        branch_id: selected.id,
+        tenant_id: tenant.id,
+        amount: rent,
+        due_date: firstDue.toISOString().slice(0, 10),
+        kind: "first_rent",
+        status: "unpaid",
+        memo: "첫달 월 이용료",
+        cycle_month: cycleMonth,
+      });
+    }
+    if (autoInvoices.length > 0) {
+      await supabase.from("invoices").insert(autoInvoices);
+    }
+
+    // Notify owner
+    await notify({
+      recipientId: user.id,
+      branchId: selected.id,
+      audience: "owner",
+      category: "move_in",
+      title: `${name} 님 입실 등록`,
+      body: roomId !== "none" ? `${rooms.find((r) => r.id === roomId)?.room_number ?? ""}호 배정` : "호실 미배정",
+      link: `/tenants/${tenant.id}`,
+    });
+
     setLoading(false);
     toast.success("입실 등록이 완료되었습니다.");
     navigate({ to: "/tenants" });
