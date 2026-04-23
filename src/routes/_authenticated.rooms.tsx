@@ -86,7 +86,6 @@ function RoomsPage() {
   const [edit, setEdit] = useState<EditState | null>(null);
 
   const [fStatus, setFStatus] = useState<RoomStatus | "all">("all");
-  const [fFloor, setFFloor] = useState<string>("all");
   const [fCategory, setFCategory] = useState<string>("all");
 
   const load = async () => {
