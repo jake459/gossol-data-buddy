@@ -204,7 +204,7 @@ function NavItem({
   return (
     <Link
       to={to}
-      className="flex items-center gap-3 px-4 py-3 text-[13.5px] font-semibold transition hover:bg-accent/40"
+      className="flex items-center gap-2.5 px-3 py-2.5 text-[12.5px] font-semibold transition hover:bg-accent/40"
     >
       <Icon className="h-4 w-4 text-brand" />
       <span className="flex-1">{label}</span>
