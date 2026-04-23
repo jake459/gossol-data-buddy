@@ -19,6 +19,8 @@ import {
 import { MobileFrame } from "@/components/MobileFrame";
 import { TopBar } from "@/components/TopBar";
 import { BottomTabs } from "@/components/BottomTabs";
+import { Pager } from "@/components/Pager";
+import { TenantDetailModal } from "@/components/TenantDetailModal";
 import { useAuth } from "@/hooks/useAuth";
 import { useBranch } from "@/hooks/useBranch";
 import { supabase } from "@/integrations/supabase/client";
@@ -85,6 +87,9 @@ function DashboardPage() {
     upcoming: [],
     todayDue: 0,
   });
+  const [overduePage, setOverduePage] = useState(1);
+  const [detailId, setDetailId] = useState<string | null>(null);
+  const OVERDUE_PAGE_SIZE = 6;
 
   useEffect(() => {
     if (!selected) return;
@@ -115,8 +120,7 @@ function DashboardPage() {
         .eq("branch_id", selected.id)
         .in("status", ["unpaid", "overdue"])
         .lte("due_date", todayStr)
-        .order("due_date", { ascending: true })
-        .limit(5),
+        .order("due_date", { ascending: true }),
       // Today's payments due (unpaid scheduled today)
       supabase
         .from("invoices")
@@ -275,30 +279,38 @@ function DashboardPage() {
               </Link>
             </div>
             <ul className="mt-1.5 divide-y divide-rose-100">
-              {stats.overdueTenants.slice(0, 2).map((t) => (
-                <li key={`${t.id}-${t.due_date}`} className="flex items-center gap-2 py-1.5">
-                  <Link
-                    to="/tenants/$tenantId"
-                    params={{ tenantId: t.id }}
-                    className="min-w-0 flex-1"
-                  >
-                    <p className="truncate text-[13px] font-semibold text-foreground">{t.name}</p>
-                    <p className="text-[11px] text-rose-700">
-                      {formatKRW(t.amount)} · {t.due_date}
-                    </p>
-                  </Link>
-                  {t.phone && (
-                    <a
-                      href={`tel:${t.phone}`}
-                      className="grid h-8 w-8 place-items-center rounded-full bg-white text-rose-600 ring-1 ring-rose-200"
-                      aria-label="전화"
+              {stats.overdueTenants
+                .slice((overduePage - 1) * OVERDUE_PAGE_SIZE, overduePage * OVERDUE_PAGE_SIZE)
+                .map((t) => (
+                  <li key={`${t.id}-${t.due_date}`} className="flex items-center gap-2 py-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setDetailId(t.id)}
+                      className="min-w-0 flex-1 text-left"
                     >
-                      <Phone className="h-3.5 w-3.5" />
-                    </a>
-                  )}
-                </li>
-              ))}
+                      <p className="truncate text-[13px] font-semibold text-foreground">{t.name}</p>
+                      <p className="text-[11px] text-rose-700">
+                        {formatKRW(t.amount)} · {t.due_date}
+                      </p>
+                    </button>
+                    {t.phone && (
+                      <a
+                        href={`tel:${t.phone}`}
+                        className="grid h-8 w-8 place-items-center rounded-full bg-white text-rose-600 ring-1 ring-rose-200"
+                        aria-label="전화"
+                      >
+                        <Phone className="h-3.5 w-3.5" />
+                      </a>
+                    )}
+                  </li>
+                ))}
             </ul>
+            <Pager
+              page={overduePage}
+              totalPages={Math.max(1, Math.ceil(stats.overdueTenants.length / OVERDUE_PAGE_SIZE))}
+              onChange={setOverduePage}
+              total={stats.overdueTenants.length}
+            />
           </section>
         )}
 
@@ -343,6 +355,11 @@ function DashboardPage() {
           <QuickLink to="/branches" icon={Building2} label="지점" />
         </section>
       </main>
+      <TenantDetailModal
+        tenantId={detailId}
+        open={!!detailId}
+        onOpenChange={(o) => !o && setDetailId(null)}
+      />
       <BottomTabs />
     </MobileFrame>
   );
@@ -398,12 +415,13 @@ function Tile({
   return (
     <Link
       to={to}
-      className="rounded-xl border border-border bg-card p-2.5 transition hover:bg-accent/40"
+      className="flex h-[68px] flex-col justify-between rounded-xl border border-border bg-card px-2.5 py-2 transition hover:bg-accent/40"
     >
       <div className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-        <Icon className={cn("h-3.5 w-3.5", toneClass)} /> {label}
+        <Icon className={cn("h-3.5 w-3.5 shrink-0", toneClass)} />
+        <span className="truncate">{label}</span>
       </div>
-      <div className={cn("mt-1 text-[17px] font-bold leading-tight", toneClass)}>{value}</div>
+      <div className={cn("truncate text-[17px] font-bold leading-tight", toneClass)}>{value}</div>
     </Link>
   );
 }
