@@ -61,7 +61,7 @@ type Room = {
   tags: string[];
   auto_name: string | null;
 };
-type RoomType = { id: string; name: string };
+type RoomType = { id: string; name: string; monthly_rent: number };
 
 const STATUS_LABEL: Record<RoomStatus, string> = {
   vacant: "공실",
@@ -104,7 +104,7 @@ function RoomsPage() {
         .eq("branch_id", selected.id)
         .order("floor", { ascending: true })
         .order("room_number", { ascending: true }),
-      supabase.from("room_types").select("id, name").eq("branch_id", selected.id),
+      supabase.from("room_types").select("id, name, monthly_rent").eq("branch_id", selected.id),
     ]);
     setRooms((r.data ?? []) as unknown as Room[]);
     setTypes((t.data ?? []) as RoomType[]);
@@ -329,6 +329,47 @@ function RoomsPage() {
             <DialogTitle>{edit?.id ? "호실 수정" : "호실 추가"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4">
+            {/* 빠른 적용 — 미리 만들어둔 방 타입 가져오기 */}
+            {types.length > 0 && (
+              <div className="rounded-xl border border-brand/30 bg-brand/5 p-3">
+                <Label className="flex items-center gap-1.5 text-[12px] font-semibold text-brand">
+                  <Wand2 className="h-3.5 w-3.5" /> 방 타입 빠른 적용
+                </Label>
+                <p className="mt-0.5 text-[10.5px] text-muted-foreground">
+                  미리 만들어둔 타입을 선택하면 분류·옵션이 자동으로 채워져요.
+                </p>
+                <Select
+                  value={edit?.room_type_id ?? "none"}
+                  onValueChange={(v) => {
+                    if (v === "none") {
+                      setEdit({ ...edit, room_type_id: null });
+                      return;
+                    }
+                    const t = types.find((x) => x.id === v);
+                    if (!t) return;
+                    // 이름으로 카테고리 자동 매핑
+                    const auto: Partial<Room> = { room_type_id: v };
+                    if (t.name.includes("미니")) auto.room_category = "mini";
+                    else if (t.name.includes("샤워")) auto.room_category = "shower";
+                    else if (t.name.includes("원룸")) auto.room_category = "studio";
+                    setEdit({ ...edit, ...auto });
+                  }}
+                >
+                  <SelectTrigger className="mt-2 h-10 rounded-xl bg-card">
+                    <SelectValue placeholder="방 타입 선택" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">선택 안 함</SelectItem>
+                    {types.map((t) => (
+                      <SelectItem key={t.id} value={t.id}>
+                        {t.name} (월 {Math.round(t.monthly_rent / 10000)}만원)
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label>호실 번호</Label>
@@ -492,25 +533,7 @@ function RoomsPage() {
               </div>
             )}
 
-            <div className="space-y-1.5">
-              <Label>가격표(선택)</Label>
-              <Select
-                value={edit?.room_type_id ?? "none"}
-                onValueChange={(v) => setEdit({ ...edit, room_type_id: v === "none" ? null : v })}
-              >
-                <SelectTrigger className="h-11 rounded-xl">
-                  <SelectValue placeholder="선택" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">선택 안 함</SelectItem>
-                  {types.map((t) => (
-                    <SelectItem key={t.id} value={t.id}>
-                      {t.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {/* 가격표 섹션 제거 — 상단 '방 타입 빠른 적용'으로 대체됨 */}
 
             <div className="space-y-1.5">
               <Label>호실 상태</Label>
