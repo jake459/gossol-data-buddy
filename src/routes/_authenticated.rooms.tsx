@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Plus, DoorOpen, Filter, X, Sparkles, LayoutGrid } from "lucide-react";
+import { Plus, DoorOpen, Filter, X, Sparkles, LayoutGrid, Wand2 } from "lucide-react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { TopBar } from "@/components/TopBar";
 import { BottomTabs } from "@/components/BottomTabs";
@@ -25,6 +25,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useBranch } from "@/hooks/useBranch";
 import { EmptyState } from "@/components/EmptyState";
+import { Pager } from "@/components/Pager";
 import { toast } from "sonner";
 import { notifyValidation } from "@/components/ValidationModal";
 import { cn } from "@/lib/utils";
@@ -315,51 +316,7 @@ function RoomsPage() {
                 );
               })}
             </ul>
-            {totalPages > 1 && (
-              <nav className="mt-4 flex items-center justify-between gap-2 text-[12px]">
-                <span className="text-muted-foreground">
-                  총 {filtered.length}건 · {page}/{totalPages}
-                </span>
-                <div className="flex items-center gap-1">
-                  <button
-                    type="button"
-                    onClick={() => setPage(Math.max(1, page - 1))}
-                    disabled={page === 1}
-                    className="h-8 rounded-lg border border-border bg-card px-2.5 font-semibold disabled:opacity-40"
-                  >
-                    이전
-                  </button>
-                  {Array.from({ length: totalPages }).slice(0, 5).map((_, i) => {
-                    const start = Math.max(1, Math.min(page - 2, totalPages - 4));
-                    const num = start + i;
-                    if (num > totalPages) return null;
-                    return (
-                      <button
-                        key={num}
-                        type="button"
-                        onClick={() => setPage(num)}
-                        className={cn(
-                          "h-8 min-w-8 rounded-lg px-2 text-[12px] font-semibold",
-                          num === page
-                            ? "bg-foreground text-background"
-                            : "border border-border bg-card hover:bg-accent",
-                        )}
-                      >
-                        {num}
-                      </button>
-                    );
-                  })}
-                  <button
-                    type="button"
-                    onClick={() => setPage(Math.min(totalPages, page + 1))}
-                    disabled={page === totalPages}
-                    className="h-8 rounded-lg border border-border bg-card px-2.5 font-semibold disabled:opacity-40"
-                  >
-                    다음
-                  </button>
-                </div>
-              </nav>
-            )}
+            <Pager page={page} totalPages={totalPages} onChange={setPage} total={filtered.length} />
           </>
         )}
       </main>
