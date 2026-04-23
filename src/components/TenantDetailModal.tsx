@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { Phone, MessageSquare, Wallet, CalendarClock, DoorOpen, ArrowRight } from "lucide-react";
 import {
   Dialog,
@@ -43,6 +43,7 @@ export function TenantDetailModal({
   open: boolean;
   onOpenChange: (o: boolean) => void;
 }) {
+  const navigate = useNavigate();
   const [tenant, setTenant] = useState<Detail | null>(null);
   const [room, setRoom] = useState<Room | null>(null);
   const [invoices, setInvoices] = useState<InvoiceMini[]>([]);
@@ -130,6 +131,30 @@ export function TenantDetailModal({
                   highlight={unpaid.length > 0}
                 />
               </div>
+            </div>
+
+            {/* Quick actions */}
+            <div className="grid grid-cols-3 gap-2 border-b border-border bg-card px-3 py-3">
+              <ActionBtn
+                icon={Phone}
+                label="전화"
+                disabled={!tenant.phone}
+                onClick={() => tenant.phone && (window.location.href = `tel:${tenant.phone}`)}
+              />
+              <ActionBtn
+                icon={MessageSquare}
+                label="문자"
+                disabled={!tenant.phone}
+                onClick={() => tenant.phone && (window.location.href = `sms:${tenant.phone}`)}
+              />
+              <ActionBtn
+                icon={ArrowRight}
+                label="상세"
+                onClick={() => {
+                  onOpenChange(false);
+                  navigate({ to: "/tenants/$tenantId", params: { tenantId: tenant.id } });
+                }}
+              />
             </div>
 
             {/* Quick actions */}
