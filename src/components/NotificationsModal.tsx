@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Bell, AlertCircle, CalendarClock, DoorOpen, CheckCircle2 } from "lucide-react";
+import { Bell, AlertCircle, CalendarClock, DoorOpen, CheckCircle2, CheckCheck } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -7,6 +7,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { Pager } from "@/components/Pager";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -58,10 +59,13 @@ export function NotificationsModal({
   const { user } = useAuth();
   const [items, setItems] = useState<DbNotification[]>([]);
   const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 4;
 
   useEffect(() => {
     if (!open || !user) return;
     setLoading(true);
+    setPage(1);
     supabase
       .from("notifications")
       .select("id, category, title, body, link, read_at, created_at")
@@ -124,8 +128,9 @@ export function NotificationsModal({
               <button
                 type="button"
                 onClick={markAllRead}
-                className="rounded-full px-2 py-0.5 text-[11px] font-semibold text-[oklch(0.45_0.18_258)] hover:bg-[oklch(0.95_0.04_258)]"
+                className="inline-flex items-center gap-1 rounded-full bg-[oklch(0.46_0.18_258)] px-2.5 py-1 text-[11px] font-bold text-white shadow-[0_4px_10px_-4px_oklch(0.46_0.18_258/0.5)] transition hover:brightness-110"
               >
+                <CheckCheck className="h-3 w-3" />
                 모두 읽음
               </button>
             )}
@@ -146,47 +151,59 @@ export function NotificationsModal({
             </p>
           </div>
         ) : (
-          <ul className="max-h-[60vh] divide-y divide-border overflow-y-auto">
-            {items.map((n) => {
-              const kind = categoryToKind(n.category);
-              const { Icon, tone } = ICONS[kind];
-              const unread = !n.read_at;
-              return (
-                <li
-                  key={n.id}
-                  className={cn(
-                    "flex gap-3 px-5 py-3.5 transition hover:bg-accent/40",
-                    unread && "bg-[oklch(0.985_0.012_258)]",
-                  )}
-                >
-                  <span className={cn("mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full", tone)}>
-                    <Icon className="h-4 w-4" />
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5">
-                      <p className="truncate text-[13px] font-semibold">{n.title}</p>
-                      {unread && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[oklch(0.6_0.2_30)]" />}
-                    </div>
-                    {n.body && (
-                      <p className="mt-0.5 line-clamp-2 break-keep text-[12px] text-muted-foreground">
-                        {n.body}
-                      </p>
+          <>
+            <ul className="max-h-[60vh] divide-y divide-border overflow-y-auto">
+              {items.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE).map((n) => {
+                const kind = categoryToKind(n.category);
+                const { Icon, tone } = ICONS[kind];
+                const unread = !n.read_at;
+                return (
+                  <li
+                    key={n.id}
+                    className={cn(
+                      "flex gap-3 px-5 py-3.5 transition hover:bg-accent/40",
+                      unread && "bg-[oklch(0.985_0.012_258)]",
                     )}
-                    <div className="mt-1 flex items-center justify-between gap-2">
-                      <p className="text-[10.5px] text-muted-foreground/80">{timeAgo(n.created_at)}</p>
-                      <button
-                        type="button"
-                        onClick={() => toggleRead(n)}
-                        className="rounded-full px-2 py-0.5 text-[10.5px] font-semibold text-[oklch(0.45_0.18_258)] hover:bg-[oklch(0.96_0.04_258)]"
-                      >
-                        {unread ? "읽음 표시" : "안읽음으로"}
-                      </button>
+                  >
+                    <span className={cn("mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full", tone)}>
+                      <Icon className="h-4 w-4" />
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5">
+                        <p className="truncate text-[13px] font-semibold">{n.title}</p>
+                        {unread && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[oklch(0.6_0.2_30)]" />}
+                      </div>
+                      {n.body && (
+                        <p className="mt-0.5 line-clamp-2 break-keep text-[12px] text-muted-foreground">
+                          {n.body}
+                        </p>
+                      )}
+                      <div className="mt-1 flex items-center justify-between gap-2">
+                        <p className="text-[10.5px] text-muted-foreground/80">{timeAgo(n.created_at)}</p>
+                        <button
+                          type="button"
+                          onClick={() => toggleRead(n)}
+                          className="rounded-full px-2 py-0.5 text-[10.5px] font-semibold text-[oklch(0.45_0.18_258)] hover:bg-[oklch(0.96_0.04_258)]"
+                        >
+                          {unread ? "읽음 표시" : "안읽음으로"}
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
+                  </li>
+                );
+              })}
+            </ul>
+            {items.length > PAGE_SIZE && (
+              <div className="border-t px-5 pb-2 pt-2">
+                <Pager
+                  page={page}
+                  totalPages={Math.max(1, Math.ceil(items.length / PAGE_SIZE))}
+                  onChange={setPage}
+                  total={items.length}
+                />
+              </div>
+            )}
+          </>
         )}
 
         <div className="border-t px-5 py-3 text-center text-[11px] text-muted-foreground">
