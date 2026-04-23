@@ -97,7 +97,7 @@ function TenantDetailPage() {
     const { data: t } = await supabase
       .from("tenants")
       .select(
-        "id, branch_id, name, phone, emergency_contact, room_id, monthly_rent, deposit, payment_day, move_in_date, move_out_date, status, memo",
+        "id, branch_id, name, phone, emergency_contact, room_id, monthly_rent, deposit, payment_day, move_in_date, move_out_date, contract_start, contract_end, deposit_paid_at, deposit_returned_at, extension_requested_at, moveout_requested_at, status, memo",
       )
       .eq("id", tenantId)
       .maybeSingle();
