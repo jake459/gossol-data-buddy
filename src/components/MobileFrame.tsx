@@ -10,7 +10,7 @@ export function MobileFrame({
 }) {
   return (
     <div className="mobile-shell">
-      <div className={cn("mobile-frame", className)}>{children}</div>
+      <div className={cn("mobile-frame text-[13px]", className)}>{children}</div>
     </div>
   );
 }

@@ -225,43 +225,51 @@ function SchedulePage() {
         </div>
       </header>
 
-      <main className="flex-1 px-4 py-3">
-        <div className="grid grid-cols-7 text-center text-[11px] font-semibold text-muted-foreground">
-          {["일", "월", "화", "수", "목", "금", "토"].map((d, i) => (
-            <div key={d} className={cn("py-1.5", i === 0 && "text-rose-500", i === 6 && "text-sky-500")}>
-              {d}
-            </div>
-          ))}
-        </div>
-        <div className="grid grid-cols-7 gap-1">
-          {cells.map((c, idx) => {
-            if (!c) return <div key={idx} />;
-            const evs = eventsByDate.get(c.date) ?? [];
-            const isSel = c.date === selectedDate;
-            const isToday = c.date === ymd(today);
-            return (
-              <button
-                key={c.date}
-                type="button"
-                onClick={() => setSelectedDate(c.date)}
-                className={cn(
-                  "flex aspect-square flex-col items-center justify-start rounded-xl p-1 text-[12px] transition",
-                  isSel
-                    ? "bg-foreground text-background"
-                    : isToday
-                      ? "bg-brand/10 text-brand"
-                      : "hover:bg-accent",
-                )}
-              >
-                <span className="font-semibold">{c.day}</span>
-                <div className="mt-auto flex gap-0.5">
-                  {evs.slice(0, 3).map((e) => (
-                    <span key={e.id} className={cn("h-1 w-1 rounded-full", KIND_TONE[e.kind])} />
-                  ))}
-                </div>
-              </button>
-            );
-          })}
+      <main className="flex-1 px-3 py-3">
+        <div className="overflow-hidden rounded-2xl border border-border bg-card">
+          <div className="grid grid-cols-7 border-b border-border bg-muted/40 text-center text-[10.5px] font-semibold text-muted-foreground">
+            {["일", "월", "화", "수", "목", "금", "토"].map((d, i) => (
+              <div key={d} className={cn("py-1.5", i === 0 && "text-rose-500", i === 6 && "text-sky-500")}>
+                {d}
+              </div>
+            ))}
+          </div>
+          <div className="grid grid-cols-7">
+            {cells.map((c, idx) => {
+              if (!c)
+                return <div key={idx} className="aspect-square border-b border-r border-border/60 bg-muted/20 last:border-r-0" />;
+              const evs = eventsByDate.get(c.date) ?? [];
+              const hasEvents = evs.length > 0;
+              const isSel = c.date === selectedDate;
+              const isToday = c.date === ymd(today);
+              const col = idx % 7;
+              return (
+                <button
+                  key={c.date}
+                  type="button"
+                  onClick={() => setSelectedDate(c.date)}
+                  className={cn(
+                    "relative flex aspect-square flex-col items-center justify-start border-b border-r border-border/60 p-1 text-[11.5px] transition last:border-r-0",
+                    col === 6 && "border-r-0",
+                    isSel
+                      ? "bg-foreground text-background"
+                      : hasEvents
+                        ? "bg-amber-100 text-amber-900 hover:bg-amber-200"
+                        : isToday
+                          ? "bg-brand/10 text-brand"
+                          : "hover:bg-accent",
+                  )}
+                >
+                  <span className={cn("font-semibold", isToday && !isSel && "underline")}>{c.day}</span>
+                  <div className="mt-auto flex gap-0.5">
+                    {evs.slice(0, 3).map((e) => (
+                      <span key={e.id} className={cn("h-1 w-1 rounded-full", KIND_TONE[e.kind])} />
+                    ))}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         <section className="mt-4">
