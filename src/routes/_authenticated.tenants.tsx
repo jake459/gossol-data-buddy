@@ -28,12 +28,15 @@ type Tenant = {
 };
 type RoomMini = { id: string; room_number: string };
 
+const PAGE_SIZE = 10;
+
 function TenantsPage() {
   const { selected } = useBranch();
   const [items, setItems] = useState<Tenant[]>([]);
   const [rooms, setRooms] = useState<RoomMini[]>([]);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     if (!selected) return;
@@ -55,6 +58,10 @@ function TenantsPage() {
   const filtered = items.filter(
     (t) => !q || t.name.includes(q) || (t.phone ?? "").includes(q),
   );
+
+  useEffect(() => setPage(1), [q, selected?.id]);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const pageItems = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
     <MobileFrame>
@@ -91,51 +98,114 @@ function TenantsPage() {
             actionTo="/tenants/new"
           />
         ) : (
-          <ul className="space-y-2">
-            {filtered.map((t) => {
-              const room = rooms.find((r) => r.id === t.room_id);
-              return (
-                <li
-                  key={t.id}
-                  className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3.5 transition hover:bg-accent/40"
-                >
-                  <Link
-                    to="/tenants/$tenantId"
-                    params={{ tenantId: t.id }}
-                    className="flex min-w-0 flex-1 items-center gap-3"
+          <>
+            <ul className="space-y-2">
+              {pageItems.map((t) => {
+                const room = rooms.find((r) => r.id === t.room_id);
+                return (
+                  <li
+                    key={t.id}
+                    className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3.5 transition hover:bg-accent/40"
                   >
-                    <span className="grid h-11 w-11 place-items-center rounded-full bg-brand/10 text-[13px] font-bold text-brand">
-                      {t.name.slice(0, 1)}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className="truncate text-[14px] font-semibold">{t.name}</p>
-                        <StatusBadge kind="tenant" value={t.status} />
-                      </div>
-                      <p className="mt-0.5 truncate text-[12px] text-muted-foreground">
-                        {room ? `${room.room_number}호` : "미배정"} · 월 {formatKRW(t.monthly_rent ?? 0)}
-                        {t.payment_day ? ` · 매달 ${t.payment_day}일` : ""}
-                      </p>
-                    </div>
-                  </Link>
-                  {t.phone && (
-                    <a
-                      href={`tel:${t.phone}`}
-                      onClick={(e) => e.stopPropagation()}
-                      className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-muted text-foreground hover:bg-accent"
-                      aria-label="전화"
+                    <Link
+                      to="/tenants/$tenantId"
+                      params={{ tenantId: t.id }}
+                      className="flex min-w-0 flex-1 items-center gap-3"
                     >
-                      <Phone className="h-4 w-4" />
-                    </a>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
+                      <span className="grid h-11 w-11 place-items-center rounded-full bg-brand/10 text-[13px] font-bold text-brand">
+                        {t.name.slice(0, 1)}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <p className="truncate text-[14px] font-semibold">{t.name}</p>
+                          <StatusBadge kind="tenant" value={t.status} />
+                        </div>
+                        <p className="mt-0.5 truncate text-[12px] text-muted-foreground">
+                          {room ? `${room.room_number}호` : "미배정"} · 월 {formatKRW(t.monthly_rent ?? 0)}
+                          {t.payment_day ? ` · 매달 ${t.payment_day}일` : ""}
+                        </p>
+                      </div>
+                    </Link>
+                    {t.phone && (
+                      <a
+                        href={`tel:${t.phone}`}
+                        onClick={(e) => e.stopPropagation()}
+                        className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-muted text-foreground hover:bg-accent"
+                        aria-label="전화"
+                      >
+                        <Phone className="h-4 w-4" />
+                      </a>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+            {totalPages > 1 && (
+              <Pager page={page} totalPages={totalPages} onChange={setPage} total={filtered.length} />
+            )}
+          </>
         )}
       </main>
 
       <BottomTabs />
     </MobileFrame>
+  );
+}
+
+function Pager({
+  page,
+  totalPages,
+  onChange,
+  total,
+}: {
+  page: number;
+  totalPages: number;
+  onChange: (p: number) => void;
+  total: number;
+}) {
+  return (
+    <nav className="mt-4 flex items-center justify-between gap-2 text-[12px]">
+      <span className="text-muted-foreground">
+        총 {total}건 · {page}/{totalPages}
+      </span>
+      <div className="flex items-center gap-1">
+        <button
+          type="button"
+          onClick={() => onChange(Math.max(1, page - 1))}
+          disabled={page === 1}
+          className="h-8 rounded-lg border border-border bg-card px-2.5 font-semibold disabled:opacity-40"
+        >
+          이전
+        </button>
+        {Array.from({ length: totalPages }).slice(0, 5).map((_, i) => {
+          const start = Math.max(1, Math.min(page - 2, totalPages - 4));
+          const num = start + i;
+          if (num > totalPages) return null;
+          return (
+            <button
+              key={num}
+              type="button"
+              onClick={() => onChange(num)}
+              className={
+                "h-8 min-w-8 rounded-lg px-2 text-[12px] font-semibold " +
+                (num === page
+                  ? "bg-foreground text-background"
+                  : "border border-border bg-card hover:bg-accent")
+              }
+            >
+              {num}
+            </button>
+          );
+        })}
+        <button
+          type="button"
+          onClick={() => onChange(Math.min(totalPages, page + 1))}
+          disabled={page === totalPages}
+          className="h-8 rounded-lg border border-border bg-card px-2.5 font-semibold disabled:opacity-40"
+        >
+          다음
+        </button>
+      </div>
+    </nav>
   );
 }
