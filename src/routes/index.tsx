@@ -180,19 +180,14 @@ function Landing() {
         {/* FINAL CTA */}
         <section className="bg-background px-5 py-10">
           <div className="overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-muted to-background p-6 text-center">
-            <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-brand">
-              START FREE
-            </p>
-            <p className="mt-2 text-[20px] font-bold leading-tight tracking-tight text-foreground">
-              지금 바로,
-              <br />
-              운영을 새로 디자인하세요.
+            <p className="text-[20px] font-bold leading-tight tracking-tight text-foreground">
+              운영을, 다시 디자인하다.
             </p>
             <Link
               to="/signup"
               className="mt-5 inline-flex h-12 items-center justify-center gap-1.5 rounded-2xl bg-foreground px-6 text-[14px] font-semibold text-background shadow-lg transition hover:opacity-90"
             >
-              무료로 시작하기
+              시작하기
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
