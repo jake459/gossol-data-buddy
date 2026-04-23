@@ -166,6 +166,9 @@
   body {
     background-color: var(--color-app-shell);
     color: var(--color-foreground);
+    /* 한국어 단어 단위 줄바꿈 — 어절 중간에서 끊기지 않도록 */
+    word-break: keep-all;
+    overflow-wrap: anywhere;
   }
 }
 
