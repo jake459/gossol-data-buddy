@@ -104,6 +104,33 @@ function ApplicationsPage() {
     load();
   };
 
+  const convertToTenant = async (a: Application) => {
+    if (!user || !selected) return;
+    if (a.kind !== "move_in") {
+      return toast.info("방 둘러보기 신청은 입실 등록 대상이 아니에요.");
+    }
+    const { data: tenant, error } = await supabase
+      .from("tenants")
+      .insert({
+        owner_id: user.id,
+        branch_id: selected.id,
+        name: a.applicant_name,
+        phone: a.applicant_phone,
+        move_in_date: a.desired_date ?? new Date().toISOString().slice(0, 10),
+        memo: a.memo,
+        status: "active",
+      })
+      .select("id")
+      .single();
+    if (error || !tenant) return toast.error(error?.message ?? "등록 실패");
+    await supabase
+      .from("applications")
+      .update({ status: "completed", approved_at: new Date().toISOString() })
+      .eq("id", a.id);
+    toast.success("입실자로 등록되었어요. 상세에서 호실/금액을 마저 입력해 주세요.");
+    navigate({ to: "/tenants/$tenantId", params: { tenantId: tenant.id } });
+  };
+
   const filtered = tab === "all" ? items : items.filter((i) => i.status === tab);
 
   return (
@@ -197,14 +224,25 @@ function ApplicationsPage() {
                 </div>
               )}
               {a.status === "approved" && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="mt-3 w-full rounded-xl"
-                  onClick={() => updateStatus(a.id, "completed")}
-                >
-                  완료 처리
-                </Button>
+                <div className="mt-3 flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="flex-1 rounded-xl"
+                    onClick={() => updateStatus(a.id, "completed")}
+                  >
+                    완료
+                  </Button>
+                  {a.kind === "move_in" && (
+                    <Button
+                      size="sm"
+                      className="flex-1 rounded-xl"
+                      onClick={() => convertToTenant(a)}
+                    >
+                      입실자 등록
+                    </Button>
+                  )}
+                </div>
               )}
             </article>
           ))

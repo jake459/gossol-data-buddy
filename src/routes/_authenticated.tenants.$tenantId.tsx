@@ -243,6 +243,19 @@ function TenantDetailPage() {
     toast.success("청소가 요청되었습니다.");
   };
 
+  const handleInviteTenant = async () => {
+    if (!tenant || !user) return;
+    const { data, error } = await supabase
+      .from("tenant_invites")
+      .insert({ owner_id: user.id, branch_id: tenant.branch_id, tenant_id: tenant.id })
+      .select("token")
+      .single();
+    if (error || !data) return toast.error(error?.message ?? "초대 발급 실패");
+    const url = `${window.location.origin}/signup?invite=${data.token}&type=tenant`;
+    await navigator.clipboard?.writeText(url);
+    toast.success("입실자 초대 링크가 복사되었어요.");
+  };
+
   if (loading) {
     return (
       <MobileFrame>
@@ -498,7 +511,7 @@ function TenantDetailPage() {
         )}
 
         {/* Quick actions */}
-        <div className="grid grid-cols-3 gap-2 pt-1">
+        <div className="grid grid-cols-4 gap-2 pt-1">
           <ActionMini
             icon={PhoneCall}
             label="전화"
@@ -507,8 +520,9 @@ function TenantDetailPage() {
               window.location.href = `tel:${tenant.phone}`;
             }}
           />
-          <ActionMini icon={Receipt} label="청구서 발행" onClick={() => setIssueOpen(true)} />
+          <ActionMini icon={Receipt} label="청구서" onClick={() => setIssueOpen(true)} />
           <ActionMini icon={MessageSquare} label="메모" onClick={() => setMemoOpen(true)} />
+          <ActionMini icon={Copy} label="앱 초대" onClick={handleInviteTenant} />
         </div>
 
         {tenant.emergency_contact && (
