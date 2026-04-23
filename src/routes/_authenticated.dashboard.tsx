@@ -88,6 +88,7 @@ function DashboardPage() {
     todayDue: 0,
   });
   const [overduePage, setOverduePage] = useState(1);
+  const [overdueOpen, setOverdueOpen] = useState(false);
   const [detailId, setDetailId] = useState<string | null>(null);
   const OVERDUE_PAGE_SIZE = 6;
 
