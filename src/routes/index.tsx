@@ -1,19 +1,23 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
-import { supabaseServer } from "@/integrations/supabase/client.server";
+import { createFileRoute, Navigate } from "@tanstack/react-router";
+import { useAuth } from "@/hooks/useAuth";
+import { MobileFrame } from "@/components/MobileFrame";
 
 export const Route = createFileRoute("/")({
-  beforeLoad: async () => {
-    // SSR: check session and route appropriately. If unauthenticated → /login.
-    try {
-      const supabase = await supabaseServer();
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-      throw redirect({ to: session ? "/dashboard" : "/login", replace: true });
-    } catch (e) {
-      // Fallback for client-side: send to login
-      if ((e as { isRedirect?: boolean })?.isRedirect) throw e;
-      throw redirect({ to: "/login", replace: true });
-    }
-  },
+  component: RootRedirect,
 });
+
+function RootRedirect() {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <MobileFrame>
+        <div className="flex flex-1 items-center justify-center">
+          <div className="h-7 w-7 animate-spin rounded-full border-2 border-brand border-t-transparent" />
+        </div>
+      </MobileFrame>
+    );
+  }
+
+  return <Navigate to={user ? "/dashboard" : "/login"} replace />;
+}
