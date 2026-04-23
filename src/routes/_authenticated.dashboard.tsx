@@ -87,6 +87,9 @@ function DashboardPage() {
     upcoming: [],
     todayDue: 0,
   });
+  const [overduePage, setOverduePage] = useState(1);
+  const [detailId, setDetailId] = useState<string | null>(null);
+  const OVERDUE_PAGE_SIZE = 6;
 
   useEffect(() => {
     if (!selected) return;
