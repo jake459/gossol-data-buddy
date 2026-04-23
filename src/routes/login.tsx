@@ -56,7 +56,6 @@ function LoginPage() {
       toast.error(toKoreanAuthError(error.message));
       return;
     }
-    toast.success("환영합니다!");
     // navigation handled by useEffect watching session
   };
 

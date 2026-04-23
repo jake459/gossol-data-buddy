@@ -58,7 +58,18 @@ type Stats = {
 function DashboardPage() {
   const { user } = useAuth();
   const { selected } = useBranch();
+  const [profileName, setProfileName] = useState<string | null>(null);
+  useEffect(() => {
+    if (!user) return;
+    supabase
+      .from("profiles")
+      .select("display_name")
+      .eq("user_id", user.id)
+      .maybeSingle()
+      .then(({ data }) => setProfileName(data?.display_name ?? null));
+  }, [user?.id]);
   const greetingName =
+    profileName ??
     (user?.user_metadata?.full_name as string | undefined) ??
     (user?.user_metadata?.display_name as string | undefined) ??
     user?.email?.split("@")[0] ??
@@ -255,7 +266,7 @@ function DashboardPage() {
               icon={DoorOpen}
               color="text-emerald-600"
               bg="bg-emerald-50"
-              label={stats.vacant > 0 ? `공실 ${stats.vacant}실 — 입실 모집 가능` : "전 호실 입실 완료"}
+              label={stats.vacant > 0 ? `공실 ${stats.vacant}건 · 입실 모집 가능` : "전 호실 입실 완료"}
               empty={stats.vacant === 0}
               to="/rooms"
             />

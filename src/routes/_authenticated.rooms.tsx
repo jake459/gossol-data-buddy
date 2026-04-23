@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { Plus, DoorOpen, Filter, X, Sparkles } from "lucide-react";
+import { Plus, DoorOpen, Filter, X, Sparkles, LayoutGrid } from "lucide-react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { TopBar } from "@/components/TopBar";
 import { BottomTabs } from "@/components/BottomTabs";
@@ -194,17 +194,25 @@ function RoomsPage() {
     <MobileFrame>
       <TopBar />
       <header className="bg-gradient-to-b from-white/85 to-transparent px-4 pb-3 pt-3 backdrop-blur-sm">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           <h1 className="text-[15px] font-bold">호실 현황</h1>
-          <Button
-            size="sm"
-            onClick={() =>
-              setEdit({ status: "vacant", size_type: "standard", extra_options: [], tags: [] })
-            }
-            className="h-9 rounded-xl"
-          >
-            <Plus className="h-4 w-4" /> 호실 추가
-          </Button>
+          <div className="flex items-center gap-1.5">
+            <Link
+              to="/room-types"
+              className="inline-flex h-9 items-center gap-1 rounded-xl border border-border bg-card px-2.5 text-[12.5px] font-semibold hover:bg-accent"
+            >
+              <LayoutGrid className="h-3.5 w-3.5" /> 방 타입
+            </Link>
+            <Button
+              size="sm"
+              onClick={() =>
+                setEdit({ status: "vacant", size_type: "standard", extra_options: [], tags: [] })
+              }
+              className="h-9 rounded-xl"
+            >
+              <Plus className="h-4 w-4" /> 호실 추가
+            </Button>
+          </div>
         </div>
         <div className="mt-3 grid grid-cols-4 gap-1.5 text-center text-[11px]">
           {(["vacant", "occupied", "cleaning", "maintenance"] as const).map((s) => (
