@@ -15,6 +15,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useBranch } from "@/hooks/useBranch";
+import { notify } from "@/lib/notifications";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/tenants/new")({
