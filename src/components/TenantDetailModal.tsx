@@ -248,18 +248,8 @@ function HeroStat({ label, value, highlight }: { label: string; value: string; h
     </div>
   );
 }
-  return (
-    <div
-      className={cn(
-        "rounded-xl bg-white/12 px-2.5 py-2 ring-1 ring-white/20 backdrop-blur",
-        highlight && "bg-rose-500/40 ring-rose-200/40",
-      )}
-    >
-      <p className="text-[10px] font-semibold uppercase tracking-wider opacity-80">{label}</p>
-      <p className="mt-0.5 text-[15px] font-bold leading-tight">{value}</p>
-    </div>
-  );
-}
+
+
 
 function ActionBtn({
   icon: Icon,
