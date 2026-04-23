@@ -229,19 +229,6 @@ function RoomsPage() {
             active={fStatus !== "all"}
             onClear={() => setFStatus("all")}
           />
-          <Select value={fFloor} onValueChange={setFFloor}>
-            <SelectTrigger className="h-8 w-auto min-w-[80px] rounded-full text-[12px]">
-              <SelectValue placeholder="층 전체" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">층 전체</SelectItem>
-              {floors.map((f) => (
-                <SelectItem key={f} value={String(f)}>
-                  {f}층
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
           <Select value={fCategory} onValueChange={setFCategory}>
             <SelectTrigger className="h-8 w-auto min-w-[100px] rounded-full text-[12px]">
               <SelectValue placeholder="타입 전체" />
