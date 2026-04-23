@@ -243,6 +243,19 @@ function TenantDetailPage() {
     toast.success("청소가 요청되었습니다.");
   };
 
+  const handleInviteTenant = async () => {
+    if (!tenant || !user) return;
+    const { data, error } = await supabase
+      .from("tenant_invites")
+      .insert({ owner_id: user.id, branch_id: tenant.branch_id, tenant_id: tenant.id })
+      .select("token")
+      .single();
+    if (error || !data) return toast.error(error?.message ?? "초대 발급 실패");
+    const url = `${window.location.origin}/signup?invite=${data.token}&type=tenant`;
+    await navigator.clipboard?.writeText(url);
+    toast.success("입실자 초대 링크가 복사되었어요.");
+  };
+
   if (loading) {
     return (
       <MobileFrame>
