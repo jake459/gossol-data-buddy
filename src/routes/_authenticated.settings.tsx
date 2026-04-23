@@ -227,11 +227,11 @@ function ToggleRow({
   onChange: (v: boolean) => void;
 }) {
   return (
-    <div className="flex items-center gap-3 px-4 py-3">
+    <div className="flex items-center gap-2.5 px-3 py-2.5">
       <Icon className="h-4 w-4 text-brand" />
       <div className="min-w-0 flex-1">
-        <p className="text-[13.5px] font-semibold">{label}</p>
-        <p className="text-[11.5px] text-muted-foreground">{description}</p>
+        <p className="text-[12.5px] font-semibold">{label}</p>
+        <p className="text-[11px] text-muted-foreground">{description}</p>
       </div>
       <Switch checked={value} onCheckedChange={onChange} />
     </div>
