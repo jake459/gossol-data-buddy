@@ -181,31 +181,31 @@ function DashboardPage() {
   return (
     <MobileFrame>
       <TopBar />
-      <main className="flex-1 space-y-2 px-3 py-2">
-        <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[oklch(0.46_0.18_258)] via-[oklch(0.4_0.18_262)] to-[oklch(0.3_0.16_268)] p-3 text-white shadow-[0_10px_25px_-12px_oklch(0.32_0.16_262/0.55)]">
-          <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-white/15 blur-3xl" />
+      <main className="flex-1 space-y-3 px-4 py-3">
+        <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[oklch(0.46_0.18_258)] via-[oklch(0.4_0.18_262)] to-[oklch(0.3_0.16_268)] p-4 text-white shadow-[0_14px_30px_-14px_oklch(0.32_0.16_262/0.6)]">
+          <div className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-white/15 blur-3xl" />
           <div className="relative">
-            <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-widest opacity-85">
+            <div className="flex items-center justify-between text-[10.5px] font-semibold uppercase tracking-widest opacity-85">
               <span className="inline-flex items-center gap-1">
-                <Sparkles className="h-3 w-3" /> {timeGreeting}
+                <Sparkles className="h-3.5 w-3.5" /> {timeGreeting}
               </span>
               <span className="opacity-80">{dateLabel}</span>
             </div>
-            <h1 className="mt-1 text-[15px] font-bold leading-tight">
+            <h1 className="mt-1.5 text-[18px] font-bold leading-tight">
               {greetingName} 님 👋
             </h1>
-            <p className="mt-0.5 text-[11px] opacity-85">
+            <p className="mt-0.5 text-[12px] opacity-85">
               {selected ? `${selected.name} 운영 현황` : "지점을 선택해 주세요"}
             </p>
-            <div className="mt-2 flex items-center justify-between rounded-lg bg-white/12 p-2 backdrop-blur-md ring-1 ring-white/20">
+            <div className="mt-3 flex items-center justify-between rounded-xl bg-white/12 p-3 backdrop-blur-md ring-1 ring-white/20">
               <div className="min-w-0">
-                <div className="text-[9.5px] font-semibold uppercase tracking-wider opacity-80">방 가동률</div>
-                <div className="text-[18px] font-black leading-none">{occupancy}%</div>
-                <div className="mt-0.5 text-[10px] opacity-80">
+                <div className="text-[10px] font-semibold uppercase tracking-wider opacity-80">방 가동률</div>
+                <div className="text-[24px] font-black leading-none">{occupancy}%</div>
+                <div className="mt-1 text-[11px] opacity-80">
                   {totalRooms}실 중 {stats.occupied}실 입실
                 </div>
               </div>
-              <div className="ml-3 h-1.5 w-1/2 overflow-hidden rounded-full bg-white/20">
+              <div className="ml-3 h-2 w-1/2 overflow-hidden rounded-full bg-white/20">
                 <div
                   className="h-full rounded-full bg-gradient-to-r from-white to-[oklch(0.85_0.15_205)] transition-all"
                   style={{ width: `${occupancy}%` }}
@@ -215,7 +215,7 @@ function DashboardPage() {
           </div>
         </section>
 
-        <section className="grid grid-cols-3 gap-1.5">
+        <section className="grid grid-cols-3 gap-2">
           <Tile to="/tenants" icon={Users} label="입실" value={`${stats.occupied}명`} tone="brand" />
           <Tile
             to="/invoices"
@@ -234,9 +234,9 @@ function DashboardPage() {
         </section>
 
         {/* Today's tasks — owner action panel */}
-        <section className="rounded-xl border border-border bg-card p-2.5">
-          <h2 className="text-[12px] font-bold">오늘 할 일</h2>
-          <div className="mt-1.5 space-y-0.5 text-[12px]">
+        <section className="rounded-2xl border border-border bg-card p-3.5">
+          <h2 className="text-[13px] font-bold">오늘 할 일</h2>
+          <div className="mt-2 space-y-1 text-[13px]">
             <TodoRow
               icon={Receipt}
               color="text-amber-600"
@@ -262,38 +262,38 @@ function DashboardPage() {
 
         {/* Overdue tenants — quick contact */}
         {stats.overdueTenants.length > 0 && (
-          <section className="rounded-xl border border-rose-200 bg-rose-50/40 p-2.5">
+          <section className="rounded-2xl border border-rose-200 bg-rose-50/40 p-3.5">
             <div className="flex items-center justify-between">
-              <h2 className="inline-flex items-center gap-1 text-[12px] font-bold text-rose-700">
-                <AlertCircle className="h-3.5 w-3.5" /> 미납자 현황
-                <span className="rounded-full bg-rose-600 px-1.5 py-0.5 text-[9.5px] font-bold text-white">
+              <h2 className="inline-flex items-center gap-1.5 text-[13px] font-bold text-rose-700">
+                <AlertCircle className="h-4 w-4" /> 미납자 현황
+                <span className="rounded-full bg-rose-600 px-1.5 py-0.5 text-[10px] font-bold text-white">
                   {stats.overdueTenants.length}
                 </span>
               </h2>
-              <Link to="/invoices" className="text-[11px] font-semibold text-rose-700">
+              <Link to="/invoices" className="text-[12px] font-semibold text-rose-700">
                 전체
               </Link>
             </div>
-            <ul className="mt-1 divide-y divide-rose-100">
+            <ul className="mt-1.5 divide-y divide-rose-100">
               {stats.overdueTenants.slice(0, 2).map((t) => (
-                <li key={`${t.id}-${t.due_date}`} className="flex items-center gap-2 py-1">
+                <li key={`${t.id}-${t.due_date}`} className="flex items-center gap-2 py-1.5">
                   <Link
                     to="/tenants/$tenantId"
                     params={{ tenantId: t.id }}
                     className="min-w-0 flex-1"
                   >
-                    <p className="truncate text-[12px] font-semibold text-foreground">{t.name}</p>
-                    <p className="text-[10.5px] text-rose-700">
+                    <p className="truncate text-[13px] font-semibold text-foreground">{t.name}</p>
+                    <p className="text-[11px] text-rose-700">
                       {formatKRW(t.amount)} · {t.due_date}
                     </p>
                   </Link>
                   {t.phone && (
                     <a
                       href={`tel:${t.phone}`}
-                      className="grid h-7 w-7 place-items-center rounded-full bg-white text-rose-600 ring-1 ring-rose-200"
+                      className="grid h-8 w-8 place-items-center rounded-full bg-white text-rose-600 ring-1 ring-rose-200"
                       aria-label="전화"
                     >
-                      <Phone className="h-3 w-3" />
+                      <Phone className="h-3.5 w-3.5" />
                     </a>
                   )}
                 </li>
@@ -302,17 +302,17 @@ function DashboardPage() {
           </section>
         )}
 
-        <section className="rounded-xl border border-border bg-card p-2.5">
+        <section className="rounded-2xl border border-border bg-card p-3.5">
           <div className="flex items-center justify-between">
-            <h2 className="text-[12px] font-bold">입·퇴실 예정</h2>
-            <Link to="/schedule" className="text-[11px] font-semibold text-brand">
+            <h2 className="text-[13px] font-bold">입·퇴실 예정</h2>
+            <Link to="/schedule" className="text-[12px] font-semibold text-brand">
               전체
             </Link>
           </div>
-          <ul className="mt-1 space-y-1 text-[12px]">
+          <ul className="mt-1.5 space-y-1.5 text-[13px]">
             {stats.upcoming.length === 0 ? (
-              <li className="flex items-center gap-1.5 text-muted-foreground">
-                <CalendarClock className="h-3.5 w-3.5 text-brand" /> 예정된 일정이 없어요.
+              <li className="flex items-center gap-2 text-muted-foreground">
+                <CalendarClock className="h-4 w-4 text-brand" /> 예정된 일정이 없어요.
               </li>
             ) : (
               stats.upcoming.slice(0, 3).map((e) => {
@@ -325,10 +325,10 @@ function DashboardPage() {
                       ? "text-rose-600"
                       : "text-brand";
                 return (
-                  <li key={e.id} className="flex items-center gap-1.5">
-                    <Icon className={cn("h-3.5 w-3.5", color)} />
+                  <li key={e.id} className="flex items-center gap-2">
+                    <Icon className={cn("h-4 w-4", color)} />
                     <span className="truncate font-medium text-foreground">{e.title}</span>
-                    <span className="ml-auto text-[11px] text-muted-foreground">{e.event_date}</span>
+                    <span className="ml-auto text-[11.5px] text-muted-foreground">{e.event_date}</span>
                   </li>
                 );
               })
@@ -336,7 +336,7 @@ function DashboardPage() {
           </ul>
         </section>
 
-        <section className="grid grid-cols-4 gap-1.5">
+        <section className="grid grid-cols-4 gap-2">
           <QuickLink to="/applications" icon={ClipboardList} label="문의" />
           <QuickLink to="/stats" icon={TrendingUp} label="통계" />
           <QuickLink to="/community" icon={Megaphone} label="커뮤니티" />
@@ -398,12 +398,12 @@ function Tile({
   return (
     <Link
       to={to}
-      className="rounded-lg border border-border bg-card p-2 transition hover:bg-accent/40"
+      className="rounded-xl border border-border bg-card p-2.5 transition hover:bg-accent/40"
     >
-      <div className="flex items-center gap-1 text-[9.5px] font-semibold uppercase tracking-wide text-muted-foreground">
-        <Icon className={cn("h-3 w-3", toneClass)} /> {label}
+      <div className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+        <Icon className={cn("h-3.5 w-3.5", toneClass)} /> {label}
       </div>
-      <div className={cn("mt-0.5 text-[15px] font-bold leading-tight", toneClass)}>{value}</div>
+      <div className={cn("mt-1 text-[17px] font-bold leading-tight", toneClass)}>{value}</div>
     </Link>
   );
 }
@@ -420,9 +420,9 @@ function QuickLink({
   return (
     <Link
       to={to}
-      className="flex flex-col items-center gap-1 rounded-lg border border-border bg-card p-2 text-[11px] font-semibold transition hover:bg-accent/40"
+      className="flex flex-col items-center gap-1 rounded-xl border border-border bg-card p-2.5 text-[11.5px] font-semibold transition hover:bg-accent/40"
     >
-      <Icon className="h-4 w-4 text-brand" />
+      <Icon className="h-4.5 w-4.5 text-brand" />
       <span className="truncate">{label}</span>
     </Link>
   );

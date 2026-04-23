@@ -111,15 +111,15 @@ function SettingsPage() {
         <h1 className="flex-1 text-[15px] font-bold">설정</h1>
       </header>
 
-      <main className="flex-1 space-y-5 px-4 py-4">
-        <section className="rounded-2xl border border-border bg-card p-4">
-          <div className="flex items-center gap-3">
-            <span className="grid h-12 w-12 place-items-center rounded-xl bg-brand/10 text-brand text-[18px] font-bold">
+      <main className="flex-1 space-y-3 px-3 py-3">
+        <section className="rounded-2xl border border-border bg-card p-3">
+          <div className="flex items-center gap-2.5">
+            <span className="grid h-10 w-10 place-items-center rounded-xl bg-brand/10 text-brand text-[15px] font-bold">
               {user?.email?.[0]?.toUpperCase() ?? "G"}
             </span>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-[14px] font-semibold">{user?.email}</p>
-              <p className="text-[12px] text-muted-foreground">현재 지점: {selected?.name ?? "—"}</p>
+              <p className="truncate text-[13px] font-semibold">{user?.email}</p>
+              <p className="text-[11px] text-muted-foreground">현재 지점: {selected?.name ?? "—"}</p>
             </div>
           </div>
         </section>
@@ -168,7 +168,7 @@ function SettingsPage() {
           <button
             type="button"
             onClick={handleSignOut}
-            className="flex w-full items-center gap-3 px-4 py-3 text-left text-[13.5px] font-semibold text-rose-600 hover:bg-rose-50"
+            className="flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-[12.5px] font-semibold text-rose-600 hover:bg-rose-50"
           >
             <LogOut className="h-4 w-4" /> 로그아웃
           </button>
@@ -182,7 +182,7 @@ function SettingsPage() {
 function NavSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
-      <h2 className="mb-2 px-1 text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+      <h2 className="mb-1.5 px-1 text-[10.5px] font-bold uppercase tracking-wider text-muted-foreground">
         {title}
       </h2>
       <div className="overflow-hidden rounded-2xl border border-border bg-card divide-y divide-border">
@@ -204,7 +204,7 @@ function NavItem({
   return (
     <Link
       to={to}
-      className="flex items-center gap-3 px-4 py-3 text-[13.5px] font-semibold transition hover:bg-accent/40"
+      className="flex items-center gap-2.5 px-3 py-2.5 text-[12.5px] font-semibold transition hover:bg-accent/40"
     >
       <Icon className="h-4 w-4 text-brand" />
       <span className="flex-1">{label}</span>
@@ -227,11 +227,11 @@ function ToggleRow({
   onChange: (v: boolean) => void;
 }) {
   return (
-    <div className="flex items-center gap-3 px-4 py-3">
+    <div className="flex items-center gap-2.5 px-3 py-2.5">
       <Icon className="h-4 w-4 text-brand" />
       <div className="min-w-0 flex-1">
-        <p className="text-[13.5px] font-semibold">{label}</p>
-        <p className="text-[11.5px] text-muted-foreground">{description}</p>
+        <p className="text-[12.5px] font-semibold">{label}</p>
+        <p className="text-[11px] text-muted-foreground">{description}</p>
       </div>
       <Switch checked={value} onCheckedChange={onChange} />
     </div>
@@ -287,7 +287,7 @@ function StaffInviteRow() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex w-full items-center gap-3 px-4 py-3 text-left text-[13.5px] font-semibold transition hover:bg-accent/40"
+        className="flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-[12.5px] font-semibold transition hover:bg-accent/40"
       >
         <UserPlus className="h-4 w-4 text-brand" />
         <span className="flex-1">스탭 초대</span>
