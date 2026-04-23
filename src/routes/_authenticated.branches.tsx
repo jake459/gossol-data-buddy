@@ -32,6 +32,7 @@ function BranchesPage() {
   const { branches, refresh, setSelectedId, selectedId } = useBranch();
   const { confirm, ConfirmDialog } = useConfirm();
   const [edit, setEdit] = useState<{ id?: string; name?: string; address?: string; phone?: string } | null>(null);
+  const [nameWarnOpen, setNameWarnOpen] = useState(false);
 
   useEffect(() => {
     refresh();
@@ -39,7 +40,11 @@ function BranchesPage() {
   }, []);
 
   const save = async () => {
-    if (!user || !edit?.name?.trim()) return toast.error("지점 이름을 입력해 주세요.");
+    if (!user) return;
+    if (!edit?.name?.trim()) {
+      setNameWarnOpen(true);
+      return;
+    }
     const payload = {
       name: edit.name.trim(),
       address: edit.address?.trim() || null,
