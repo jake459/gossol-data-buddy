@@ -19,6 +19,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useBranch } from "@/hooks/useBranch";
 import { toast } from "sonner";
 import { useConfirm } from "@/components/ConfirmModal";
+import { InfoModal } from "@/components/InfoModal";
 
 export const Route = createFileRoute("/_authenticated/branches")({
   head: () => ({ meta: [{ title: "지점 관리 — Gossol" }] }),
