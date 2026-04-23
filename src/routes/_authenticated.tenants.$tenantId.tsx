@@ -2,16 +2,13 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState, useCallback } from "react";
 import {
   ChevronLeft,
-  Phone,
   CheckCircle2,
   LogOut,
   Pencil,
   Trash2,
   MessageSquare,
-  ShieldAlert,
   PhoneCall,
   FileText,
-  FileSignature,
   Wallet,
   RotateCcw,
   CalendarPlus,
@@ -19,6 +16,8 @@ import {
   Plus,
   Receipt,
   MoreVertical,
+  ClipboardCheck,
+  Sparkles,
 } from "lucide-react";
 import { toast as _toast } from "sonner";
 import { MobileFrame } from "@/components/MobileFrame";
