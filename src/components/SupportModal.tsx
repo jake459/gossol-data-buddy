@@ -78,7 +78,7 @@ export function SupportModal({
             <HeadphonesIcon className="h-4 w-4" />
             <DialogTitle className="text-base font-bold">고객센터</DialogTitle>
           </div>
-          <DialogDescription className="text-[12.5px] text-muted-foreground">
+          <DialogDescription className="break-keep text-[12.5px] leading-relaxed text-muted-foreground">
             운영 중 궁금한 점이나 불편한 점을 빠르게 도와드릴게요.
           </DialogDescription>
         </DialogHeader>
@@ -119,8 +119,10 @@ export function SupportModal({
               </button>
             </div>
 
-            <div className="rounded-xl border border-dashed border-border bg-muted/30 p-3 text-[11.5px] text-muted-foreground">
-              <b className="text-foreground">운영시간</b> 평일 09:00–18:00 (점심 12:30–13:30) · 주말/공휴일 휴무
+            <div className="break-keep rounded-xl border border-dashed border-border bg-muted/30 p-3 text-[11.5px] leading-relaxed text-muted-foreground">
+              <b className="text-foreground">운영시간</b> 평일 09:00–18:00
+              <br />
+              (점심 12:30–13:30) · 주말/공휴일 휴무
             </div>
 
             <Button

@@ -40,7 +40,7 @@ export function BranchSwitcher({
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-[14px] font-semibold">{b.name}</span>
-                    {b.address && (
+                    {b.address && /[가-힣a-zA-Z]/.test(b.address) && (
                       <span className="block truncate text-[12px] text-muted-foreground">
                         {b.address}
                       </span>
