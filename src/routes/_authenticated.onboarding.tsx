@@ -37,11 +37,12 @@ function OnboardingPage() {
   const [address, setAddress] = useState("");
   const [phone, setPhone] = useState("");
   const [loading, setLoading] = useState(false);
+  const [warnOpen, setWarnOpen] = useState(false);
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      toast.error("지점 이름을 입력해 주세요.");
+      setWarnOpen(true);
       return;
     }
     if (!user) return;
