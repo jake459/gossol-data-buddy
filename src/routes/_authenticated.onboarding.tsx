@@ -71,7 +71,7 @@ function OnboardingPage() {
 
   return (
     <MobileFrame>
-      <main className="relative flex flex-1 flex-col overflow-hidden bg-gradient-to-b from-[oklch(0.98_0.02_268)] via-background to-background">
+      <main className="relative flex flex-1 flex-col overflow-y-auto bg-gradient-to-b from-[oklch(0.98_0.02_268)] via-background to-background">
         {/* Ambient gradient blobs */}
         <div
           aria-hidden
@@ -83,7 +83,7 @@ function OnboardingPage() {
         />
 
         {/* Top bar — back option when on form step */}
-        <div className="relative z-10 flex items-center justify-between px-5 pt-5">
+        <div className="relative z-10 flex items-center justify-between gap-2 px-5 pt-5">
           {step === "form" ? (
             <button
               type="button"
@@ -97,9 +97,9 @@ function OnboardingPage() {
           )}
           <Link
             to="/dashboard"
-            className="text-[12px] font-medium text-muted-foreground/80 underline-offset-2 hover:text-foreground hover:underline"
+            className="inline-flex items-center gap-1.5 rounded-full border-2 border-brand/30 bg-white/80 px-4 py-2 text-[12.5px] font-semibold text-brand shadow-sm backdrop-blur transition hover:border-brand/50 hover:bg-white"
           >
-            나중에 할게요
+            나중에 할게요 <ArrowRight className="h-3.5 w-3.5" />
           </Link>
         </div>
 
@@ -121,6 +121,7 @@ function OnboardingPage() {
           />
         )}
       </main>
+      <BottomTabs />
     </MobileFrame>
   );
 }
