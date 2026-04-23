@@ -189,9 +189,17 @@ function WelcomeStep({
           첫 지점 등록하기
           <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
         </Button>
-        <p className="mt-3 text-center text-[11.5px] text-muted-foreground">
-          지점은 언제든 [설정] 메뉴에서 추가하거나 수정할 수 있어요.
-        </p>
+        <div className="mt-4 flex items-start gap-2.5 rounded-2xl border-2 border-dashed border-brand/25 bg-brand/[0.04] p-3.5">
+          <div className="grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-brand/10 text-brand">
+            <CheckCircle2 className="h-4 w-4" />
+          </div>
+          <div className="text-[12px] leading-relaxed text-foreground/80">
+            <p className="font-semibold text-foreground">지금 안 해도 괜찮아요.</p>
+            <p className="mt-0.5 text-muted-foreground">
+              상단의 <span className="font-semibold text-brand">‘나중에 할게요’</span>를 누르면 대시보드로 이동하고, 지점은 [설정]에서 언제든 추가할 수 있어요.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
   );
