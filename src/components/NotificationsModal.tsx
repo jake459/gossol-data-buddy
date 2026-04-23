@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Bell, AlertCircle, CalendarClock, DoorOpen, CheckCircle2 } from "lucide-react";
 import {
   Dialog,
@@ -7,15 +8,38 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 
-type Notice = {
+type DbNotification = {
   id: string;
-  kind: "overdue" | "schedule" | "room" | "done";
+  category: string;
   title: string;
-  desc: string;
-  time: string;
-  unread?: boolean;
+  body: string | null;
+  link: string | null;
+  read_at: string | null;
+  created_at: string;
 };
+
+type Kind = "overdue" | "schedule" | "room" | "done";
+
+function categoryToKind(c: string): Kind {
+  if (c === "overdue" || c === "invoice_overdue") return "overdue";
+  if (c === "move_in" || c === "move_out" || c === "extension" || c === "schedule") return "schedule";
+  if (c === "room_tour" || c === "application" || c === "inspection" || c === "cleaning") return "room";
+  return "done";
+}
+
+function timeAgo(iso: string) {
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return "방금 전";
+  if (m < 60) return `${m}분 전`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `${h}시간 전`;
+  const d = Math.floor(h / 24);
+  return `${d}일 전`;
+}
 
 const ICONS = {
   overdue: { Icon: AlertCircle, tone: "bg-[oklch(0.95_0.06_30)] text-[oklch(0.5_0.18_30)]" },
@@ -24,22 +48,42 @@ const ICONS = {
   done: { Icon: CheckCircle2, tone: "bg-[oklch(0.95_0.06_158)] text-[oklch(0.4_0.15_158)]" },
 } as const;
 
-/**
- * 원장님용 알림 센터.
- * 데모/실서비스 모두에서 동일한 UX를 제공하기 위해 props로 알림 목록을 주입받지 않고
- * 운영 안내성 더미 데이터로 시작합니다. (추후 Supabase notifications 테이블 연동 예정)
- */
 export function NotificationsModal({
   open,
   onOpenChange,
-  notices,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  notices?: Notice[];
 }) {
-  const items: Notice[] = notices ?? DEFAULT_NOTICES;
-  const unreadCount = items.filter((n) => n.unread).length;
+  const { user } = useAuth();
+  const [items, setItems] = useState<DbNotification[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!open || !user) return;
+    setLoading(true);
+    supabase
+      .from("notifications")
+      .select("id, category, title, body, link, read_at, created_at")
+      .eq("recipient_id", user.id)
+      .order("created_at", { ascending: false })
+      .limit(30)
+      .then(({ data }) => {
+        setItems((data ?? []) as DbNotification[]);
+        setLoading(false);
+        // Mark all unread as read (best effort)
+        const unread = (data ?? []).filter((n) => !n.read_at).map((n) => n.id);
+        if (unread.length > 0) {
+          supabase
+            .from("notifications")
+            .update({ read_at: new Date().toISOString() })
+            .in("id", unread)
+            .then(() => {});
+        }
+      });
+  }, [open, user]);
+
+  const unreadCount = items.filter((n) => !n.read_at).length;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -52,74 +96,55 @@ export function NotificationsModal({
             </DialogTitle>
           </div>
           <DialogDescription className="text-[12.5px] text-muted-foreground">
-            월세 미납·일정·문의 등 운영 알림을 한곳에서 확인하세요.
+            입퇴실, 청구, 점검·청소 등 운영 알림을 한곳에서 확인하세요.
           </DialogDescription>
         </DialogHeader>
 
-        <ul className="max-h-[60vh] divide-y divide-border overflow-y-auto">
-          {items.map((n) => {
-            const { Icon, tone } = ICONS[n.kind];
-            return (
-              <li
-                key={n.id}
-                className={cn(
-                  "flex gap-3 px-5 py-3.5 transition hover:bg-accent/40",
-                  n.unread && "bg-[oklch(0.985_0.012_258)]",
-                )}
-              >
-                <span className={cn("mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full", tone)}>
-                  <Icon className="h-4 w-4" />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-1.5">
-                    <p className="truncate text-[13px] font-semibold">{n.title}</p>
-                    {n.unread && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[oklch(0.6_0.2_30)]" />}
+        {loading ? (
+          <p className="py-10 text-center text-sm text-muted-foreground">불러오는 중…</p>
+        ) : items.length === 0 ? (
+          <div className="px-5 py-10 text-center">
+            <Bell className="mx-auto h-7 w-7 text-muted-foreground/60" />
+            <p className="mt-2 text-[13px] font-semibold">받은 알림이 없어요</p>
+            <p className="mt-1 text-[11.5px] text-muted-foreground">
+              입실 등록·퇴실·청구서 등 활동이 발생하면 여기에 표시됩니다.
+            </p>
+          </div>
+        ) : (
+          <ul className="max-h-[60vh] divide-y divide-border overflow-y-auto">
+            {items.map((n) => {
+              const kind = categoryToKind(n.category);
+              const { Icon, tone } = ICONS[kind];
+              const unread = !n.read_at;
+              return (
+                <li
+                  key={n.id}
+                  className={cn(
+                    "flex gap-3 px-5 py-3.5 transition hover:bg-accent/40",
+                    unread && "bg-[oklch(0.985_0.012_258)]",
+                  )}
+                >
+                  <span className={cn("mt-0.5 grid h-9 w-9 shrink-0 place-items-center rounded-full", tone)}>
+                    <Icon className="h-4 w-4" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5">
+                      <p className="truncate text-[13px] font-semibold">{n.title}</p>
+                      {unread && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[oklch(0.6_0.2_30)]" />}
+                    </div>
+                    {n.body && <p className="mt-0.5 line-clamp-2 text-[12px] text-muted-foreground">{n.body}</p>}
+                    <p className="mt-1 text-[10.5px] text-muted-foreground/80">{timeAgo(n.created_at)}</p>
                   </div>
-                  <p className="mt-0.5 line-clamp-2 text-[12px] text-muted-foreground">{n.desc}</p>
-                  <p className="mt-1 text-[10.5px] text-muted-foreground/80">{n.time}</p>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
+                </li>
+              );
+            })}
+          </ul>
+        )}
 
         <div className="border-t px-5 py-3 text-center text-[11px] text-muted-foreground">
-          최근 7일간 받은 알림을 표시합니다.
+          최근 30개 알림을 표시합니다.
         </div>
       </DialogContent>
     </Dialog>
   );
 }
-
-const DEFAULT_NOTICES: Notice[] = [
-  {
-    id: "1",
-    kind: "overdue",
-    title: "월세 미납 알림",
-    desc: "302호 김민수 님의 월세가 3일째 미납 상태입니다.",
-    time: "오늘 09:12",
-    unread: true,
-  },
-  {
-    id: "2",
-    kind: "schedule",
-    title: "내일 입실 예정",
-    desc: "박지영 님이 내일 오후 2시 405호로 입실할 예정입니다.",
-    time: "어제 18:40",
-    unread: true,
-  },
-  {
-    id: "3",
-    kind: "room",
-    title: "룸투어 문의 도착",
-    desc: "이서연 님이 1인실 룸투어를 신청했습니다.",
-    time: "2일 전",
-  },
-  {
-    id: "4",
-    kind: "done",
-    title: "월세 수납 완료",
-    desc: "201호 정현우 님의 이번 달 월세가 입금되었습니다.",
-    time: "3일 전",
-  },
-];
