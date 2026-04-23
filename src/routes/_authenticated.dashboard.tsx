@@ -234,9 +234,9 @@ function DashboardPage() {
         </section>
 
         {/* Today's tasks — owner action panel */}
-        <section className="rounded-2xl border border-border bg-card p-3">
-          <h2 className="text-[13px] font-bold">오늘 할 일</h2>
-          <div className="mt-2 space-y-1 text-[12.5px]">
+        <section className="rounded-xl border border-border bg-card p-2.5">
+          <h2 className="text-[12px] font-bold">오늘 할 일</h2>
+          <div className="mt-1.5 space-y-0.5 text-[12px]">
             <TodoRow
               icon={Receipt}
               color="text-amber-600"
@@ -251,7 +251,7 @@ function DashboardPage() {
               bg="bg-rose-50"
               label={
                 stats.overdueCount > 0
-                  ? `월세 미납 ${stats.overdueCount}건 · ${formatKRW(stats.overdueSum)}`
+                  ? `미납 ${stats.overdueCount}건 · ${formatKRW(stats.overdueSum)}`
                   : "미납자가 없어요"
               }
               empty={stats.overdueCount === 0}
@@ -262,41 +262,38 @@ function DashboardPage() {
 
         {/* Overdue tenants — quick contact */}
         {stats.overdueTenants.length > 0 && (
-          <section className="rounded-2xl border border-rose-200 bg-rose-50/40 p-3">
+          <section className="rounded-xl border border-rose-200 bg-rose-50/40 p-2.5">
             <div className="flex items-center justify-between">
-              <h2 className="inline-flex items-center gap-1.5 text-[13px] font-bold text-rose-700">
-                <AlertCircle className="h-4 w-4" /> 미납자 현황
-                <span className="rounded-full bg-rose-600 px-1.5 py-0.5 text-[10px] font-bold text-white">
-                  {stats.overdueTenants.length}명
+              <h2 className="inline-flex items-center gap-1 text-[12px] font-bold text-rose-700">
+                <AlertCircle className="h-3.5 w-3.5" /> 미납자 현황
+                <span className="rounded-full bg-rose-600 px-1.5 py-0.5 text-[9.5px] font-bold text-white">
+                  {stats.overdueTenants.length}
                 </span>
               </h2>
-              <Link to="/invoices" className="text-[11.5px] font-semibold text-rose-700">
+              <Link to="/invoices" className="text-[11px] font-semibold text-rose-700">
                 전체
               </Link>
             </div>
-            <p className="mt-1 text-center text-[11.5px] text-rose-600">
-              총 미납액: {formatKRW(stats.overdueSum)}
-            </p>
-            <ul className="mt-1.5 divide-y divide-rose-100">
-              {stats.overdueTenants.slice(0, 3).map((t) => (
-                <li key={`${t.id}-${t.due_date}`} className="flex items-center gap-2 py-1.5">
+            <ul className="mt-1 divide-y divide-rose-100">
+              {stats.overdueTenants.slice(0, 2).map((t) => (
+                <li key={`${t.id}-${t.due_date}`} className="flex items-center gap-2 py-1">
                   <Link
                     to="/tenants/$tenantId"
                     params={{ tenantId: t.id }}
                     className="min-w-0 flex-1"
                   >
-                    <p className="truncate text-[12.5px] font-semibold text-foreground">{t.name}</p>
-                    <p className="text-[11px] text-rose-700">
+                    <p className="truncate text-[12px] font-semibold text-foreground">{t.name}</p>
+                    <p className="text-[10.5px] text-rose-700">
                       {formatKRW(t.amount)} · {t.due_date}
                     </p>
                   </Link>
                   {t.phone && (
                     <a
                       href={`tel:${t.phone}`}
-                      className="grid h-8 w-8 place-items-center rounded-full bg-white text-rose-600 ring-1 ring-rose-200"
+                      className="grid h-7 w-7 place-items-center rounded-full bg-white text-rose-600 ring-1 ring-rose-200"
                       aria-label="전화"
                     >
-                      <Phone className="h-3.5 w-3.5" />
+                      <Phone className="h-3 w-3" />
                     </a>
                   )}
                 </li>
@@ -305,20 +302,20 @@ function DashboardPage() {
           </section>
         )}
 
-        <section className="rounded-2xl border border-border bg-card p-3">
+        <section className="rounded-xl border border-border bg-card p-2.5">
           <div className="flex items-center justify-between">
-            <h2 className="text-[13px] font-bold">입·퇴실 예정</h2>
-            <Link to="/schedule" className="text-[11.5px] font-semibold text-brand">
+            <h2 className="text-[12px] font-bold">입·퇴실 예정</h2>
+            <Link to="/schedule" className="text-[11px] font-semibold text-brand">
               전체
             </Link>
           </div>
-          <ul className="mt-2 space-y-1.5 text-[12.5px]">
+          <ul className="mt-1 space-y-1 text-[12px]">
             {stats.upcoming.length === 0 ? (
-              <li className="flex items-center gap-2 text-muted-foreground">
-                <CalendarClock className="h-4 w-4 text-brand" /> 예정된 입·퇴실이 없어요.
+              <li className="flex items-center gap-1.5 text-muted-foreground">
+                <CalendarClock className="h-3.5 w-3.5 text-brand" /> 예정된 일정이 없어요.
               </li>
             ) : (
-              stats.upcoming.map((e) => {
+              stats.upcoming.slice(0, 3).map((e) => {
                 const Icon =
                   e.kind === "move_in" ? LogIn : e.kind === "move_out" ? LogOut : CalendarClock;
                 const color =
@@ -328,10 +325,10 @@ function DashboardPage() {
                       ? "text-rose-600"
                       : "text-brand";
                 return (
-                  <li key={e.id} className="flex items-center gap-2">
-                    <Icon className={cn("h-4 w-4", color)} />
-                    <span className="font-medium text-foreground">{e.title}</span>
-                    <span className="ml-auto text-[12px] text-muted-foreground">{e.event_date}</span>
+                  <li key={e.id} className="flex items-center gap-1.5">
+                    <Icon className={cn("h-3.5 w-3.5", color)} />
+                    <span className="truncate font-medium text-foreground">{e.title}</span>
+                    <span className="ml-auto text-[11px] text-muted-foreground">{e.event_date}</span>
                   </li>
                 );
               })
@@ -339,11 +336,11 @@ function DashboardPage() {
           </ul>
         </section>
 
-        <section className="grid grid-cols-2 gap-2">
-          <QuickLink to="/applications" icon={ClipboardList} label="룸투어·입실 문의" />
-          <QuickLink to="/stats" icon={TrendingUp} label="운영 통계" />
-          <QuickLink to="/community" icon={Megaphone} label="원장님 커뮤니티" />
-          <QuickLink to="/branches" icon={Building2} label="지점 관리" />
+        <section className="grid grid-cols-4 gap-1.5">
+          <QuickLink to="/applications" icon={ClipboardList} label="문의" />
+          <QuickLink to="/stats" icon={TrendingUp} label="통계" />
+          <QuickLink to="/community" icon={Megaphone} label="커뮤니티" />
+          <QuickLink to="/branches" icon={Building2} label="지점" />
         </section>
       </main>
       <BottomTabs />
