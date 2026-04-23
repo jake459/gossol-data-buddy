@@ -126,6 +126,7 @@ function SettingsPage() {
         <NavSection title="운영">
           <NavItem to="/branches" icon={Building2} label="지점 관리" />
           <NavItem to="/applications" icon={ClipboardList} label="입실 신청서" />
+          <StaffInviteRow />
           <NavItem to="/community" icon={Megaphone} label="커뮤니티" />
           <NavItem to="/stats" icon={TrendingUp} label="운영 통계" />
         </NavSection>
