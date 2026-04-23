@@ -112,18 +112,9 @@ function RoomsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected?.id]);
 
-  const floors = useMemo(
-    () =>
-      Array.from(new Set(rooms.map((r) => r.floor).filter((f): f is number => f != null))).sort(
-        (a, b) => a - b,
-      ),
-    [rooms],
-  );
-
   const filtered = rooms.filter(
     (r) =>
       (fStatus === "all" || r.status === fStatus) &&
-      (fFloor === "all" || r.floor === Number(fFloor)) &&
       (fCategory === "all" || r.room_category === fCategory),
   );
 
