@@ -202,14 +202,14 @@ function DashboardPage() {
                     style={{ width: `${occupancy}%` }}
                   />
                 </div>
-                <div className="text-[11px] opacity-80">빈 방 {stats.vacant}실</div>
+                <div className="text-[11px] opacity-80">공실 {stats.vacant}실</div>
               </div>
             </div>
           </div>
         </section>
 
         <section className="grid grid-cols-2 gap-3">
-          <Tile to="/rooms" icon={DoorOpen} label="빈 방" value={`${stats.vacant}실`} tone="danger" />
+          <Tile to="/rooms" icon={DoorOpen} label="공실" value={`${stats.vacant}실`} tone="danger" />
           <Tile to="/tenants" icon={Users} label="입실 인원" value={`${stats.occupied}명`} tone="brand" />
           <Tile
             to="/invoices"
@@ -255,7 +255,7 @@ function DashboardPage() {
               icon={DoorOpen}
               color="text-emerald-600"
               bg="bg-emerald-50"
-              label={stats.vacant > 0 ? `빈 방 ${stats.vacant}실 — 입실 모집 가능` : "전 호실 입실 완료"}
+              label={stats.vacant > 0 ? `공실 ${stats.vacant}실 — 입실 모집 가능` : "전 호실 입실 완료"}
               empty={stats.vacant === 0}
               to="/rooms"
             />

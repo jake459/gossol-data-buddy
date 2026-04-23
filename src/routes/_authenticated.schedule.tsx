@@ -42,6 +42,8 @@ type EventRow = {
   event_time: string | null;
   kind: EventKind;
   memo: string | null;
+  /** synthetic: tenants 테이블에서 자동 생성된 항목은 편집 불가 */
+  readonly?: boolean;
 };
 
 const KIND_LABEL: Record<EventKind, string> = {
@@ -81,14 +83,68 @@ function SchedulePage() {
 
   const load = async () => {
     if (!selected) return;
-    const { data } = await supabase
-      .from("events")
-      .select("id, title, event_date, event_time, kind, memo")
-      .eq("branch_id", selected.id)
-      .gte("event_date", ymd(monthStart))
-      .lte("event_date", ymd(monthEnd))
-      .order("event_date");
-    setEvents((data ?? []) as EventRow[]);
+    const monthStartStr = ymd(monthStart);
+    const monthEndStr = ymd(monthEnd);
+
+    const [eventsRes, tenantsRes] = await Promise.all([
+      supabase
+        .from("events")
+        .select("id, title, event_date, event_time, kind, memo")
+        .eq("branch_id", selected.id)
+        .gte("event_date", monthStartStr)
+        .lte("event_date", monthEndStr)
+        .order("event_date"),
+      supabase
+        .from("tenants")
+        .select("id, name, move_in_date, move_out_date, status, room_id, rooms(room_number)")
+        .eq("branch_id", selected.id),
+    ]);
+
+    const merged: EventRow[] = ((eventsRes.data ?? []) as EventRow[]).slice();
+
+    type TenantRow = {
+      id: string;
+      name: string;
+      move_in_date: string | null;
+      move_out_date: string | null;
+      status: string;
+      room_id: string | null;
+      rooms: { room_number: string } | null;
+    };
+    const tenants = (tenantsRes.data ?? []) as unknown as TenantRow[];
+    for (const t of tenants) {
+      const roomLabel = t.rooms?.room_number ? `${t.rooms.room_number}호 · ` : "";
+      if (t.move_in_date && t.move_in_date >= monthStartStr && t.move_in_date <= monthEndStr) {
+        merged.push({
+          id: `tenant-in-${t.id}`,
+          title: `${t.name} 입실`,
+          event_date: t.move_in_date,
+          event_time: null,
+          kind: "move_in",
+          memo: `${roomLabel}입실 예정`,
+          readonly: true,
+        });
+      }
+      if (
+        t.move_out_date &&
+        t.move_out_date >= monthStartStr &&
+        t.move_out_date <= monthEndStr &&
+        t.status !== "moved_out"
+      ) {
+        merged.push({
+          id: `tenant-out-${t.id}`,
+          title: `${t.name} 퇴실`,
+          event_date: t.move_out_date,
+          event_time: null,
+          kind: "move_out",
+          memo: `${roomLabel}퇴실 예정`,
+          readonly: true,
+        });
+      }
+    }
+
+    merged.sort((a, b) => a.event_date.localeCompare(b.event_date));
+    setEvents(merged);
   };
 
   useEffect(() => {
@@ -225,7 +281,13 @@ function SchedulePage() {
               dayEvents.map((e) => (
                 <li
                   key={e.id}
-                  onClick={() => setEdit(e)}
+                  onClick={() => {
+                    if (e.readonly) {
+                      toast.info("입실/퇴실 일정은 입실자 화면에서 수정할 수 있어요.");
+                      return;
+                    }
+                    setEdit(e);
+                  }}
                   className="flex cursor-pointer items-start gap-3 rounded-2xl border border-border bg-card p-3.5"
                 >
                   <span className={cn("mt-1 h-2.5 w-2.5 shrink-0 rounded-full", KIND_TONE[e.kind])} />

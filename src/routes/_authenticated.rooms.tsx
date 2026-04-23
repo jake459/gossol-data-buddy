@@ -88,6 +88,8 @@ function RoomsPage() {
 
   const [fStatus, setFStatus] = useState<RoomStatus | "all">("all");
   const [fCategory, setFCategory] = useState<string>("all");
+  const [page, setPage] = useState(1);
+  const PAGE_SIZE = 10;
 
   const load = async () => {
     if (!selected) return;
@@ -118,6 +120,10 @@ function RoomsPage() {
       (fStatus === "all" || r.status === fStatus) &&
       (fCategory === "all" || r.room_category === fCategory),
   );
+
+  useEffect(() => setPage(1), [fStatus, fCategory, selected?.id]);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const pageItems = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const counts = useMemo(() => {
     const c: Record<RoomStatus, number> = { vacant: 0, occupied: 0, cleaning: 0, maintenance: 0 };
@@ -255,51 +261,98 @@ function RoomsPage() {
             }
           />
         ) : (
-          <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
-            {filtered.map((r) => {
-              const type = types.find((t) => t.id === r.room_type_id);
-              const auto = r.auto_name ?? buildAutoRoomName({
-                category: r.room_category,
-                window_type: r.window_type,
-                size_type: r.size_type,
-              });
-              return (
-                <li key={r.id}>
+          <>
+            <ul className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
+              {pageItems.map((r) => {
+                const type = types.find((t) => t.id === r.room_type_id);
+                const auto = r.auto_name ?? buildAutoRoomName({
+                  category: r.room_category,
+                  window_type: r.window_type,
+                  size_type: r.size_type,
+                });
+                return (
+                  <li key={r.id}>
+                    <button
+                      type="button"
+                      onClick={() => setEdit(r)}
+                      className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-accent/50"
+                    >
+                      <div className="grid h-11 w-11 place-items-center rounded-xl bg-muted text-[13px] font-bold">
+                        {r.room_number}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-[14px] font-semibold">
+                          {auto || "타입 미설정"}
+                        </p>
+                        <p className="truncate text-[11.5px] text-muted-foreground">
+                          {r.floor ? `${r.floor}층` : "—"}
+                          {type ? ` · ${type.name}` : ""}
+                        </p>
+                      </div>
+                      <span
+                        role="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          cycleStatus(r);
+                        }}
+                        className={cn(
+                          "rounded-full border px-2.5 py-1 text-[11px] font-bold",
+                          STATUS_TONE[r.status],
+                        )}
+                      >
+                        {STATUS_LABEL[r.status]}
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+            {totalPages > 1 && (
+              <nav className="mt-4 flex items-center justify-between gap-2 text-[12px]">
+                <span className="text-muted-foreground">
+                  총 {filtered.length}건 · {page}/{totalPages}
+                </span>
+                <div className="flex items-center gap-1">
                   <button
                     type="button"
-                    onClick={() => setEdit(r)}
-                    className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-accent/50"
+                    onClick={() => setPage(Math.max(1, page - 1))}
+                    disabled={page === 1}
+                    className="h-8 rounded-lg border border-border bg-card px-2.5 font-semibold disabled:opacity-40"
                   >
-                    <div className="grid h-11 w-11 place-items-center rounded-xl bg-muted text-[13px] font-bold">
-                      {r.room_number}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-[14px] font-semibold">
-                        {auto || "타입 미설정"}
-                      </p>
-                      <p className="truncate text-[11.5px] text-muted-foreground">
-                        {r.floor ? `${r.floor}층` : "—"}
-                        {type ? ` · ${type.name}` : ""}
-                      </p>
-                    </div>
-                    <span
-                      role="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        cycleStatus(r);
-                      }}
-                      className={cn(
-                        "rounded-full border px-2.5 py-1 text-[11px] font-bold",
-                        STATUS_TONE[r.status],
-                      )}
-                    >
-                      {STATUS_LABEL[r.status]}
-                    </span>
+                    이전
                   </button>
-                </li>
-              );
-            })}
-          </ul>
+                  {Array.from({ length: totalPages }).slice(0, 5).map((_, i) => {
+                    const start = Math.max(1, Math.min(page - 2, totalPages - 4));
+                    const num = start + i;
+                    if (num > totalPages) return null;
+                    return (
+                      <button
+                        key={num}
+                        type="button"
+                        onClick={() => setPage(num)}
+                        className={cn(
+                          "h-8 min-w-8 rounded-lg px-2 text-[12px] font-semibold",
+                          num === page
+                            ? "bg-foreground text-background"
+                            : "border border-border bg-card hover:bg-accent",
+                        )}
+                      >
+                        {num}
+                      </button>
+                    );
+                  })}
+                  <button
+                    type="button"
+                    onClick={() => setPage(Math.min(totalPages, page + 1))}
+                    disabled={page === totalPages}
+                    className="h-8 rounded-lg border border-border bg-card px-2.5 font-semibold disabled:opacity-40"
+                  >
+                    다음
+                  </button>
+                </div>
+              </nav>
+            )}
+          </>
         )}
       </main>
 
