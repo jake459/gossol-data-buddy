@@ -187,6 +187,54 @@ function TenantDetailPage() {
     load();
   };
 
+  const toggleTimestamp = async (
+    column: "deposit_paid_at" | "deposit_returned_at" | "extension_requested_at" | "moveout_requested_at",
+    label: string,
+  ) => {
+    if (!tenant) return;
+    const current = tenant[column];
+    const next = current ? null : new Date().toISOString();
+    const { error } = await supabase.from("tenants").update({ [column]: next }).eq("id", tenant.id);
+    if (error) return toast.error(error.message);
+    toast.success(next ? `${label} 완료로 표시했어요.` : `${label} 표시를 해제했어요.`);
+    load();
+  };
+  const handleToggleDepositPaid = () => toggleTimestamp("deposit_paid_at", "보증금 납입");
+  const handleToggleDepositReturned = () => toggleTimestamp("deposit_returned_at", "보증금 반환");
+  const handleToggleExtension = () => toggleTimestamp("extension_requested_at", "연장 신청");
+  const handleToggleMoveoutRequest = () => toggleTimestamp("moveout_requested_at", "퇴실 신청");
+
+  const handleCreateInspection = async () => {
+    if (!tenant || !user || !tenant.room_id) {
+      return toast.info("호실이 배정된 입실자만 점검을 등록할 수 있어요.");
+    }
+    const { error } = await supabase.from("inspections").insert({
+      owner_id: user.id,
+      branch_id: tenant.branch_id,
+      room_id: tenant.room_id,
+      tenant_id: tenant.id,
+      status: "requested",
+      requested_at: new Date().toISOString(),
+    });
+    if (error) return toast.error(error.message);
+    toast.success("점검이 요청되었습니다.");
+  };
+
+  const handleCreateCleaning = async () => {
+    if (!tenant || !user || !tenant.room_id) {
+      return toast.info("호실이 배정된 입실자만 청소를 등록할 수 있어요.");
+    }
+    const { error } = await supabase.from("cleanings").insert({
+      owner_id: user.id,
+      branch_id: tenant.branch_id,
+      room_id: tenant.room_id,
+      status: "requested",
+      requested_at: new Date().toISOString(),
+    });
+    if (error) return toast.error(error.message);
+    toast.success("청소가 요청되었습니다.");
+  };
+
   if (loading) {
     return (
       <MobileFrame>
