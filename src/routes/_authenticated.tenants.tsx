@@ -28,7 +28,7 @@ type Tenant = {
 };
 type RoomMini = { id: string; room_number: string };
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 6;
 
 function TenantsPage() {
   const { selected } = useBranch();

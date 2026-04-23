@@ -185,7 +185,7 @@
 }
 .mobile-frame {
   width: 100%;
-  max-width: 28rem;
+  max-width: 24rem;
   min-height: 100vh;
   min-height: 100dvh;
   background-color: var(--color-background);
@@ -196,9 +196,9 @@
 }
 @media (min-width: 640px) {
   .mobile-frame {
-    margin: 1.25rem 0;
-    min-height: calc(100dvh - 2.5rem);
-    border-radius: 2.25rem;
+    margin: 1rem 0;
+    min-height: calc(100dvh - 2rem);
+    border-radius: 2rem;
     box-shadow:
       0 1px 0 0 oklch(1 0 0 / 0.5) inset,
       0 30px 60px -20px oklch(0.2 0.05 260 / 0.35),

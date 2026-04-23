@@ -89,7 +89,7 @@ function RoomsPage() {
   const [fStatus, setFStatus] = useState<RoomStatus | "all">("all");
   const [fCategory, setFCategory] = useState<string>("all");
   const [page, setPage] = useState(1);
-  const PAGE_SIZE = 10;
+  const PAGE_SIZE = 6;
 
   const load = async () => {
     if (!selected) return;
