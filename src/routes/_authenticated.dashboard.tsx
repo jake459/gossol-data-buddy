@@ -115,8 +115,7 @@ function DashboardPage() {
         .eq("branch_id", selected.id)
         .in("status", ["unpaid", "overdue"])
         .lte("due_date", todayStr)
-        .order("due_date", { ascending: true })
-        .limit(5),
+        .order("due_date", { ascending: true }),
       // Today's payments due (unpaid scheduled today)
       supabase
         .from("invoices")
