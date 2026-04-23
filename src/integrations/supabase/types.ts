@@ -16,8 +16,10 @@ export type Database = {
     Tables: {
       applications: {
         Row: {
+          agreed_at: string | null
           applicant_name: string
           applicant_phone: string | null
+          approved_at: string | null
           branch_id: string
           created_at: string
           desired_date: string | null
@@ -26,12 +28,15 @@ export type Database = {
           kind: Database["public"]["Enums"]["application_kind"]
           memo: string | null
           owner_id: string
+          room_id: string | null
           status: Database["public"]["Enums"]["application_status"]
           updated_at: string
         }
         Insert: {
+          agreed_at?: string | null
           applicant_name: string
           applicant_phone?: string | null
+          approved_at?: string | null
           branch_id: string
           created_at?: string
           desired_date?: string | null
@@ -40,12 +45,15 @@ export type Database = {
           kind: Database["public"]["Enums"]["application_kind"]
           memo?: string | null
           owner_id: string
+          room_id?: string | null
           status?: Database["public"]["Enums"]["application_status"]
           updated_at?: string
         }
         Update: {
+          agreed_at?: string | null
           applicant_name?: string
           applicant_phone?: string | null
+          approved_at?: string | null
           branch_id?: string
           created_at?: string
           desired_date?: string | null
@@ -54,6 +62,7 @@ export type Database = {
           kind?: Database["public"]["Enums"]["application_kind"]
           memo?: string | null
           owner_id?: string
+          room_id?: string | null
           status?: Database["public"]["Enums"]["application_status"]
           updated_at?: string
         }
@@ -73,6 +82,33 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      branch_members: {
+        Row: {
+          branch_id: string
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          branch_id: string
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          branch_id?: string
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       branch_settings: {
         Row: {
@@ -168,6 +204,51 @@ export type Database = {
           owner_id?: string
           phone?: string | null
           theme_color?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      cleanings: {
+        Row: {
+          assignee_id: string | null
+          branch_id: string
+          completed_at: string | null
+          created_at: string
+          id: string
+          memo: string | null
+          owner_id: string
+          requested_at: string | null
+          room_id: string
+          scheduled_date: string | null
+          status: Database["public"]["Enums"]["cleaning_status"]
+          updated_at: string
+        }
+        Insert: {
+          assignee_id?: string | null
+          branch_id: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          memo?: string | null
+          owner_id: string
+          requested_at?: string | null
+          room_id: string
+          scheduled_date?: string | null
+          status?: Database["public"]["Enums"]["cleaning_status"]
+          updated_at?: string
+        }
+        Update: {
+          assignee_id?: string | null
+          branch_id?: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          memo?: string | null
+          owner_id?: string
+          requested_at?: string | null
+          room_id?: string
+          scheduled_date?: string | null
+          status?: Database["public"]["Enums"]["cleaning_status"]
           updated_at?: string
         }
         Relationships: []
@@ -278,13 +359,63 @@ export type Database = {
           },
         ]
       }
+      inspections: {
+        Row: {
+          assignee_id: string | null
+          branch_id: string
+          completed_at: string | null
+          created_at: string
+          id: string
+          memo: string | null
+          owner_id: string
+          requested_at: string | null
+          room_id: string
+          scheduled_date: string | null
+          status: Database["public"]["Enums"]["inspection_status"]
+          tenant_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          assignee_id?: string | null
+          branch_id: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          memo?: string | null
+          owner_id: string
+          requested_at?: string | null
+          room_id: string
+          scheduled_date?: string | null
+          status?: Database["public"]["Enums"]["inspection_status"]
+          tenant_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          assignee_id?: string | null
+          branch_id?: string
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          memo?: string | null
+          owner_id?: string
+          requested_at?: string | null
+          room_id?: string
+          scheduled_date?: string | null
+          status?: Database["public"]["Enums"]["inspection_status"]
+          tenant_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       invoices: {
         Row: {
           amount: number
           branch_id: string
           created_at: string
+          cycle_month: string | null
           due_date: string
           id: string
+          kind: Database["public"]["Enums"]["invoice_kind"]
           memo: string | null
           owner_id: string
           paid_at: string | null
@@ -296,8 +427,10 @@ export type Database = {
           amount?: number
           branch_id: string
           created_at?: string
+          cycle_month?: string | null
           due_date: string
           id?: string
+          kind?: Database["public"]["Enums"]["invoice_kind"]
           memo?: string | null
           owner_id: string
           paid_at?: string | null
@@ -309,8 +442,10 @@ export type Database = {
           amount?: number
           branch_id?: string
           created_at?: string
+          cycle_month?: string | null
           due_date?: string
           id?: string
+          kind?: Database["public"]["Enums"]["invoice_kind"]
           memo?: string | null
           owner_id?: string
           paid_at?: string | null
@@ -334,6 +469,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      notifications: {
+        Row: {
+          audience: Database["public"]["Enums"]["notification_audience"]
+          body: string | null
+          branch_id: string | null
+          category: string
+          created_at: string
+          id: string
+          link: string | null
+          read_at: string | null
+          recipient_id: string
+          title: string
+        }
+        Insert: {
+          audience: Database["public"]["Enums"]["notification_audience"]
+          body?: string | null
+          branch_id?: string | null
+          category: string
+          created_at?: string
+          id?: string
+          link?: string | null
+          read_at?: string | null
+          recipient_id: string
+          title: string
+        }
+        Update: {
+          audience?: Database["public"]["Enums"]["notification_audience"]
+          body?: string | null
+          branch_id?: string | null
+          category?: string
+          created_at?: string
+          id?: string
+          link?: string | null
+          read_at?: string | null
+          recipient_id?: string
+          title?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -414,40 +588,58 @@ export type Database = {
       }
       rooms: {
         Row: {
+          auto_name: string | null
           branch_id: string
           created_at: string
+          extra_options: Json
           floor: number | null
           id: string
           memo: string | null
           owner_id: string
+          room_category: Database["public"]["Enums"]["room_category"] | null
           room_number: string
           room_type_id: string | null
+          size_type: Database["public"]["Enums"]["room_size_type"] | null
           status: Database["public"]["Enums"]["room_status"]
+          tags: Json
           updated_at: string
+          window_type: Database["public"]["Enums"]["window_type"] | null
         }
         Insert: {
+          auto_name?: string | null
           branch_id: string
           created_at?: string
+          extra_options?: Json
           floor?: number | null
           id?: string
           memo?: string | null
           owner_id: string
+          room_category?: Database["public"]["Enums"]["room_category"] | null
           room_number: string
           room_type_id?: string | null
+          size_type?: Database["public"]["Enums"]["room_size_type"] | null
           status?: Database["public"]["Enums"]["room_status"]
+          tags?: Json
           updated_at?: string
+          window_type?: Database["public"]["Enums"]["window_type"] | null
         }
         Update: {
+          auto_name?: string | null
           branch_id?: string
           created_at?: string
+          extra_options?: Json
           floor?: number | null
           id?: string
           memo?: string | null
           owner_id?: string
+          room_category?: Database["public"]["Enums"]["room_category"] | null
           room_number?: string
           room_type_id?: string | null
+          size_type?: Database["public"]["Enums"]["room_size_type"] | null
           status?: Database["public"]["Enums"]["room_status"]
+          tags?: Json
           updated_at?: string
+          window_type?: Database["public"]["Enums"]["window_type"] | null
         }
         Relationships: [
           {
@@ -465,6 +657,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      staff_invites: {
+        Row: {
+          accepted_at: string | null
+          branch_id: string
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          owner_id: string
+          token: string
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          branch_id: string
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          owner_id: string
+          token?: string
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          branch_id?: string
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          owner_id?: string
+          token?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       support_inquiries: {
         Row: {
@@ -499,17 +727,59 @@ export type Database = {
         }
         Relationships: []
       }
+      tenant_invites: {
+        Row: {
+          accepted_at: string | null
+          branch_id: string
+          created_at: string
+          expires_at: string
+          id: string
+          owner_id: string
+          tenant_id: string
+          token: string
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          branch_id: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          owner_id: string
+          tenant_id: string
+          token?: string
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          branch_id?: string
+          created_at?: string
+          expires_at?: string
+          id?: string
+          owner_id?: string
+          tenant_id?: string
+          token?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       tenants: {
         Row: {
           branch_id: string
+          contract_end: string | null
+          contract_start: string | null
           created_at: string
           deposit: number | null
+          deposit_paid_at: string | null
+          deposit_returned_at: string | null
           emergency_contact: string | null
+          extension_requested_at: string | null
           id: string
           memo: string | null
           monthly_rent: number | null
           move_in_date: string | null
           move_out_date: string | null
+          moveout_requested_at: string | null
           name: string
           owner_id: string
           payment_day: number | null
@@ -517,17 +787,24 @@ export type Database = {
           room_id: string | null
           status: Database["public"]["Enums"]["tenant_status"]
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           branch_id: string
+          contract_end?: string | null
+          contract_start?: string | null
           created_at?: string
           deposit?: number | null
+          deposit_paid_at?: string | null
+          deposit_returned_at?: string | null
           emergency_contact?: string | null
+          extension_requested_at?: string | null
           id?: string
           memo?: string | null
           monthly_rent?: number | null
           move_in_date?: string | null
           move_out_date?: string | null
+          moveout_requested_at?: string | null
           name: string
           owner_id: string
           payment_day?: number | null
@@ -535,17 +812,24 @@ export type Database = {
           room_id?: string | null
           status?: Database["public"]["Enums"]["tenant_status"]
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           branch_id?: string
+          contract_end?: string | null
+          contract_start?: string | null
           created_at?: string
           deposit?: number | null
+          deposit_paid_at?: string | null
+          deposit_returned_at?: string | null
           emergency_contact?: string | null
+          extension_requested_at?: string | null
           id?: string
           memo?: string | null
           monthly_rent?: number | null
           move_in_date?: string | null
           move_out_date?: string | null
+          moveout_requested_at?: string | null
           name?: string
           owner_id?: string
           payment_day?: number | null
@@ -553,6 +837,7 @@ export type Database = {
           room_id?: string | null
           status?: Database["public"]["Enums"]["tenant_status"]
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -604,16 +889,27 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_branch_member: {
+        Args: { _branch_id: string; _user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
-      app_role: "owner" | "staff" | "admin"
+      app_role: "owner" | "staff" | "admin" | "tenant"
       application_kind: "room_tour" | "move_in"
       application_status: "pending" | "approved" | "rejected" | "completed"
+      cleaning_status: "assigned" | "requested" | "completed"
       event_kind: "move_in" | "move_out" | "inspection" | "room_tour" | "memo"
+      inspection_status: "assigned" | "requested" | "completed"
+      invoice_kind: "deposit" | "first_rent" | "monthly" | "other"
       invoice_status: "unpaid" | "paid" | "overdue" | "canceled"
+      notification_audience: "owner" | "staff" | "tenant"
       post_category: "notice" | "event" | "tip" | "update"
+      room_category: "mini" | "shower" | "studio"
+      room_size_type: "standard" | "wide" | "duplex"
       room_status: "occupied" | "vacant" | "cleaning" | "maintenance"
       tenant_status: "active" | "overdue" | "moved_out"
+      window_type: "external" | "internal"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -741,14 +1037,21 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["owner", "staff", "admin"],
+      app_role: ["owner", "staff", "admin", "tenant"],
       application_kind: ["room_tour", "move_in"],
       application_status: ["pending", "approved", "rejected", "completed"],
+      cleaning_status: ["assigned", "requested", "completed"],
       event_kind: ["move_in", "move_out", "inspection", "room_tour", "memo"],
+      inspection_status: ["assigned", "requested", "completed"],
+      invoice_kind: ["deposit", "first_rent", "monthly", "other"],
       invoice_status: ["unpaid", "paid", "overdue", "canceled"],
+      notification_audience: ["owner", "staff", "tenant"],
       post_category: ["notice", "event", "tip", "update"],
+      room_category: ["mini", "shower", "studio"],
+      room_size_type: ["standard", "wide", "duplex"],
       room_status: ["occupied", "vacant", "cleaning", "maintenance"],
       tenant_status: ["active", "overdue", "moved_out"],
+      window_type: ["external", "internal"],
     },
   },
 } as const

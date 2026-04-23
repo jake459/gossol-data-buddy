@@ -14,16 +14,6 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as DemoTenantsRouteImport } from './routes/demo.tenants'
-import { Route as DemoStatsRouteImport } from './routes/demo.stats'
-import { Route as DemoSettingsRouteImport } from './routes/demo.settings'
-import { Route as DemoScheduleRouteImport } from './routes/demo.schedule'
-import { Route as DemoRoomsRouteImport } from './routes/demo.rooms'
-import { Route as DemoInvoicesRouteImport } from './routes/demo.invoices'
-import { Route as DemoDashboardRouteImport } from './routes/demo.dashboard'
-import { Route as DemoCommunityRouteImport } from './routes/demo.community'
-import { Route as DemoBranchesRouteImport } from './routes/demo.branches'
-import { Route as DemoApplicationsRouteImport } from './routes/demo.applications'
 import { Route as AuthenticatedTenantsRouteImport } from './routes/_authenticated.tenants'
 import { Route as AuthenticatedStatsRouteImport } from './routes/_authenticated.stats'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated.settings'
@@ -36,7 +26,6 @@ import { Route as AuthenticatedDashboardRouteImport } from './routes/_authentica
 import { Route as AuthenticatedCommunityRouteImport } from './routes/_authenticated.community'
 import { Route as AuthenticatedBranchesRouteImport } from './routes/_authenticated.branches'
 import { Route as AuthenticatedApplicationsRouteImport } from './routes/_authenticated.applications'
-import { Route as DemoTenantsTenantIdRouteImport } from './routes/demo.tenants.$tenantId'
 import { Route as AuthenticatedTenantsNewRouteImport } from './routes/_authenticated.tenants.new'
 import { Route as AuthenticatedTenantsTenantIdRouteImport } from './routes/_authenticated.tenants.$tenantId'
 
@@ -62,56 +51,6 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoTenantsRoute = DemoTenantsRouteImport.update({
-  id: '/demo/tenants',
-  path: '/demo/tenants',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoStatsRoute = DemoStatsRouteImport.update({
-  id: '/demo/stats',
-  path: '/demo/stats',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoSettingsRoute = DemoSettingsRouteImport.update({
-  id: '/demo/settings',
-  path: '/demo/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoScheduleRoute = DemoScheduleRouteImport.update({
-  id: '/demo/schedule',
-  path: '/demo/schedule',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoRoomsRoute = DemoRoomsRouteImport.update({
-  id: '/demo/rooms',
-  path: '/demo/rooms',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoInvoicesRoute = DemoInvoicesRouteImport.update({
-  id: '/demo/invoices',
-  path: '/demo/invoices',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoDashboardRoute = DemoDashboardRouteImport.update({
-  id: '/demo/dashboard',
-  path: '/demo/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoCommunityRoute = DemoCommunityRouteImport.update({
-  id: '/demo/community',
-  path: '/demo/community',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoBranchesRoute = DemoBranchesRouteImport.update({
-  id: '/demo/branches',
-  path: '/demo/branches',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoApplicationsRoute = DemoApplicationsRouteImport.update({
-  id: '/demo/applications',
-  path: '/demo/applications',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedTenantsRoute = AuthenticatedTenantsRouteImport.update({
@@ -175,11 +114,6 @@ const AuthenticatedApplicationsRoute =
     path: '/applications',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const DemoTenantsTenantIdRoute = DemoTenantsTenantIdRouteImport.update({
-  id: '/$tenantId',
-  path: '/$tenantId',
-  getParentRoute: () => DemoTenantsRoute,
-} as any)
 const AuthenticatedTenantsNewRoute = AuthenticatedTenantsNewRouteImport.update({
   id: '/new',
   path: '/new',
@@ -209,19 +143,8 @@ export interface FileRoutesByFullPath {
   '/settings': typeof AuthenticatedSettingsRoute
   '/stats': typeof AuthenticatedStatsRoute
   '/tenants': typeof AuthenticatedTenantsRouteWithChildren
-  '/demo/applications': typeof DemoApplicationsRoute
-  '/demo/branches': typeof DemoBranchesRoute
-  '/demo/community': typeof DemoCommunityRoute
-  '/demo/dashboard': typeof DemoDashboardRoute
-  '/demo/invoices': typeof DemoInvoicesRoute
-  '/demo/rooms': typeof DemoRoomsRoute
-  '/demo/schedule': typeof DemoScheduleRoute
-  '/demo/settings': typeof DemoSettingsRoute
-  '/demo/stats': typeof DemoStatsRoute
-  '/demo/tenants': typeof DemoTenantsRouteWithChildren
   '/tenants/$tenantId': typeof AuthenticatedTenantsTenantIdRoute
   '/tenants/new': typeof AuthenticatedTenantsNewRoute
-  '/demo/tenants/$tenantId': typeof DemoTenantsTenantIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -240,19 +163,8 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsRoute
   '/stats': typeof AuthenticatedStatsRoute
   '/tenants': typeof AuthenticatedTenantsRouteWithChildren
-  '/demo/applications': typeof DemoApplicationsRoute
-  '/demo/branches': typeof DemoBranchesRoute
-  '/demo/community': typeof DemoCommunityRoute
-  '/demo/dashboard': typeof DemoDashboardRoute
-  '/demo/invoices': typeof DemoInvoicesRoute
-  '/demo/rooms': typeof DemoRoomsRoute
-  '/demo/schedule': typeof DemoScheduleRoute
-  '/demo/settings': typeof DemoSettingsRoute
-  '/demo/stats': typeof DemoStatsRoute
-  '/demo/tenants': typeof DemoTenantsRouteWithChildren
   '/tenants/$tenantId': typeof AuthenticatedTenantsTenantIdRoute
   '/tenants/new': typeof AuthenticatedTenantsNewRoute
-  '/demo/tenants/$tenantId': typeof DemoTenantsTenantIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -273,19 +185,8 @@ export interface FileRoutesById {
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/stats': typeof AuthenticatedStatsRoute
   '/_authenticated/tenants': typeof AuthenticatedTenantsRouteWithChildren
-  '/demo/applications': typeof DemoApplicationsRoute
-  '/demo/branches': typeof DemoBranchesRoute
-  '/demo/community': typeof DemoCommunityRoute
-  '/demo/dashboard': typeof DemoDashboardRoute
-  '/demo/invoices': typeof DemoInvoicesRoute
-  '/demo/rooms': typeof DemoRoomsRoute
-  '/demo/schedule': typeof DemoScheduleRoute
-  '/demo/settings': typeof DemoSettingsRoute
-  '/demo/stats': typeof DemoStatsRoute
-  '/demo/tenants': typeof DemoTenantsRouteWithChildren
   '/_authenticated/tenants/$tenantId': typeof AuthenticatedTenantsTenantIdRoute
   '/_authenticated/tenants/new': typeof AuthenticatedTenantsNewRoute
-  '/demo/tenants/$tenantId': typeof DemoTenantsTenantIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -306,19 +207,8 @@ export interface FileRouteTypes {
     | '/settings'
     | '/stats'
     | '/tenants'
-    | '/demo/applications'
-    | '/demo/branches'
-    | '/demo/community'
-    | '/demo/dashboard'
-    | '/demo/invoices'
-    | '/demo/rooms'
-    | '/demo/schedule'
-    | '/demo/settings'
-    | '/demo/stats'
-    | '/demo/tenants'
     | '/tenants/$tenantId'
     | '/tenants/new'
-    | '/demo/tenants/$tenantId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -337,19 +227,8 @@ export interface FileRouteTypes {
     | '/settings'
     | '/stats'
     | '/tenants'
-    | '/demo/applications'
-    | '/demo/branches'
-    | '/demo/community'
-    | '/demo/dashboard'
-    | '/demo/invoices'
-    | '/demo/rooms'
-    | '/demo/schedule'
-    | '/demo/settings'
-    | '/demo/stats'
-    | '/demo/tenants'
     | '/tenants/$tenantId'
     | '/tenants/new'
-    | '/demo/tenants/$tenantId'
   id:
     | '__root__'
     | '/'
@@ -369,19 +248,8 @@ export interface FileRouteTypes {
     | '/_authenticated/settings'
     | '/_authenticated/stats'
     | '/_authenticated/tenants'
-    | '/demo/applications'
-    | '/demo/branches'
-    | '/demo/community'
-    | '/demo/dashboard'
-    | '/demo/invoices'
-    | '/demo/rooms'
-    | '/demo/schedule'
-    | '/demo/settings'
-    | '/demo/stats'
-    | '/demo/tenants'
     | '/_authenticated/tenants/$tenantId'
     | '/_authenticated/tenants/new'
-    | '/demo/tenants/$tenantId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -390,16 +258,6 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SignupRoute: typeof SignupRoute
-  DemoApplicationsRoute: typeof DemoApplicationsRoute
-  DemoBranchesRoute: typeof DemoBranchesRoute
-  DemoCommunityRoute: typeof DemoCommunityRoute
-  DemoDashboardRoute: typeof DemoDashboardRoute
-  DemoInvoicesRoute: typeof DemoInvoicesRoute
-  DemoRoomsRoute: typeof DemoRoomsRoute
-  DemoScheduleRoute: typeof DemoScheduleRoute
-  DemoSettingsRoute: typeof DemoSettingsRoute
-  DemoStatsRoute: typeof DemoStatsRoute
-  DemoTenantsRoute: typeof DemoTenantsRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -437,76 +295,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/tenants': {
-      id: '/demo/tenants'
-      path: '/demo/tenants'
-      fullPath: '/demo/tenants'
-      preLoaderRoute: typeof DemoTenantsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/stats': {
-      id: '/demo/stats'
-      path: '/demo/stats'
-      fullPath: '/demo/stats'
-      preLoaderRoute: typeof DemoStatsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/settings': {
-      id: '/demo/settings'
-      path: '/demo/settings'
-      fullPath: '/demo/settings'
-      preLoaderRoute: typeof DemoSettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/schedule': {
-      id: '/demo/schedule'
-      path: '/demo/schedule'
-      fullPath: '/demo/schedule'
-      preLoaderRoute: typeof DemoScheduleRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/rooms': {
-      id: '/demo/rooms'
-      path: '/demo/rooms'
-      fullPath: '/demo/rooms'
-      preLoaderRoute: typeof DemoRoomsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/invoices': {
-      id: '/demo/invoices'
-      path: '/demo/invoices'
-      fullPath: '/demo/invoices'
-      preLoaderRoute: typeof DemoInvoicesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/dashboard': {
-      id: '/demo/dashboard'
-      path: '/demo/dashboard'
-      fullPath: '/demo/dashboard'
-      preLoaderRoute: typeof DemoDashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/community': {
-      id: '/demo/community'
-      path: '/demo/community'
-      fullPath: '/demo/community'
-      preLoaderRoute: typeof DemoCommunityRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/branches': {
-      id: '/demo/branches'
-      path: '/demo/branches'
-      fullPath: '/demo/branches'
-      preLoaderRoute: typeof DemoBranchesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/applications': {
-      id: '/demo/applications'
-      path: '/demo/applications'
-      fullPath: '/demo/applications'
-      preLoaderRoute: typeof DemoApplicationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/tenants': {
@@ -593,13 +381,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedApplicationsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/demo/tenants/$tenantId': {
-      id: '/demo/tenants/$tenantId'
-      path: '/$tenantId'
-      fullPath: '/demo/tenants/$tenantId'
-      preLoaderRoute: typeof DemoTenantsTenantIdRouteImport
-      parentRoute: typeof DemoTenantsRoute
-    }
     '/_authenticated/tenants/new': {
       id: '/_authenticated/tenants/new'
       path: '/new'
@@ -664,34 +445,12 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
   AuthenticatedRouteChildren,
 )
 
-interface DemoTenantsRouteChildren {
-  DemoTenantsTenantIdRoute: typeof DemoTenantsTenantIdRoute
-}
-
-const DemoTenantsRouteChildren: DemoTenantsRouteChildren = {
-  DemoTenantsTenantIdRoute: DemoTenantsTenantIdRoute,
-}
-
-const DemoTenantsRouteWithChildren = DemoTenantsRoute._addFileChildren(
-  DemoTenantsRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   LoginRoute: LoginRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SignupRoute: SignupRoute,
-  DemoApplicationsRoute: DemoApplicationsRoute,
-  DemoBranchesRoute: DemoBranchesRoute,
-  DemoCommunityRoute: DemoCommunityRoute,
-  DemoDashboardRoute: DemoDashboardRoute,
-  DemoInvoicesRoute: DemoInvoicesRoute,
-  DemoRoomsRoute: DemoRoomsRoute,
-  DemoScheduleRoute: DemoScheduleRoute,
-  DemoSettingsRoute: DemoSettingsRoute,
-  DemoStatsRoute: DemoStatsRoute,
-  DemoTenantsRoute: DemoTenantsRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

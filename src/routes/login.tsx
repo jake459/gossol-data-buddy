@@ -179,12 +179,12 @@ function LoginPage() {
           </div>
         </section>
 
-        {/* Demo entry */}
+        {/* Sign-up entry */}
         <Link
-          to="/demo/dashboard"
+          to="/signup"
           className="mx-auto mt-7 inline-flex items-center gap-1.5 text-[13px] font-semibold text-foreground/80 hover:text-brand"
         >
-          로그인 없이 체험하기 <ArrowRight className="h-4 w-4" />
+          아직 계정이 없어요 — 30초 가입 <ArrowRight className="h-4 w-4" />
         </Link>
 
         <div className="mx-auto mt-5 flex items-center gap-2 text-[11px] text-muted-foreground">
