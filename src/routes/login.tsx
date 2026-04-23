@@ -96,12 +96,11 @@ function LoginPage() {
           }}
         />
         {/* Brand */}
-        <div className="relative mb-7 text-center">
+        <div className="relative mb-8 text-center">
           <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-[oklch(0.55_0.22_268)] to-[oklch(0.32_0.16_263)] text-2xl font-black text-primary-foreground shadow-[0_15px_30px_-10px_oklch(0.32_0.16_263/0.6)]">
             G
           </div>
           <p className="mt-3 text-[12px] font-semibold uppercase tracking-[0.2em] text-brand">Gossol</p>
-          <p className="mt-1 text-[13px] text-muted-foreground">고시원 운영, 더 가볍게</p>
         </div>
 
         {/* Glass card */}
@@ -166,7 +165,7 @@ function LoginPage() {
           {/* Divider */}
           <div className="my-5 flex items-center gap-3">
             <div className="h-px flex-1 bg-border" />
-            <span className="text-[11px] font-medium text-muted-foreground">또는 소셜 계정으로</span>
+            <span className="text-[11px] font-medium text-muted-foreground">소셜 계정</span>
             <div className="h-px flex-1 bg-border" />
           </div>
 
@@ -184,7 +183,7 @@ function LoginPage() {
           to="/signup"
           className="mx-auto mt-7 inline-flex items-center gap-1.5 text-[13px] font-semibold text-foreground/80 hover:text-brand"
         >
-          아직 계정이 없어요 — 30초 가입 <ArrowRight className="h-4 w-4" />
+          계정 만들기 <ArrowRight className="h-4 w-4" />
         </Link>
 
         <div className="mx-auto mt-5 flex items-center gap-2 text-[11px] text-muted-foreground">

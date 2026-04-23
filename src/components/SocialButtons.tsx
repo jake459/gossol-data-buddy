@@ -52,7 +52,7 @@ export function SocialButtons({ redirectTo }: { redirectTo?: string }) {
         className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-kakao text-[15px] font-semibold text-kakao-foreground shadow-sm transition active:scale-[0.99]"
       >
         <KakaoIcon />
-        카카오로 3초 만에 시작
+        카카오로 계속하기
       </button>
       <button
         type="button"
@@ -60,7 +60,7 @@ export function SocialButtons({ redirectTo }: { redirectTo?: string }) {
         className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl bg-naver text-[15px] font-semibold text-naver-foreground shadow-sm transition active:scale-[0.99]"
       >
         <NaverIcon />
-        네이버로 시작
+        네이버로 계속하기
       </button>
       <button
         type="button"
@@ -68,7 +68,7 @@ export function SocialButtons({ redirectTo }: { redirectTo?: string }) {
         className="flex h-12 w-full items-center justify-center gap-2 rounded-2xl border border-border bg-card text-[15px] font-semibold text-foreground shadow-sm transition hover:bg-accent active:scale-[0.99]"
       >
         <GoogleIcon />
-        Google로 시작
+        Google로 계속하기
       </button>
 
       <InfoModal

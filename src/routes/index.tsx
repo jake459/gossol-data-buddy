@@ -25,7 +25,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Gossol — 가장 쉬운 고시원 관리" },
       {
         property: "og:description",
-        content: "엑셀과 카톡 메모는 그만. 2026년형 모바일 운영 OS, 고쏠.",
+        content: "호실·입실자·청구서·일정. 한 화면에서 끝내는 모바일 운영.",
       },
     ],
   }),
@@ -54,9 +54,9 @@ function Landing() {
           </header>
 
           {/* Headline */}
-          <div className="relative mt-10">
+          <div className="relative mt-12">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-[11px] font-medium backdrop-blur">
-              <Sparkles className="h-3 w-3" /> 2026 · 고시원 운영 OS
+              <Sparkles className="h-3 w-3" /> Gossol · 고시원 운영 OS
             </span>
             <h1 className="mt-4 text-[2.4rem] font-bold leading-[1.05] tracking-[-0.03em]">
               운영의 무게,
@@ -64,7 +64,7 @@ function Landing() {
               <span className="shimmer-text">가볍게</span> 덜다.
             </h1>
             <p className="mt-3 max-w-[20rem] text-[14px] leading-relaxed text-white/75">
-              호실·입실자·청구서·일정까지. 한 화면에서 완성하는 모바일 고시원 운영.
+              호실·입실자·청구서·일정. 한 화면에서 끝내는 모바일 운영.
             </p>
           </div>
 
@@ -74,7 +74,7 @@ function Landing() {
               to="/signup"
               className="group flex h-14 w-full items-center justify-between rounded-2xl bg-white px-5 text-[15px] font-semibold text-[oklch(0.22_0.12_268)] shadow-[0_10px_30px_-8px_oklch(0_0_0/0.45)] transition active:scale-[0.99]"
             >
-              <span>30초 만에 무료 가입</span>
+              <span>시작하기</span>
               <span className="grid h-9 w-9 place-items-center rounded-xl bg-[oklch(0.32_0.16_263)] text-white transition group-hover:translate-x-0.5">
                 <ArrowRight className="h-4 w-4" />
               </span>
@@ -173,26 +173,21 @@ function Landing() {
             <BentoTile Icon={Users} title="입실자 흐름" desc="신청부터 퇴실까지 자동" tone="indigo" />
             <BentoTile Icon={Receipt} title="청구서 자동" desc="기한 경과 시 미납 표시" tone="rose" />
             <BentoTile Icon={CalendarCheck} title="월간 일정" desc="입퇴실·점검·룸투어" tone="emerald" />
-            <BentoTile Icon={Sparkles} title="AI 도우미" desc="공지·문자 1초 작성" tone="amber" />
+            <BentoTile Icon={Sparkles} title="AI 도우미" desc="공지·문자 자동 작성" tone="amber" />
           </div>
         </section>
 
         {/* FINAL CTA */}
         <section className="bg-background px-5 py-10">
           <div className="overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-muted to-background p-6 text-center">
-            <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-brand">
-              START FREE
-            </p>
-            <p className="mt-2 text-[20px] font-bold leading-tight tracking-tight text-foreground">
-              지금 바로,
-              <br />
-              운영을 새로 디자인하세요.
+            <p className="text-[20px] font-bold leading-tight tracking-tight text-foreground">
+              운영을, 다시 디자인하다.
             </p>
             <Link
               to="/signup"
               className="mt-5 inline-flex h-12 items-center justify-center gap-1.5 rounded-2xl bg-foreground px-6 text-[14px] font-semibold text-background shadow-lg transition hover:opacity-90"
             >
-              무료로 시작하기
+              시작하기
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
