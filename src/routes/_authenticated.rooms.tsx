@@ -86,7 +86,6 @@ function RoomsPage() {
   const [edit, setEdit] = useState<EditState | null>(null);
 
   const [fStatus, setFStatus] = useState<RoomStatus | "all">("all");
-  const [fFloor, setFFloor] = useState<string>("all");
   const [fCategory, setFCategory] = useState<string>("all");
 
   const load = async () => {
@@ -113,18 +112,9 @@ function RoomsPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected?.id]);
 
-  const floors = useMemo(
-    () =>
-      Array.from(new Set(rooms.map((r) => r.floor).filter((f): f is number => f != null))).sort(
-        (a, b) => a - b,
-      ),
-    [rooms],
-  );
-
   const filtered = rooms.filter(
     (r) =>
       (fStatus === "all" || r.status === fStatus) &&
-      (fFloor === "all" || r.floor === Number(fFloor)) &&
       (fCategory === "all" || r.room_category === fCategory),
   );
 
@@ -239,19 +229,6 @@ function RoomsPage() {
             active={fStatus !== "all"}
             onClear={() => setFStatus("all")}
           />
-          <Select value={fFloor} onValueChange={setFFloor}>
-            <SelectTrigger className="h-8 w-auto min-w-[80px] rounded-full text-[12px]">
-              <SelectValue placeholder="층 전체" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">층 전체</SelectItem>
-              {floors.map((f) => (
-                <SelectItem key={f} value={String(f)}>
-                  {f}층
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
           <Select value={fCategory} onValueChange={setFCategory}>
             <SelectTrigger className="h-8 w-auto min-w-[100px] rounded-full text-[12px]">
               <SelectValue placeholder="타입 전체" />
