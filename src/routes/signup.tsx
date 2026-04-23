@@ -15,8 +15,40 @@ import { toKoreanAuthError } from "@/lib/auth-errors";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({ meta: [{ title: "회원가입 — Gossol" }] }),
+  validateSearch: (search: Record<string, unknown>) => ({
+    invite: typeof search.invite === "string" ? (search.invite as string) : undefined,
+    type: search.type === "tenant" ? "tenant" : search.type === "staff" ? "staff" : undefined,
+  }),
   component: SignupPage,
 });
+
+async function consumeInvite(opts: { token: string; type: "staff" | "tenant"; userId: string }) {
+  if (opts.type === "staff") {
+    const { data: inv } = await supabase
+      .from("staff_invites")
+      .select("id, branch_id, accepted_at, expires_at")
+      .eq("token", opts.token)
+      .maybeSingle();
+    if (!inv || inv.accepted_at || new Date(inv.expires_at) < new Date()) return;
+    await supabase.from("branch_members").insert({
+      branch_id: inv.branch_id,
+      user_id: opts.userId,
+      role: "staff",
+    });
+    await supabase.from("user_roles").insert({ user_id: opts.userId, role: "staff" });
+    await supabase.from("staff_invites").update({ accepted_at: new Date().toISOString() }).eq("id", inv.id);
+  } else {
+    const { data: inv } = await supabase
+      .from("tenant_invites")
+      .select("id, tenant_id, accepted_at, expires_at")
+      .eq("token", opts.token)
+      .maybeSingle();
+    if (!inv || inv.accepted_at || new Date(inv.expires_at) < new Date()) return;
+    await supabase.from("tenants").update({ user_id: opts.userId }).eq("id", inv.tenant_id);
+    await supabase.from("user_roles").insert({ user_id: opts.userId, role: "tenant" });
+    await supabase.from("tenant_invites").update({ accepted_at: new Date().toISOString() }).eq("id", inv.id);
+  }
+}
 
 const schema = z.object({
   name: z.string().trim().min(1, "이름을 입력하세요.").max(60),
