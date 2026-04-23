@@ -181,38 +181,35 @@ function DashboardPage() {
   return (
     <MobileFrame>
       <TopBar />
-      <main className="flex-1 space-y-3 px-4 py-3">
-        <section className="relative overflow-hidden rounded-[20px] bg-gradient-to-br from-[oklch(0.46_0.18_258)] via-[oklch(0.4_0.18_262)] to-[oklch(0.3_0.16_268)] p-4 text-white shadow-[0_14px_35px_-15px_oklch(0.32_0.16_262/0.55)]">
-          <div className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full bg-white/15 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-16 -left-10 h-44 w-44 rounded-full bg-[oklch(0.7_0.2_205)]/30 blur-3xl" />
+      <main className="flex-1 space-y-2 px-3 py-2">
+        <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[oklch(0.46_0.18_258)] via-[oklch(0.4_0.18_262)] to-[oklch(0.3_0.16_268)] p-3 text-white shadow-[0_10px_25px_-12px_oklch(0.32_0.16_262/0.55)]">
+          <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-white/15 blur-3xl" />
           <div className="relative">
-            <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-widest opacity-85">
-              <span className="inline-flex items-center gap-1.5">
-                <Sparkles className="h-3.5 w-3.5" /> {timeGreeting}
+            <div className="flex items-center justify-between text-[10px] font-semibold uppercase tracking-widest opacity-85">
+              <span className="inline-flex items-center gap-1">
+                <Sparkles className="h-3 w-3" /> {timeGreeting}
               </span>
               <span className="opacity-80">{dateLabel}</span>
             </div>
-            <h1 className="mt-1.5 text-[19px] font-bold leading-tight">
+            <h1 className="mt-1 text-[15px] font-bold leading-tight">
               {greetingName} 님 👋
             </h1>
-            <p className="mt-0.5 text-[12px] opacity-85">
-              {selected ? `${selected.name} 운영 현황입니다.` : "지점을 선택하면 자세한 현황이 보여요."}
+            <p className="mt-0.5 text-[11px] opacity-85">
+              {selected ? `${selected.name} 운영 현황` : "지점을 선택해 주세요"}
             </p>
-            <div className="mt-3 flex items-end justify-between rounded-xl bg-white/12 p-3 backdrop-blur-md ring-1 ring-white/20">
-              <div>
-                <div className="text-[10px] font-semibold uppercase tracking-wider opacity-80">방 가동률</div>
-                <div className="mt-0.5 text-[22px] font-black leading-none">{occupancy}%</div>
-                <div className="mt-0.5 text-[11px] opacity-80">
-                  전체 {totalRooms}실 중 {stats.occupied}실 입실
+            <div className="mt-2 flex items-center justify-between rounded-lg bg-white/12 p-2 backdrop-blur-md ring-1 ring-white/20">
+              <div className="min-w-0">
+                <div className="text-[9.5px] font-semibold uppercase tracking-wider opacity-80">방 가동률</div>
+                <div className="text-[18px] font-black leading-none">{occupancy}%</div>
+                <div className="mt-0.5 text-[10px] opacity-80">
+                  {totalRooms}실 중 {stats.occupied}실 입실
                 </div>
               </div>
-              <div className="flex w-1/2 flex-col items-end gap-1.5">
-                <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/20">
-                  <div
-                    className="h-full rounded-full bg-gradient-to-r from-white to-[oklch(0.85_0.15_205)] transition-all"
-                    style={{ width: `${occupancy}%` }}
-                  />
-                </div>
+              <div className="ml-3 h-1.5 w-1/2 overflow-hidden rounded-full bg-white/20">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-white to-[oklch(0.85_0.15_205)] transition-all"
+                  style={{ width: `${occupancy}%` }}
+                />
               </div>
             </div>
           </div>
