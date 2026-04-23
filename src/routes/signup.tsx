@@ -59,6 +59,7 @@ const schema = z.object({
 function SignupPage() {
   const navigate = useNavigate();
   const { session, loading: authLoading } = useAuth();
+  const search = Route.useSearch();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -68,10 +69,14 @@ function SignupPage() {
   const [legalOpen, setLegalOpen] = useState<LegalKind | null>(null);
 
   useEffect(() => {
-    if (!authLoading && session) {
+    if (authLoading || !session) return;
+    (async () => {
+      if (search.invite && search.type) {
+        await consumeInvite({ token: search.invite, type: search.type, userId: session.user.id });
+      }
       navigate({ to: "/dashboard" });
-    }
-  }, [authLoading, session, navigate]);
+    })();
+  }, [authLoading, session, navigate, search.invite, search.type]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
