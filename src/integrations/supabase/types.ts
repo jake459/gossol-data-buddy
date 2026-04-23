@@ -21,15 +21,19 @@ export type Database = {
           applicant_phone: string | null
           approved_at: string | null
           branch_id: string
+          confirmed_at: string | null
           created_at: string
+          deposit_invoice_id: string | null
           desired_date: string | null
           desired_room_type_id: string | null
+          first_rent_invoice_id: string | null
           id: string
           kind: Database["public"]["Enums"]["application_kind"]
           memo: string | null
           owner_id: string
           room_id: string | null
           status: Database["public"]["Enums"]["application_status"]
+          tenant_id: string | null
           updated_at: string
         }
         Insert: {
@@ -38,15 +42,19 @@ export type Database = {
           applicant_phone?: string | null
           approved_at?: string | null
           branch_id: string
+          confirmed_at?: string | null
           created_at?: string
+          deposit_invoice_id?: string | null
           desired_date?: string | null
           desired_room_type_id?: string | null
+          first_rent_invoice_id?: string | null
           id?: string
           kind: Database["public"]["Enums"]["application_kind"]
           memo?: string | null
           owner_id: string
           room_id?: string | null
           status?: Database["public"]["Enums"]["application_status"]
+          tenant_id?: string | null
           updated_at?: string
         }
         Update: {
@@ -55,15 +63,19 @@ export type Database = {
           applicant_phone?: string | null
           approved_at?: string | null
           branch_id?: string
+          confirmed_at?: string | null
           created_at?: string
+          deposit_invoice_id?: string | null
           desired_date?: string | null
           desired_room_type_id?: string | null
+          first_rent_invoice_id?: string | null
           id?: string
           kind?: Database["public"]["Enums"]["application_kind"]
           memo?: string | null
           owner_id?: string
           room_id?: string | null
           status?: Database["public"]["Enums"]["application_status"]
+          tenant_id?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -75,10 +87,31 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "applications_deposit_invoice_id_fkey"
+            columns: ["deposit_invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "applications_desired_room_type_id_fkey"
             columns: ["desired_room_type_id"]
             isOneToOne: false
             referencedRelation: "room_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "applications_first_rent_invoice_id_fkey"
+            columns: ["first_rent_invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "applications_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "tenants"
             referencedColumns: ["id"]
           },
         ]
@@ -773,13 +806,18 @@ export type Database = {
           deposit_paid_at: string | null
           deposit_returned_at: string | null
           emergency_contact: string | null
+          extension_approved_at: string | null
           extension_requested_at: string | null
           id: string
           memo: string | null
           monthly_rent: number | null
           move_in_date: string | null
           move_out_date: string | null
+          movein_confirmed_at: string | null
+          moveout_approved_at: string | null
+          moveout_confirmed_at: string | null
           moveout_requested_at: string | null
+          moveout_week_notified_at: string | null
           name: string
           owner_id: string
           payment_day: number | null
@@ -798,13 +836,18 @@ export type Database = {
           deposit_paid_at?: string | null
           deposit_returned_at?: string | null
           emergency_contact?: string | null
+          extension_approved_at?: string | null
           extension_requested_at?: string | null
           id?: string
           memo?: string | null
           monthly_rent?: number | null
           move_in_date?: string | null
           move_out_date?: string | null
+          movein_confirmed_at?: string | null
+          moveout_approved_at?: string | null
+          moveout_confirmed_at?: string | null
           moveout_requested_at?: string | null
+          moveout_week_notified_at?: string | null
           name: string
           owner_id: string
           payment_day?: number | null
@@ -823,13 +866,18 @@ export type Database = {
           deposit_paid_at?: string | null
           deposit_returned_at?: string | null
           emergency_contact?: string | null
+          extension_approved_at?: string | null
           extension_requested_at?: string | null
           id?: string
           memo?: string | null
           monthly_rent?: number | null
           move_in_date?: string | null
           move_out_date?: string | null
+          movein_confirmed_at?: string | null
+          moveout_approved_at?: string | null
+          moveout_confirmed_at?: string | null
           moveout_requested_at?: string | null
+          moveout_week_notified_at?: string | null
           name?: string
           owner_id?: string
           payment_day?: number | null
@@ -894,6 +942,8 @@ export type Database = {
         Args: { _branch_id: string; _user_id: string }
         Returns: boolean
       }
+      mark_overdue_invoices: { Args: never; Returns: number }
+      notify_moveout_week: { Args: never; Returns: number }
     }
     Enums: {
       app_role: "owner" | "staff" | "admin" | "tenant"
