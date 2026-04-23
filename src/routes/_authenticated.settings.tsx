@@ -111,15 +111,15 @@ function SettingsPage() {
         <h1 className="flex-1 text-[15px] font-bold">설정</h1>
       </header>
 
-      <main className="flex-1 space-y-5 px-4 py-4">
-        <section className="rounded-2xl border border-border bg-card p-4">
-          <div className="flex items-center gap-3">
-            <span className="grid h-12 w-12 place-items-center rounded-xl bg-brand/10 text-brand text-[18px] font-bold">
+      <main className="flex-1 space-y-3 px-3 py-3">
+        <section className="rounded-2xl border border-border bg-card p-3">
+          <div className="flex items-center gap-2.5">
+            <span className="grid h-10 w-10 place-items-center rounded-xl bg-brand/10 text-brand text-[15px] font-bold">
               {user?.email?.[0]?.toUpperCase() ?? "G"}
             </span>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-[14px] font-semibold">{user?.email}</p>
-              <p className="text-[12px] text-muted-foreground">현재 지점: {selected?.name ?? "—"}</p>
+              <p className="truncate text-[13px] font-semibold">{user?.email}</p>
+              <p className="text-[11px] text-muted-foreground">현재 지점: {selected?.name ?? "—"}</p>
             </div>
           </div>
         </section>
@@ -168,7 +168,7 @@ function SettingsPage() {
           <button
             type="button"
             onClick={handleSignOut}
-            className="flex w-full items-center gap-3 px-4 py-3 text-left text-[13.5px] font-semibold text-rose-600 hover:bg-rose-50"
+            className="flex w-full items-center gap-2.5 px-3 py-2.5 text-left text-[12.5px] font-semibold text-rose-600 hover:bg-rose-50"
           >
             <LogOut className="h-4 w-4" /> 로그아웃
           </button>
