@@ -882,6 +882,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      generate_monthly_rent_invoices: { Args: never; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
