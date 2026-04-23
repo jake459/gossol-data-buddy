@@ -173,7 +173,11 @@ function ApplicationsPage() {
         ) : (
           filtered.map((a) => (
             <article key={a.id} className="rounded-2xl border border-border bg-card p-4">
-              <div className="flex items-center justify-between">
+              <button
+                type="button"
+                onClick={() => navigate({ to: "/applications/$applicationId", params: { applicationId: a.id } })}
+                className="flex w-full items-center justify-between text-left"
+              >
                 <div>
                   <h3 className="text-[14px] font-bold">{a.applicant_name}</h3>
                   <div className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
@@ -190,7 +194,7 @@ function ApplicationsPage() {
                     <StatusBadge kind="application" value={a.status} />
                   </div>
                 </div>
-              </div>
+              </button>
               <div className="mt-2 space-y-1 text-[12.5px] text-muted-foreground">
                 {a.applicant_phone && (
                   <p className="flex items-center gap-1.5">

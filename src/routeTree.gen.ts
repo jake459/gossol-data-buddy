@@ -22,12 +22,15 @@ import { Route as AuthenticatedRoomsRouteImport } from './routes/_authenticated.
 import { Route as AuthenticatedRoomTypesRouteImport } from './routes/_authenticated.room-types'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated.onboarding'
 import { Route as AuthenticatedInvoicesRouteImport } from './routes/_authenticated.invoices'
+import { Route as AuthenticatedInspectionsRouteImport } from './routes/_authenticated.inspections'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated.dashboard'
 import { Route as AuthenticatedCommunityRouteImport } from './routes/_authenticated.community'
+import { Route as AuthenticatedCleaningsRouteImport } from './routes/_authenticated.cleanings'
 import { Route as AuthenticatedBranchesRouteImport } from './routes/_authenticated.branches'
 import { Route as AuthenticatedApplicationsRouteImport } from './routes/_authenticated.applications'
 import { Route as AuthenticatedTenantsNewRouteImport } from './routes/_authenticated.tenants.new'
 import { Route as AuthenticatedTenantsTenantIdRouteImport } from './routes/_authenticated.tenants.$tenantId'
+import { Route as AuthenticatedApplicationsApplicationIdRouteImport } from './routes/_authenticated.applications.$applicationId'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -93,6 +96,12 @@ const AuthenticatedInvoicesRoute = AuthenticatedInvoicesRouteImport.update({
   path: '/invoices',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedInspectionsRoute =
+  AuthenticatedInspectionsRouteImport.update({
+    id: '/inspections',
+    path: '/inspections',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -101,6 +110,11 @@ const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
 const AuthenticatedCommunityRoute = AuthenticatedCommunityRouteImport.update({
   id: '/community',
   path: '/community',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedCleaningsRoute = AuthenticatedCleaningsRouteImport.update({
+  id: '/cleanings',
+  path: '/cleanings',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedBranchesRoute = AuthenticatedBranchesRouteImport.update({
@@ -125,16 +139,24 @@ const AuthenticatedTenantsTenantIdRoute =
     path: '/$tenantId',
     getParentRoute: () => AuthenticatedTenantsRoute,
   } as any)
+const AuthenticatedApplicationsApplicationIdRoute =
+  AuthenticatedApplicationsApplicationIdRouteImport.update({
+    id: '/$applicationId',
+    path: '/$applicationId',
+    getParentRoute: () => AuthenticatedApplicationsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
-  '/applications': typeof AuthenticatedApplicationsRoute
+  '/applications': typeof AuthenticatedApplicationsRouteWithChildren
   '/branches': typeof AuthenticatedBranchesRoute
+  '/cleanings': typeof AuthenticatedCleaningsRoute
   '/community': typeof AuthenticatedCommunityRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/inspections': typeof AuthenticatedInspectionsRoute
   '/invoices': typeof AuthenticatedInvoicesRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/room-types': typeof AuthenticatedRoomTypesRoute
@@ -143,6 +165,7 @@ export interface FileRoutesByFullPath {
   '/settings': typeof AuthenticatedSettingsRoute
   '/stats': typeof AuthenticatedStatsRoute
   '/tenants': typeof AuthenticatedTenantsRouteWithChildren
+  '/applications/$applicationId': typeof AuthenticatedApplicationsApplicationIdRoute
   '/tenants/$tenantId': typeof AuthenticatedTenantsTenantIdRoute
   '/tenants/new': typeof AuthenticatedTenantsNewRoute
 }
@@ -151,10 +174,12 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
-  '/applications': typeof AuthenticatedApplicationsRoute
+  '/applications': typeof AuthenticatedApplicationsRouteWithChildren
   '/branches': typeof AuthenticatedBranchesRoute
+  '/cleanings': typeof AuthenticatedCleaningsRoute
   '/community': typeof AuthenticatedCommunityRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
+  '/inspections': typeof AuthenticatedInspectionsRoute
   '/invoices': typeof AuthenticatedInvoicesRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/room-types': typeof AuthenticatedRoomTypesRoute
@@ -163,6 +188,7 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsRoute
   '/stats': typeof AuthenticatedStatsRoute
   '/tenants': typeof AuthenticatedTenantsRouteWithChildren
+  '/applications/$applicationId': typeof AuthenticatedApplicationsApplicationIdRoute
   '/tenants/$tenantId': typeof AuthenticatedTenantsTenantIdRoute
   '/tenants/new': typeof AuthenticatedTenantsNewRoute
 }
@@ -173,10 +199,12 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/reset-password': typeof ResetPasswordRoute
   '/signup': typeof SignupRoute
-  '/_authenticated/applications': typeof AuthenticatedApplicationsRoute
+  '/_authenticated/applications': typeof AuthenticatedApplicationsRouteWithChildren
   '/_authenticated/branches': typeof AuthenticatedBranchesRoute
+  '/_authenticated/cleanings': typeof AuthenticatedCleaningsRoute
   '/_authenticated/community': typeof AuthenticatedCommunityRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
+  '/_authenticated/inspections': typeof AuthenticatedInspectionsRoute
   '/_authenticated/invoices': typeof AuthenticatedInvoicesRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/room-types': typeof AuthenticatedRoomTypesRoute
@@ -185,6 +213,7 @@ export interface FileRoutesById {
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/stats': typeof AuthenticatedStatsRoute
   '/_authenticated/tenants': typeof AuthenticatedTenantsRouteWithChildren
+  '/_authenticated/applications/$applicationId': typeof AuthenticatedApplicationsApplicationIdRoute
   '/_authenticated/tenants/$tenantId': typeof AuthenticatedTenantsTenantIdRoute
   '/_authenticated/tenants/new': typeof AuthenticatedTenantsNewRoute
 }
@@ -197,8 +226,10 @@ export interface FileRouteTypes {
     | '/signup'
     | '/applications'
     | '/branches'
+    | '/cleanings'
     | '/community'
     | '/dashboard'
+    | '/inspections'
     | '/invoices'
     | '/onboarding'
     | '/room-types'
@@ -207,6 +238,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/stats'
     | '/tenants'
+    | '/applications/$applicationId'
     | '/tenants/$tenantId'
     | '/tenants/new'
   fileRoutesByTo: FileRoutesByTo
@@ -217,8 +249,10 @@ export interface FileRouteTypes {
     | '/signup'
     | '/applications'
     | '/branches'
+    | '/cleanings'
     | '/community'
     | '/dashboard'
+    | '/inspections'
     | '/invoices'
     | '/onboarding'
     | '/room-types'
@@ -227,6 +261,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/stats'
     | '/tenants'
+    | '/applications/$applicationId'
     | '/tenants/$tenantId'
     | '/tenants/new'
   id:
@@ -238,8 +273,10 @@ export interface FileRouteTypes {
     | '/signup'
     | '/_authenticated/applications'
     | '/_authenticated/branches'
+    | '/_authenticated/cleanings'
     | '/_authenticated/community'
     | '/_authenticated/dashboard'
+    | '/_authenticated/inspections'
     | '/_authenticated/invoices'
     | '/_authenticated/onboarding'
     | '/_authenticated/room-types'
@@ -248,6 +285,7 @@ export interface FileRouteTypes {
     | '/_authenticated/settings'
     | '/_authenticated/stats'
     | '/_authenticated/tenants'
+    | '/_authenticated/applications/$applicationId'
     | '/_authenticated/tenants/$tenantId'
     | '/_authenticated/tenants/new'
   fileRoutesById: FileRoutesById
@@ -353,6 +391,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedInvoicesRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/inspections': {
+      id: '/_authenticated/inspections'
+      path: '/inspections'
+      fullPath: '/inspections'
+      preLoaderRoute: typeof AuthenticatedInspectionsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/dashboard': {
       id: '/_authenticated/dashboard'
       path: '/dashboard'
@@ -365,6 +410,13 @@ declare module '@tanstack/react-router' {
       path: '/community'
       fullPath: '/community'
       preLoaderRoute: typeof AuthenticatedCommunityRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/cleanings': {
+      id: '/_authenticated/cleanings'
+      path: '/cleanings'
+      fullPath: '/cleanings'
+      preLoaderRoute: typeof AuthenticatedCleaningsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/branches': {
@@ -395,8 +447,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTenantsTenantIdRouteImport
       parentRoute: typeof AuthenticatedTenantsRoute
     }
+    '/_authenticated/applications/$applicationId': {
+      id: '/_authenticated/applications/$applicationId'
+      path: '/$applicationId'
+      fullPath: '/applications/$applicationId'
+      preLoaderRoute: typeof AuthenticatedApplicationsApplicationIdRouteImport
+      parentRoute: typeof AuthenticatedApplicationsRoute
+    }
   }
 }
+
+interface AuthenticatedApplicationsRouteChildren {
+  AuthenticatedApplicationsApplicationIdRoute: typeof AuthenticatedApplicationsApplicationIdRoute
+}
+
+const AuthenticatedApplicationsRouteChildren: AuthenticatedApplicationsRouteChildren =
+  {
+    AuthenticatedApplicationsApplicationIdRoute:
+      AuthenticatedApplicationsApplicationIdRoute,
+  }
+
+const AuthenticatedApplicationsRouteWithChildren =
+  AuthenticatedApplicationsRoute._addFileChildren(
+    AuthenticatedApplicationsRouteChildren,
+  )
 
 interface AuthenticatedTenantsRouteChildren {
   AuthenticatedTenantsTenantIdRoute: typeof AuthenticatedTenantsTenantIdRoute
@@ -412,10 +486,12 @@ const AuthenticatedTenantsRouteWithChildren =
   AuthenticatedTenantsRoute._addFileChildren(AuthenticatedTenantsRouteChildren)
 
 interface AuthenticatedRouteChildren {
-  AuthenticatedApplicationsRoute: typeof AuthenticatedApplicationsRoute
+  AuthenticatedApplicationsRoute: typeof AuthenticatedApplicationsRouteWithChildren
   AuthenticatedBranchesRoute: typeof AuthenticatedBranchesRoute
+  AuthenticatedCleaningsRoute: typeof AuthenticatedCleaningsRoute
   AuthenticatedCommunityRoute: typeof AuthenticatedCommunityRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+  AuthenticatedInspectionsRoute: typeof AuthenticatedInspectionsRoute
   AuthenticatedInvoicesRoute: typeof AuthenticatedInvoicesRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedRoomTypesRoute: typeof AuthenticatedRoomTypesRoute
@@ -427,10 +503,12 @@ interface AuthenticatedRouteChildren {
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedApplicationsRoute: AuthenticatedApplicationsRoute,
+  AuthenticatedApplicationsRoute: AuthenticatedApplicationsRouteWithChildren,
   AuthenticatedBranchesRoute: AuthenticatedBranchesRoute,
+  AuthenticatedCleaningsRoute: AuthenticatedCleaningsRoute,
   AuthenticatedCommunityRoute: AuthenticatedCommunityRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+  AuthenticatedInspectionsRoute: AuthenticatedInspectionsRoute,
   AuthenticatedInvoicesRoute: AuthenticatedInvoicesRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedRoomTypesRoute: AuthenticatedRoomTypesRoute,

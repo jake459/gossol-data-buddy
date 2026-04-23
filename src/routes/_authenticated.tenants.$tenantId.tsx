@@ -34,6 +34,7 @@ import {
 } from "@/components/ui/dialog";
 import { StatusBadge, formatKRW } from "@/components/StatusBadge";
 import { useConfirm } from "@/components/ConfirmModal";
+import { ProcessTimeline, type TimelineTrack } from "@/components/ProcessTimeline";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
@@ -297,6 +298,9 @@ function TenantDetailPage() {
       <Header onBack={() => navigate({ to: "/tenants" })} title={tenant.name} status={tenant.status} onEdit={() => setEditOpen(true)} />
 
       <main className="flex-1 space-y-3 bg-muted/30 px-3 py-3 pb-24">
+        {/* 입퇴실 프로세스 타임라인 */}
+        <ProcessTimeline tracks={buildTenantTimeline(tenant, invoices)} />
+
         {/* 계약 상태 관리 */}
         <Card>
           <CardHeader title="계약 상태 관리" right={
@@ -1034,4 +1038,113 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
       {children}
     </div>
   );
+}
+
+/** 다이어그램의 트랙을 입실자 데이터로 매핑. */
+function buildTenantTimeline(t: Tenant, invs: Invoice[]): TimelineTrack[] {
+  type IK = Invoice & { kind?: string };
+  type TX = Tenant & {
+    movein_confirmed_at?: string | null;
+    extension_approved_at?: string | null;
+    moveout_approved_at?: string | null;
+  };
+  const tx = t as TX;
+  const depositInv = invs.find((i) => (i as IK).kind === "deposit");
+  const firstRentInv = invs.find((i) => (i as IK).kind === "first_rent");
+  const monthlyInvs = invs.filter((i) => (i as IK).kind === "monthly");
+  const movedIn = !!tx.movein_confirmed_at;
+  const movedOut = t.status === "moved_out";
+
+  return [
+    {
+      name: "입실자",
+      tone: "owner",
+      steps: [
+        { label: "대기", state: movedIn || movedOut ? "done" : "current" },
+        {
+          label: "입실",
+          state: movedOut ? "done" : movedIn ? "current" : "pending",
+          hint: t.move_in_date ?? undefined,
+        },
+        {
+          label: "퇴실",
+          state: movedOut ? "done" : t.moveout_requested_at ? "current" : "pending",
+          hint: t.move_out_date ?? undefined,
+        },
+      ],
+    },
+    {
+      name: "연장신청",
+      tone: "tenant",
+      steps: [
+        {
+          label: "신청",
+          state: t.extension_requested_at ? "done" : "pending",
+          hint: t.extension_requested_at?.slice(0, 10),
+        },
+        {
+          label: "승인",
+          state: tx.extension_approved_at
+            ? "done"
+            : t.extension_requested_at
+              ? "current"
+              : "pending",
+        },
+      ],
+    },
+    {
+      name: "퇴실신청",
+      tone: "tenant",
+      steps: [
+        {
+          label: "신청",
+          state: t.moveout_requested_at ? "done" : "pending",
+          hint: t.moveout_requested_at?.slice(0, 10),
+        },
+        {
+          label: "승인",
+          state: tx.moveout_approved_at
+            ? "done"
+            : t.moveout_requested_at
+              ? "current"
+              : "pending",
+        },
+      ],
+    },
+    {
+      name: "청구서",
+      tone: "invoice",
+      steps: [
+        {
+          label: "보증금",
+          state: depositInv?.status === "paid" ? "done" : depositInv ? "current" : "pending",
+        },
+        {
+          label: "첫월세",
+          state: firstRentInv?.status === "paid" ? "done" : firstRentInv ? "current" : "pending",
+        },
+        {
+          label: "월세",
+          state:
+            monthlyInvs.length > 0 && monthlyInvs.every((i) => i.status === "paid")
+              ? "done"
+              : monthlyInvs.length > 0
+                ? "current"
+                : "pending",
+          hint: monthlyInvs.length ? `${monthlyInvs.length}건` : undefined,
+        },
+      ],
+    },
+    {
+      name: "보증금",
+      tone: "owner",
+      steps: [
+        { label: "납입", state: t.deposit_paid_at ? "done" : "pending" },
+        {
+          label: "반환",
+          state: t.deposit_returned_at ? "done" : t.move_out_date ? "current" : "pending",
+        },
+      ],
+    },
+  ];
 }
