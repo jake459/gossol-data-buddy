@@ -44,19 +44,13 @@ function Landing() {
           <div className="pointer-events-none absolute -bottom-24 -left-16 h-56 w-56 rounded-full bg-[oklch(0.7_0.2_205)]/30 blur-3xl" />
 
           {/* Top bar */}
-          <header className="relative flex items-center justify-between">
+          <header className="relative flex items-center">
             <div className="flex items-center gap-2">
               <div className="grid h-9 w-9 place-items-center rounded-xl bg-white text-base font-black text-[oklch(0.32_0.16_263)] shadow-lg shadow-black/20">
                 G
               </div>
               <span className="text-[15px] font-semibold tracking-tight">Gossol</span>
             </div>
-            <Link
-              to="/login"
-              className="rounded-full border border-white/25 bg-white/10 px-3.5 py-1.5 text-xs font-semibold text-white backdrop-blur transition hover:bg-white/20"
-            >
-              로그인
-            </Link>
           </header>
 
           {/* Headline */}
@@ -89,7 +83,7 @@ function Landing() {
               to="/login"
               className="flex h-12 w-full items-center justify-center rounded-2xl border border-white/20 bg-white/10 text-[14px] font-semibold text-white backdrop-blur transition hover:bg-white/20"
             >
-              이미 계정이 있어요 — 로그인
+              로그인
             </Link>
           </div>
 

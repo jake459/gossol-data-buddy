@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, useNavigate, useLocation } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useBranch } from "@/hooks/useBranch";
 import { MobileFrame } from "@/components/MobileFrame";
@@ -13,6 +13,8 @@ function AuthenticatedLayout() {
   const { branches, loading: branchLoading } = useBranch();
   const navigate = useNavigate();
   const location = useLocation();
+  // Only redirect to onboarding ONCE per session — afterwards user can navigate freely.
+  const onboardingRedirectedRef = useRef(false);
 
   useEffect(() => {
     if (loading) return;
@@ -20,14 +22,18 @@ function AuthenticatedLayout() {
       navigate({ to: "/login", replace: true });
       return;
     }
-    if (!branchLoading && branches.length === 0) {
-      if (!location.pathname.startsWith("/onboarding")) {
-        navigate({ to: "/onboarding", replace: true });
-      }
+    if (
+      !branchLoading &&
+      branches.length === 0 &&
+      !onboardingRedirectedRef.current &&
+      !location.pathname.startsWith("/onboarding")
+    ) {
+      onboardingRedirectedRef.current = true;
+      navigate({ to: "/onboarding", replace: true });
     }
   }, [loading, user, branchLoading, branches.length, location.pathname, navigate]);
 
-  if (loading || !user || (branchLoading && branches.length === 0)) {
+  if (loading || !user) {
     return (
       <MobileFrame>
         <div className="flex flex-1 items-center justify-center">
