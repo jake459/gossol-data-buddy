@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { MobileFrame } from "@/components/MobileFrame";
 import { BottomTabs } from "@/components/BottomTabs";
+import { InfoModal } from "@/components/InfoModal";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
