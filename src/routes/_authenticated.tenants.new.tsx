@@ -77,7 +77,7 @@ function NewTenantPage() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user || !selected) return;
-    if (!name.trim()) return toast.error("이름을 입력해 주세요.");
+    if (!name.trim()) return notifyValidation("이름을 입력해 주세요.");
     setLoading(true);
     const { data: tenant, error } = await supabase
       .from("tenants")
