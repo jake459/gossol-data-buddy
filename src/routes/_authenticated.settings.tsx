@@ -236,3 +236,142 @@ function ToggleRow({
     </div>
   );
 }
+
+function StaffInviteRow() {
+  const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [link, setLink] = useState<string | null>(null);
+  const [invites, setInvites] = useState<{ id: string; email: string; token: string; accepted_at: string | null; expires_at: string }[]>([]);
+  const { user } = useAuth();
+  const { selected } = useBranch();
+
+  useEffect(() => {
+    if (!open || !selected) return;
+    supabase
+      .from("staff_invites")
+      .select("id, email, token, accepted_at, expires_at")
+      .eq("branch_id", selected.id)
+      .order("created_at", { ascending: false })
+      .limit(10)
+      .then(({ data }) => setInvites(data ?? []));
+  }, [open, selected?.id]);
+
+  const submit = async () => {
+    if (!user || !selected) return;
+    if (!email.trim() || !email.includes("@")) return toast.error("올바른 이메일을 입력해 주세요.");
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("staff_invites")
+      .insert({ owner_id: user.id, branch_id: selected.id, email: email.trim().toLowerCase() })
+      .select("id, email, token, accepted_at, expires_at")
+      .single();
+    setLoading(false);
+    if (error || !data) return toast.error(error?.message ?? "초대 발급 실패");
+    const url = `${window.location.origin}/signup?invite=${data.token}`;
+    setLink(url);
+    setEmail("");
+    setInvites((prev) => [data, ...prev]);
+    toast.success("스탭 초대 링크를 발급했어요.");
+  };
+
+  const copyLink = (token: string) => {
+    const url = `${window.location.origin}/signup?invite=${token}`;
+    navigator.clipboard?.writeText(url);
+    toast.success("초대 링크가 복사되었어요.");
+  };
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="flex w-full items-center gap-3 px-4 py-3 text-left text-[13.5px] font-semibold transition hover:bg-accent/40"
+      >
+        <UserPlus className="h-4 w-4 text-brand" />
+        <span className="flex-1">스탭 초대</span>
+        <ChevronRight className="h-4 w-4 text-muted-foreground" />
+      </button>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="rounded-2xl">
+          <DialogHeader>
+            <DialogTitle>스탭 초대</DialogTitle>
+            <DialogDescription>
+              초대 링크를 받은 사람은 회원가입 후 이 지점의 스탭으로 자동 등록됩니다.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-3">
+            <div className="space-y-1.5">
+              <Label className="text-[12.5px]">이메일</Label>
+              <div className="flex gap-2">
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="staff@example.com"
+                  className="h-11 rounded-xl"
+                />
+                <Button onClick={submit} disabled={loading} className="h-11 rounded-xl">
+                  발급
+                </Button>
+              </div>
+            </div>
+
+            {link && (
+              <div className="rounded-xl border border-border bg-muted/40 p-3 text-[12px]">
+                <p className="font-semibold">초대 링크</p>
+                <p className="mt-1 truncate text-muted-foreground">{link}</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    navigator.clipboard?.writeText(link);
+                    toast.success("복사되었어요.");
+                  }}
+                  className="mt-2 inline-flex items-center gap-1 rounded-md bg-background px-2 py-1 text-[11px] font-semibold"
+                >
+                  <Copy className="h-3 w-3" /> 복사
+                </button>
+              </div>
+            )}
+
+            {invites.length > 0 && (
+              <div className="space-y-2 pt-2">
+                <p className="text-[11.5px] font-bold uppercase tracking-wider text-muted-foreground">발급 내역</p>
+                <ul className="divide-y divide-border overflow-hidden rounded-xl border border-border">
+                  {invites.map((iv) => (
+                    <li key={iv.id} className="flex items-center justify-between gap-2 px-3 py-2.5 text-[12.5px]">
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate font-semibold">{iv.email}</p>
+                        <p className="text-[11px] text-muted-foreground">
+                          {iv.accepted_at ? "수락됨" : `만료 ${new Date(iv.expires_at).toLocaleDateString("ko-KR")}`}
+                        </p>
+                      </div>
+                      {!iv.accepted_at && (
+                        <button
+                          type="button"
+                          onClick={() => copyLink(iv.token)}
+                          className="grid h-8 w-8 place-items-center rounded-md hover:bg-accent"
+                          aria-label="복사"
+                        >
+                          <Copy className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setOpen(false)}>
+              닫기
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
