@@ -218,9 +218,8 @@ function DashboardPage() {
           </div>
         </section>
 
-        <section className="grid grid-cols-2 gap-2">
-          <Tile to="/rooms" icon={DoorOpen} label="공실" value={`${stats.vacant}실`} tone="danger" />
-          <Tile to="/tenants" icon={Users} label="입실 현황" value={`${stats.occupied}명`} tone="brand" />
+        <section className="grid grid-cols-3 gap-1.5">
+          <Tile to="/tenants" icon={Users} label="입실" value={`${stats.occupied}명`} tone="brand" />
           <Tile
             to="/invoices"
             icon={Receipt}
@@ -231,7 +230,7 @@ function DashboardPage() {
           <Tile
             to="/invoices"
             icon={AlertCircle}
-            label="월세 미납"
+            label="미납"
             value={`${stats.overdueCount}건`}
             tone="danger"
           />
