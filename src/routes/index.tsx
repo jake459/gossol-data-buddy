@@ -173,7 +173,7 @@ function Landing() {
             <BentoTile Icon={Users} title="입실자 흐름" desc="신청부터 퇴실까지 자동" tone="indigo" />
             <BentoTile Icon={Receipt} title="청구서 자동" desc="기한 경과 시 미납 표시" tone="rose" />
             <BentoTile Icon={CalendarCheck} title="월간 일정" desc="입퇴실·점검·룸투어" tone="emerald" />
-            <BentoTile Icon={Sparkles} title="AI 도우미" desc="공지·문자 1초 작성" tone="amber" />
+            <BentoTile Icon={Sparkles} title="AI 도우미" desc="공지·문자 자동 작성" tone="amber" />
           </div>
         </section>
 
