@@ -242,12 +242,54 @@ function TenantDetailPage() {
             </button>
           } />
           <div className="grid grid-cols-2 gap-2 px-3 pb-3">
-            <StatusTile tone="blue" icon={FileText} title="계약서 전송" status="전송완료" detail="2026. 04. 18. 오후 05:50" />
-            <StatusTile tone="green" icon={FileSignature} title="계약 동의" status="동의완료" detail="2026. 04. 18. 오후 10:31" />
-            <StatusTile tone="purple" icon={Wallet} title="보증금 납입" status="청구완료" detail={tenant.move_in_date ? `(${tenant.move_in_date})` : "—"} badge="완료" />
-            <StatusTile tone="amber" icon={RotateCcw} title="보증금 반환" status="미반환" detail="" />
-            <StatusTile tone="gray" icon={CalendarPlus} title="연장신청" status="없음" detail="" />
-            <StatusTile tone="gray" icon={LogOut} title="퇴실신청" status={tenant.move_out_date ? "신청됨" : "없음"} detail={tenant.move_out_date ?? ""} />
+            <StatusTile
+              tone={tenant.deposit_paid_at ? "green" : "amber"}
+              icon={Wallet}
+              title="보증금 납입"
+              status={tenant.deposit_paid_at ? "납입완료" : "대기"}
+              detail={tenant.deposit_paid_at ? new Date(tenant.deposit_paid_at).toLocaleDateString("ko-KR") : "탭하여 표시"}
+              onClick={() => handleToggleDepositPaid()}
+            />
+            <StatusTile
+              tone={tenant.deposit_returned_at ? "green" : "gray"}
+              icon={RotateCcw}
+              title="보증금 반환"
+              status={tenant.deposit_returned_at ? "반환완료" : "미반환"}
+              detail={tenant.deposit_returned_at ? new Date(tenant.deposit_returned_at).toLocaleDateString("ko-KR") : "탭하여 표시"}
+              onClick={() => handleToggleDepositReturned()}
+            />
+            <StatusTile
+              tone={tenant.extension_requested_at ? "purple" : "gray"}
+              icon={CalendarPlus}
+              title="연장신청"
+              status={tenant.extension_requested_at ? "신청됨" : "없음"}
+              detail={tenant.extension_requested_at ? new Date(tenant.extension_requested_at).toLocaleDateString("ko-KR") : "탭하여 신청"}
+              onClick={() => handleToggleExtension()}
+            />
+            <StatusTile
+              tone={tenant.moveout_requested_at ? "amber" : "gray"}
+              icon={LogOut}
+              title="퇴실신청"
+              status={tenant.moveout_requested_at ? "신청됨" : "없음"}
+              detail={tenant.moveout_requested_at ? new Date(tenant.moveout_requested_at).toLocaleDateString("ko-KR") : "탭하여 신청"}
+              onClick={() => handleToggleMoveoutRequest()}
+            />
+            <StatusTile
+              tone="blue"
+              icon={ClipboardCheck}
+              title="점검 요청"
+              status="등록"
+              detail="청소 전 점검"
+              onClick={() => handleCreateInspection()}
+            />
+            <StatusTile
+              tone="purple"
+              icon={Sparkles}
+              title="청소 등록"
+              status="등록"
+              detail="배정·요청"
+              onClick={() => handleCreateCleaning()}
+            />
           </div>
         </Card>
 
