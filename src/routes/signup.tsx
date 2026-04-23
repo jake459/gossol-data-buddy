@@ -13,10 +13,12 @@ import { toast } from "sonner";
 import { useAuth } from "@/hooks/useAuth";
 import { toKoreanAuthError } from "@/lib/auth-errors";
 
+type SignupSearch = { invite?: string; type?: "staff" | "tenant" };
+
 export const Route = createFileRoute("/signup")({
   head: () => ({ meta: [{ title: "회원가입 — Gossol" }] }),
-  validateSearch: (search: Record<string, unknown>) => ({
-    invite: typeof search.invite === "string" ? (search.invite as string) : undefined,
+  validateSearch: (search: Record<string, unknown>): SignupSearch => ({
+    invite: typeof search.invite === "string" ? search.invite : undefined,
     type: search.type === "tenant" ? "tenant" : search.type === "staff" ? "staff" : undefined,
   }),
   component: SignupPage,
