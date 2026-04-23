@@ -78,6 +78,7 @@ function RootComponent() {
       <BranchProvider>
         <Outlet />
         <Toaster position="top-center" richColors />
+        <ValidationModalHost />
       </BranchProvider>
     </AuthProvider>
   );
