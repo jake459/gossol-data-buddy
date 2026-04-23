@@ -268,7 +268,7 @@ function StaffInviteRow() {
       .single();
     setLoading(false);
     if (error || !data) return toast.error(error?.message ?? "초대 발급 실패");
-    const url = `${window.location.origin}/signup?invite=${data.token}`;
+    const url = `${window.location.origin}/signup?invite=${data.token}&type=staff`;
     setLink(url);
     setEmail("");
     setInvites((prev) => [data, ...prev]);
@@ -276,7 +276,7 @@ function StaffInviteRow() {
   };
 
   const copyLink = (token: string) => {
-    const url = `${window.location.origin}/signup?invite=${token}`;
+    const url = `${window.location.origin}/signup?invite=${token}&type=staff`;
     navigator.clipboard?.writeText(url);
     toast.success("초대 링크가 복사되었어요.");
   };
