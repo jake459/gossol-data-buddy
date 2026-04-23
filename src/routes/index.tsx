@@ -25,7 +25,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Gossol — 가장 쉬운 고시원 관리" },
       {
         property: "og:description",
-        content: "엑셀과 카톡 메모는 그만. 2026년형 모바일 운영 OS, 고쏠.",
+        content: "호실·입실자·청구서·일정. 한 화면에서 끝내는 모바일 운영.",
       },
     ],
   }),
