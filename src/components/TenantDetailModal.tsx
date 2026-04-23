@@ -157,27 +157,7 @@ export function TenantDetailModal({
               />
             </div>
 
-            {/* Quick actions */}
-            <div className="grid grid-cols-3 gap-2 border-b border-border bg-card px-3 py-3">
-              <ActionBtn
-                icon={Phone}
-                label="전화"
-                disabled={!tenant.phone}
-                onClick={() => tenant.phone && (window.location.href = `tel:${tenant.phone}`)}
-              />
-              <ActionBtn
-                icon={MessageSquare}
-                label="문자"
-                disabled={!tenant.phone}
-                onClick={() => tenant.phone && (window.location.href = `sms:${tenant.phone}`)}
-              />
-              <ActionBtn
-                icon={ArrowRight}
-                label="상세"
-                to={`/tenants/${tenant.id}`}
-                onClose={() => onOpenChange(false)}
-              />
-            </div>
+
 
             <div className="space-y-3 bg-muted/30 p-3">
               {/* 연락처 */}
@@ -273,31 +253,23 @@ function ActionBtn({
   icon: Icon,
   label,
   onClick,
-  to,
-  onClose,
   disabled,
 }: {
   icon: React.ComponentType<{ className?: string }>;
   label: string;
   onClick?: () => void;
-  to?: string;
-  onClose?: () => void;
   disabled?: boolean;
 }) {
-  const cls = cn(
-    "flex flex-col items-center justify-center gap-1 rounded-xl border border-border bg-card py-2 text-[11.5px] font-semibold transition hover:bg-accent",
-    disabled && "pointer-events-none opacity-40",
-  );
-  if (to) {
-    return (
-      <Link to={to} onClick={onClose} className={cls}>
-        <Icon className="h-4 w-4 text-brand" />
-        {label}
-      </Link>
-    );
-  }
   return (
-    <button type="button" onClick={onClick} disabled={disabled} className={cls}>
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      className={cn(
+        "flex flex-col items-center justify-center gap-1 rounded-xl border border-border bg-card py-2 text-[11.5px] font-semibold transition hover:bg-accent",
+        disabled && "pointer-events-none opacity-40",
+      )}
+    >
       <Icon className="h-4 w-4 text-brand" />
       {label}
     </button>
