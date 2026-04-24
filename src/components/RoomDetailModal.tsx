@@ -72,6 +72,7 @@ export function RoomDetailModal({
   onOpenChange: (o: boolean) => void;
   onEdit: () => void;
 }) {
+  const navigate = useNavigate();
   const [tenant, setTenant] = useState<Tenant | null>(null);
   const [loading, setLoading] = useState(false);
 
