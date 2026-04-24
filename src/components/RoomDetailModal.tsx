@@ -238,7 +238,7 @@ export function RoomDetailModal({
                 type="button"
                 onClick={() => {
                   onOpenChange(false);
-                  navigate({ to: "/tenants/$tenantId", params: { tenantId: tenant.id } });
+                  navigate({ to: "/tenants/$tenantId/edit", params: { tenantId: tenant.id } });
                 }}
                 className="group block w-full text-left transition hover:bg-accent/50"
               >

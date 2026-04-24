@@ -31,6 +31,7 @@ import { Route as AuthenticatedApplicationsRouteImport } from './routes/_authent
 import { Route as AuthenticatedTenantsNewRouteImport } from './routes/_authenticated.tenants.new'
 import { Route as AuthenticatedTenantsTenantIdRouteImport } from './routes/_authenticated.tenants.$tenantId'
 import { Route as AuthenticatedApplicationsApplicationIdRouteImport } from './routes/_authenticated.applications.$applicationId'
+import { Route as AuthenticatedTenantsTenantIdEditRouteImport } from './routes/_authenticated.tenants.$tenantId.edit'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -145,6 +146,12 @@ const AuthenticatedApplicationsApplicationIdRoute =
     path: '/$applicationId',
     getParentRoute: () => AuthenticatedApplicationsRoute,
   } as any)
+const AuthenticatedTenantsTenantIdEditRoute =
+  AuthenticatedTenantsTenantIdEditRouteImport.update({
+    id: '/edit',
+    path: '/edit',
+    getParentRoute: () => AuthenticatedTenantsTenantIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -166,8 +173,9 @@ export interface FileRoutesByFullPath {
   '/stats': typeof AuthenticatedStatsRoute
   '/tenants': typeof AuthenticatedTenantsRouteWithChildren
   '/applications/$applicationId': typeof AuthenticatedApplicationsApplicationIdRoute
-  '/tenants/$tenantId': typeof AuthenticatedTenantsTenantIdRoute
+  '/tenants/$tenantId': typeof AuthenticatedTenantsTenantIdRouteWithChildren
   '/tenants/new': typeof AuthenticatedTenantsNewRoute
+  '/tenants/$tenantId/edit': typeof AuthenticatedTenantsTenantIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -189,8 +197,9 @@ export interface FileRoutesByTo {
   '/stats': typeof AuthenticatedStatsRoute
   '/tenants': typeof AuthenticatedTenantsRouteWithChildren
   '/applications/$applicationId': typeof AuthenticatedApplicationsApplicationIdRoute
-  '/tenants/$tenantId': typeof AuthenticatedTenantsTenantIdRoute
+  '/tenants/$tenantId': typeof AuthenticatedTenantsTenantIdRouteWithChildren
   '/tenants/new': typeof AuthenticatedTenantsNewRoute
+  '/tenants/$tenantId/edit': typeof AuthenticatedTenantsTenantIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -214,8 +223,9 @@ export interface FileRoutesById {
   '/_authenticated/stats': typeof AuthenticatedStatsRoute
   '/_authenticated/tenants': typeof AuthenticatedTenantsRouteWithChildren
   '/_authenticated/applications/$applicationId': typeof AuthenticatedApplicationsApplicationIdRoute
-  '/_authenticated/tenants/$tenantId': typeof AuthenticatedTenantsTenantIdRoute
+  '/_authenticated/tenants/$tenantId': typeof AuthenticatedTenantsTenantIdRouteWithChildren
   '/_authenticated/tenants/new': typeof AuthenticatedTenantsNewRoute
+  '/_authenticated/tenants/$tenantId/edit': typeof AuthenticatedTenantsTenantIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -241,6 +251,7 @@ export interface FileRouteTypes {
     | '/applications/$applicationId'
     | '/tenants/$tenantId'
     | '/tenants/new'
+    | '/tenants/$tenantId/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -264,6 +275,7 @@ export interface FileRouteTypes {
     | '/applications/$applicationId'
     | '/tenants/$tenantId'
     | '/tenants/new'
+    | '/tenants/$tenantId/edit'
   id:
     | '__root__'
     | '/'
@@ -288,6 +300,7 @@ export interface FileRouteTypes {
     | '/_authenticated/applications/$applicationId'
     | '/_authenticated/tenants/$tenantId'
     | '/_authenticated/tenants/new'
+    | '/_authenticated/tenants/$tenantId/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -454,6 +467,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedApplicationsApplicationIdRouteImport
       parentRoute: typeof AuthenticatedApplicationsRoute
     }
+    '/_authenticated/tenants/$tenantId/edit': {
+      id: '/_authenticated/tenants/$tenantId/edit'
+      path: '/edit'
+      fullPath: '/tenants/$tenantId/edit'
+      preLoaderRoute: typeof AuthenticatedTenantsTenantIdEditRouteImport
+      parentRoute: typeof AuthenticatedTenantsTenantIdRoute
+    }
   }
 }
 
@@ -472,13 +492,29 @@ const AuthenticatedApplicationsRouteWithChildren =
     AuthenticatedApplicationsRouteChildren,
   )
 
+interface AuthenticatedTenantsTenantIdRouteChildren {
+  AuthenticatedTenantsTenantIdEditRoute: typeof AuthenticatedTenantsTenantIdEditRoute
+}
+
+const AuthenticatedTenantsTenantIdRouteChildren: AuthenticatedTenantsTenantIdRouteChildren =
+  {
+    AuthenticatedTenantsTenantIdEditRoute:
+      AuthenticatedTenantsTenantIdEditRoute,
+  }
+
+const AuthenticatedTenantsTenantIdRouteWithChildren =
+  AuthenticatedTenantsTenantIdRoute._addFileChildren(
+    AuthenticatedTenantsTenantIdRouteChildren,
+  )
+
 interface AuthenticatedTenantsRouteChildren {
-  AuthenticatedTenantsTenantIdRoute: typeof AuthenticatedTenantsTenantIdRoute
+  AuthenticatedTenantsTenantIdRoute: typeof AuthenticatedTenantsTenantIdRouteWithChildren
   AuthenticatedTenantsNewRoute: typeof AuthenticatedTenantsNewRoute
 }
 
 const AuthenticatedTenantsRouteChildren: AuthenticatedTenantsRouteChildren = {
-  AuthenticatedTenantsTenantIdRoute: AuthenticatedTenantsTenantIdRoute,
+  AuthenticatedTenantsTenantIdRoute:
+    AuthenticatedTenantsTenantIdRouteWithChildren,
   AuthenticatedTenantsNewRoute: AuthenticatedTenantsNewRoute,
 }
 

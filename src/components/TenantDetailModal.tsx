@@ -149,10 +149,10 @@ export function TenantDetailModal({
               />
               <ActionBtn
                 icon={ArrowRight}
-                label="상세"
+                label="수정"
                 onClick={() => {
                   onOpenChange(false);
-                  navigate({ to: "/tenants/$tenantId", params: { tenantId: tenant.id } });
+                  navigate({ to: "/tenants/$tenantId/edit", params: { tenantId: tenant.id } });
                 }}
               />
             </div>
