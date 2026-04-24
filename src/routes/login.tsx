@@ -6,6 +6,7 @@ import { MobileFrame } from "@/components/MobileFrame";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { LegalModal, type LegalKind } from "@/components/LegalModal";
 import { InfoModal } from "@/components/InfoModal";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +15,8 @@ import { toast } from "sonner";
 import { notifyValidation } from "@/components/ValidationModal";
 import { useAuth } from "@/hooks/useAuth";
 import { toKoreanAuthError } from "@/lib/auth-errors";
+
+const REMEMBER_KEY = "gossol:remember-me";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "로그인 — Gossol" }] }),
