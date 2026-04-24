@@ -152,6 +152,15 @@ function LoginPage() {
               />
             </div>
 
+            <label className="flex items-center gap-2 select-none cursor-pointer text-[13px] text-foreground">
+              <Checkbox
+                checked={rememberMe}
+                onCheckedChange={(c) => setRememberMe(c === true)}
+                className="h-4 w-4 rounded-[4px]"
+              />
+              <span className="font-medium">자동 로그인</span>
+            </label>
+
             <Button
               type="submit"
               disabled={loading}
