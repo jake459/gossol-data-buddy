@@ -235,7 +235,7 @@ function TenantsPage() {
                   >
                     <button
                       type="button"
-                      onClick={() => setDetailId(t.id)}
+                      onClick={() => navigate({ to: "/tenants/$tenantId/edit", params: { tenantId: t.id } })}
                       className="flex min-w-0 flex-1 items-center gap-3 text-left"
                     >
                       <span className="grid h-10 w-10 place-items-center rounded-full bg-brand/10 text-[13px] font-bold text-brand">
