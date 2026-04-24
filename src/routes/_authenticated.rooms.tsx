@@ -587,6 +587,15 @@ function RoomsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <RoomDetailModal
+        room={detail}
+        typeName={types.find((t) => t.id === detail?.room_type_id)?.name ?? null}
+        open={!!detail}
+        onOpenChange={(o) => !o && setDetail(null)}
+        onEdit={() => detail && setEdit(detail)}
+      />
+
       <ConfirmDialog />
     </MobileFrame>
   );
