@@ -234,27 +234,44 @@ export function RoomDetailModal({
                 {room.status === "occupied" ? "배정된 입실자가 없어요." : "현재 비어있는 호실이에요."}
               </p>
             ) : (
-              <div className="space-y-2 px-3 pb-3 text-[12.5px]">
-                <Row icon={User2} label="이름" value={tenant.name} />
-                <Row icon={Phone} label="연락처" value={tenant.phone ?? "—"} />
-                <Row
-                  icon={Wallet}
-                  label="월세 / 보증금"
-                  value={`${formatKRW(tenant.monthly_rent ?? 0)} / ${formatKRW(tenant.deposit ?? 0)}`}
-                />
-                <Row
-                  icon={CalendarClock}
-                  label="계약 기간"
-                  value={
-                    tenant.move_in_date
-                      ? `${tenant.move_in_date}${tenant.contract_end ? ` ~ ${tenant.contract_end}` : ""}`
-                      : "—"
-                  }
-                />
-                {tenant.payment_day ? (
-                  <Row label="납부일" value={`매달 ${tenant.payment_day}일`} />
-                ) : null}
-              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  onOpenChange(false);
+                  navigate({ to: "/tenants/$tenantId", params: { tenantId: tenant.id } });
+                }}
+                className="group block w-full text-left transition hover:bg-accent/50"
+              >
+                <div className="space-y-2 px-3 pb-3 text-[12.5px]">
+                  <Row icon={User2} label="이름" value={
+                    <span className="inline-flex items-center gap-1 text-brand">
+                      {tenant.name}
+                      <ChevronRight className="h-3.5 w-3.5 opacity-60 transition group-hover:translate-x-0.5" />
+                    </span>
+                  } />
+                  <Row icon={Phone} label="연락처" value={tenant.phone ?? "—"} />
+                  <Row
+                    icon={Wallet}
+                    label="월세 / 보증금"
+                    value={`${formatKRW(tenant.monthly_rent ?? 0)} / ${formatKRW(tenant.deposit ?? 0)}`}
+                  />
+                  <Row
+                    icon={CalendarClock}
+                    label="계약 기간"
+                    value={
+                      tenant.move_in_date
+                        ? `${tenant.move_in_date}${tenant.contract_end ? ` ~ ${tenant.contract_end}` : ""}`
+                        : "—"
+                    }
+                  />
+                  {tenant.payment_day ? (
+                    <Row label="납부일" value={`매달 ${tenant.payment_day}일`} />
+                  ) : null}
+                </div>
+                <div className="border-t border-border bg-muted/30 px-3 py-2 text-[11.5px] font-semibold text-brand">
+                  입실자 정보 보기 / 수정 →
+                </div>
+              </button>
             )}
           </Card>
 
