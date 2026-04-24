@@ -285,7 +285,7 @@ function RoomsPage() {
                   <li key={r.id}>
                     <button
                       type="button"
-                      onClick={() => setEdit(r)}
+                      onClick={() => setDetail(r)}
                       className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-accent/50"
                     >
                       <div className="grid h-11 w-11 place-items-center rounded-xl bg-muted text-[13px] font-bold">
