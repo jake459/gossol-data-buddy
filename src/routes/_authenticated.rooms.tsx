@@ -26,6 +26,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useBranch } from "@/hooks/useBranch";
 import { EmptyState } from "@/components/EmptyState";
 import { Pager } from "@/components/Pager";
+import { RoomDetailModal } from "@/components/RoomDetailModal";
 import { toast } from "sonner";
 import { notifyValidation } from "@/components/ValidationModal";
 import { cn } from "@/lib/utils";
