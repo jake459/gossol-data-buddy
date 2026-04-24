@@ -269,7 +269,7 @@ export function RoomDetailModal({
                   ) : null}
                 </div>
                 <div className="border-t border-border bg-muted/30 px-3 py-2 text-[11.5px] font-semibold text-brand">
-                  입실자 정보 보기 / 수정 →
+                  입실자 정보 수정 →
                 </div>
               </button>
             )}
