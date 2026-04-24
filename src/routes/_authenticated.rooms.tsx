@@ -87,6 +87,7 @@ function RoomsPage() {
   const [types, setTypes] = useState<RoomType[]>([]);
   const [loading, setLoading] = useState(true);
   const [edit, setEdit] = useState<EditState | null>(null);
+  const [detail, setDetail] = useState<Room | null>(null);
 
   const [fStatus, setFStatus] = useState<RoomStatus | "all">("all");
   const [fCategory, setFCategory] = useState<string>("all");
