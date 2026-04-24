@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { CalendarClock, Pencil, User2, Wallet, DoorOpen, Phone } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
+import { CalendarClock, Pencil, User2, Wallet, DoorOpen, Phone, ChevronRight } from "lucide-react";
 import {
   Dialog,
   DialogContent,
