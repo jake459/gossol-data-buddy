@@ -593,7 +593,26 @@ function RoomsPage() {
         typeName={types.find((t) => t.id === detail?.room_type_id)?.name ?? null}
         open={!!detail}
         onOpenChange={(o) => !o && setDetail(null)}
-        onEdit={() => detail && setEdit(detail)}
+        onEdit={() => {
+          if (!detail) return;
+          const target = detail;
+          setDetail(null);
+          setTimeout(() => {
+            setEdit({
+              id: target.id,
+              room_number: target.room_number,
+              floor: target.floor,
+              status: target.status,
+              room_type_id: target.room_type_id,
+              room_category: target.room_category,
+              window_type: target.window_type,
+              size_type: target.size_type,
+              extra_options: Array.isArray(target.extra_options) ? target.extra_options : [],
+              tags: Array.isArray(target.tags) ? target.tags : [],
+              auto_name: target.auto_name,
+            });
+          }, 150);
+        }}
       />
 
       <ConfirmDialog />
