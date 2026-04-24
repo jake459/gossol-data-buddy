@@ -6,6 +6,7 @@ import { MobileFrame } from "@/components/MobileFrame";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { LegalModal, type LegalKind } from "@/components/LegalModal";
 import { InfoModal } from "@/components/InfoModal";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +15,8 @@ import { toast } from "sonner";
 import { notifyValidation } from "@/components/ValidationModal";
 import { useAuth } from "@/hooks/useAuth";
 import { toKoreanAuthError } from "@/lib/auth-errors";
+
+const REMEMBER_KEY = "gossol:remember-me";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "로그인 — Gossol" }] }),
@@ -35,6 +38,16 @@ function LoginPage() {
   const [legalOpen, setLegalOpen] = useState<LegalKind | null>(null);
   const [comingSoon, setComingSoon] = useState<null | "kakao" | "naver">(null);
   const [findIdOpen, setFindIdOpen] = useState(false);
+  const [rememberMe, setRememberMe] = useState<boolean>(() => {
+    if (typeof window === "undefined") return true;
+    const v = window.localStorage.getItem(REMEMBER_KEY);
+    return v === null ? true : v === "1";
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem(REMEMBER_KEY, rememberMe ? "1" : "0");
+  }, [rememberMe]);
 
   useEffect(() => {
     if (!authLoading && session) {
@@ -138,6 +151,15 @@ function LoginPage() {
                 className="h-12 rounded-xl border-border bg-background px-4 text-[15px] placeholder:text-muted-foreground/70"
               />
             </div>
+
+            <label className="flex items-center gap-2 select-none cursor-pointer text-[13px] text-foreground">
+              <Checkbox
+                checked={rememberMe}
+                onCheckedChange={(c) => setRememberMe(c === true)}
+                className="h-4 w-4 rounded-[4px]"
+              />
+              <span className="font-medium">자동 로그인</span>
+            </label>
 
             <Button
               type="submit"

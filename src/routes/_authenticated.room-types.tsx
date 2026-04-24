@@ -169,7 +169,6 @@ function RoomTypesPage() {
         </button>
         <div className="flex-1">
           <h1 className="text-[15px] font-bold">등록된 방 타입</h1>
-          <p className="text-[11px] text-muted-foreground">호실 추가 시 빠르게 적용할 수 있는 규격</p>
         </div>
         <Button size="sm" onClick={() => setEdit({ options: { amenities: [] } })} className="h-9 rounded-xl">
           <Plus className="h-4 w-4" /> 방 타입 추가

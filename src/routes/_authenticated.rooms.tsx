@@ -26,6 +26,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { useBranch } from "@/hooks/useBranch";
 import { EmptyState } from "@/components/EmptyState";
 import { Pager } from "@/components/Pager";
+import { RoomDetailModal } from "@/components/RoomDetailModal";
 import { toast } from "sonner";
 import { notifyValidation } from "@/components/ValidationModal";
 import { cn } from "@/lib/utils";
@@ -86,6 +87,7 @@ function RoomsPage() {
   const [types, setTypes] = useState<RoomType[]>([]);
   const [loading, setLoading] = useState(true);
   const [edit, setEdit] = useState<EditState | null>(null);
+  const [detail, setDetail] = useState<Room | null>(null);
 
   const [fStatus, setFStatus] = useState<RoomStatus | "all">("all");
   const [fCategory, setFCategory] = useState<string>("all");
@@ -283,7 +285,7 @@ function RoomsPage() {
                   <li key={r.id}>
                     <button
                       type="button"
-                      onClick={() => setEdit(r)}
+                      onClick={() => setDetail(r)}
                       className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-accent/50"
                     >
                       <div className="grid h-11 w-11 place-items-center rounded-xl bg-muted text-[13px] font-bold">
@@ -585,6 +587,15 @@ function RoomsPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <RoomDetailModal
+        room={detail}
+        typeName={types.find((t) => t.id === detail?.room_type_id)?.name ?? null}
+        open={!!detail}
+        onOpenChange={(o) => !o && setDetail(null)}
+        onEdit={() => detail && setEdit(detail)}
+      />
+
       <ConfirmDialog />
     </MobileFrame>
   );
