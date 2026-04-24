@@ -38,6 +38,16 @@ function LoginPage() {
   const [legalOpen, setLegalOpen] = useState<LegalKind | null>(null);
   const [comingSoon, setComingSoon] = useState<null | "kakao" | "naver">(null);
   const [findIdOpen, setFindIdOpen] = useState(false);
+  const [rememberMe, setRememberMe] = useState<boolean>(() => {
+    if (typeof window === "undefined") return true;
+    const v = window.localStorage.getItem(REMEMBER_KEY);
+    return v === null ? true : v === "1";
+  });
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem(REMEMBER_KEY, rememberMe ? "1" : "0");
+  }, [rememberMe]);
 
   useEffect(() => {
     if (!authLoading && session) {
