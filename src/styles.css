@@ -80,13 +80,17 @@
   --brand-foreground: oklch(0.99 0.005 247);
   --brand-glow: oklch(0.62 0.22 268);
 
-  --success: oklch(0.66 0.16 158);
+  --success: oklch(0.5 0.14 155);
   --success-foreground: oklch(0.99 0.005 247);
-  --warning: oklch(0.82 0.15 78);
-  --warning-foreground: oklch(0.25 0.05 80);
-  --danger: oklch(0.62 0.23 22);
+  --success-bg: oklch(0.96 0.06 155);
+  --warning: oklch(0.5 0.14 80);
+  --warning-foreground: oklch(0.99 0.005 247);
+  --warning-bg: oklch(0.96 0.06 80);
+  --danger: oklch(0.55 0.2 30);
   --danger-foreground: oklch(0.99 0.005 247);
+  --danger-bg: oklch(0.96 0.05 30);
 
+  --surface: oklch(0.965 0.006 250);
   --app-shell: oklch(0.965 0.006 250);
 
   --kakao: oklch(0.92 0.18 95);
