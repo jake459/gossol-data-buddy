@@ -48,10 +48,14 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
+  --color-success-bg: var(--success-bg);
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
+  --color-warning-bg: var(--warning-bg);
   --color-danger: var(--danger);
   --color-danger-foreground: var(--danger-foreground);
+  --color-danger-bg: var(--danger-bg);
+  --color-surface: var(--surface);
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
   --color-brand-glow: var(--brand-glow);
