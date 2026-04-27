@@ -48,10 +48,14 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-success: var(--success);
   --color-success-foreground: var(--success-foreground);
+  --color-success-bg: var(--success-bg);
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
+  --color-warning-bg: var(--warning-bg);
   --color-danger: var(--danger);
   --color-danger-foreground: var(--danger-foreground);
+  --color-danger-bg: var(--danger-bg);
+  --color-surface: var(--surface);
   --color-brand: var(--brand);
   --color-brand-foreground: var(--brand-foreground);
   --color-brand-glow: var(--brand-glow);
@@ -80,13 +84,17 @@
   --brand-foreground: oklch(0.99 0.005 247);
   --brand-glow: oklch(0.62 0.22 268);
 
-  --success: oklch(0.66 0.16 158);
+  --success: oklch(0.5 0.14 155);
   --success-foreground: oklch(0.99 0.005 247);
-  --warning: oklch(0.82 0.15 78);
-  --warning-foreground: oklch(0.25 0.05 80);
-  --danger: oklch(0.62 0.23 22);
+  --success-bg: oklch(0.96 0.06 155);
+  --warning: oklch(0.5 0.14 80);
+  --warning-foreground: oklch(0.99 0.005 247);
+  --warning-bg: oklch(0.96 0.06 80);
+  --danger: oklch(0.55 0.2 30);
   --danger-foreground: oklch(0.99 0.005 247);
+  --danger-bg: oklch(0.96 0.05 30);
 
+  --surface: oklch(0.965 0.006 250);
   --app-shell: oklch(0.965 0.006 250);
 
   --kakao: oklch(0.92 0.18 95);
@@ -249,3 +257,135 @@
   color: transparent;
   animation: shimmer 6s ease-in-out infinite;
 }
+
+/* =====================================================
+   Gossol v2 — 시안 공통 디자인 토큰 / 유틸
+   라운드 위계: card 8 / input 10 / button 12 / pill 9999
+   ===================================================== */
+@utility rounded-card { border-radius: 8px; }
+@utility rounded-input { border-radius: 10px; }
+@utility rounded-button { border-radius: 12px; }
+@utility rounded-button-lg { border-radius: 14px; }
+@utility rounded-pill { border-radius: 9999px; }
+@utility rounded-modal { border-radius: 20px; }
+
+/* 카드 / 섹션 */
+.gs-card {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+}
+.gs-section {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+/* 입력 */
+.gs-input {
+  display: block;
+  height: 40px;
+  width: 100%;
+  border-radius: 10px;
+  padding: 0 12px;
+  font-size: 13px;
+  outline: none;
+  border: 1px solid var(--color-border);
+  background: var(--color-card);
+  transition: border-color 150ms;
+}
+.gs-input:focus { border-color: var(--color-ring); }
+.gs-textarea {
+  display: block;
+  width: 100%;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  outline: none;
+  border: 1px solid var(--color-border);
+  background: var(--color-card);
+  min-height: 80px;
+  resize: vertical;
+}
+
+/* 칩 */
+.gs-chip {
+  border-radius: 9999px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid var(--color-border);
+  background: var(--color-card);
+  color: oklch(from var(--color-foreground) l c h / 0.7);
+  transition: all 150ms;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.gs-chip:hover { background: var(--color-surface); }
+.gs-chip.is-active {
+  border-color: var(--color-brand);
+  background: oklch(from var(--color-brand) l c h / 0.1);
+  color: var(--color-brand);
+}
+
+/* 배지 */
+.gs-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 9999px;
+  padding: 3px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+.gs-badge-success { background: var(--color-success-bg); color: var(--color-success); }
+.gs-badge-danger  { background: var(--color-danger-bg);  color: var(--color-danger); }
+.gs-badge-warn    { background: var(--color-warning-bg); color: var(--color-warning); }
+.gs-badge-brand   { background: oklch(from var(--color-brand) l c h / 0.1); color: var(--color-brand); }
+.gs-badge-muted   { background: var(--color-surface); color: var(--color-muted-foreground); }
+
+/* 기본 버튼 */
+.gs-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 14px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  transition: opacity 150ms, background 150ms;
+  cursor: pointer;
+}
+.gs-btn-primary { background: var(--color-brand); color: var(--color-brand-foreground); }
+.gs-btn-primary:hover:not(:disabled) { opacity: 0.92; }
+.gs-btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.gs-btn-outline {
+  background: var(--color-card);
+  color: var(--color-foreground);
+  border: 1px solid var(--color-border);
+}
+.gs-btn-outline:hover { background: var(--color-surface); }
+.gs-btn-ghost { color: var(--color-muted-foreground); }
+.gs-btn-ghost:hover { background: var(--color-surface); color: var(--color-foreground); }
+
+/* 헤더 아이콘 버튼 */
+.gs-icon-btn {
+  display: grid;
+  place-items: center;
+  height: 36px;
+  width: 36px;
+  border-radius: 9999px;
+  color: var(--color-muted-foreground);
+  transition: background 150ms, color 150ms;
+}
+.gs-icon-btn:hover { background: var(--color-surface); color: var(--color-foreground); }
+
+/* 가벼운 페이지 배경(콘텐츠 영역) */
+.gs-page-bg { background: oklch(from var(--color-surface) l c h / 0.5); }
+

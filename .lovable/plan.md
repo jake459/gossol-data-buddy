@@ -1,65 +1,76 @@
 
+## 개요
 
-# 로그인/소셜로그인 네비게이션 수정 계획
+Claude(클루드)에서 작업하신 18개 화면 시안(`gossol-01` ~ `gossol-19`)을 분석한 결과:
+- **JSX + 인라인 스타일** 기반 순수 UI 시안 (Supabase 연동 없음, 목 데이터 사용)
+- 공통 디자인 토큰: `oklch` 색상(brand=cobalt 톤), Pretendard 폰트, 라운드 위계(card 8px / input 10px / button 12px / pill 9999px)
+- 기존 프로젝트의 모든 라우트가 이미 존재 → **UI만 시안대로 교체**, 기존 Supabase 데이터/라우팅/인증은 그대로 유지
 
-## 진단
+## 적용 전략
 
-1. **"Invalid login credentials"는 정상 응답**입니다 — 임의 비밀번호이므로 Supabase가 400을 반환합니다. 다만 영어 메시지가 그대로 노출되고, 일부 사용자는 회원가입 시 **이메일 확인** 절차 때문에 실제 가입 후에도 같은 오류를 봅니다.
-2. **소셜 로그인 후 화면 미이동**의 진짜 원인:
-   - `lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin })`는 OAuth 성공 시 **랜딩 페이지(`/`)** 로 돌아갑니다 → `/dashboard`로 가지 않음
-   - 로그인 페이지의 `useEffect`가 **`supabase.auth.getSession()` 한 번만** 호출하므로, OAuth 콜백으로 세션이 갱신되어도 페이지가 반응하지 않음 (race condition)
-   - 회원가입 페이지도 같은 문제
-3. `signup.tsx`의 `emailRedirectTo`도 `/dashboard`로 되어 있지만, 이메일 확인이 켜져 있으면 가입 직후 세션 없이 안내 메일만 발송됩니다.
+**디자인 토큰을 Tailwind/CSS로 변환**하여 시안의 인라인 스타일을 프로젝트의 shadcn/ui + Tailwind 체계로 옮깁니다 (인라인 스타일을 그대로 가져오면 유지보수가 어렵고 다크모드/일관성이 깨집니다).
 
-## 수정 사항
+### 1단계 — 디자인 시스템 정착
+- `src/styles.css`에 시안의 컬러 팔레트(`--brand`, `--success`, `--danger`, `--surface`, `--border`)를 oklch 토큰으로 추가
+- 라운드 위계 유틸 클래스(`rounded-card`, `rounded-input`, `rounded-button`, `rounded-pill`) 정의
+- Pretendard 폰트 import (이미 system 스택에 있는지 확인 후 필요 시 `<link>` 추가)
+- 공통 컴포넌트(`MobileFrame`, `TopBar`, `BottomTabs`, `PageHeader`, `StatusBadge`, `EmptyState`)를 시안 톤에 맞춰 리팩터
 
-### A. 이메일 확인 비활성화 (즉시 로그인 가능)
-`supabase/config.toml`에 auth 블록 추가:
-```toml
-[auth]
-enable_signup = true
-enable_confirmations = false
-```
-→ 회원가입 즉시 세션 발급, 다음 로그인도 정상 작동.
+### 2단계 — 인증/온보딩 (3개)
+| 시안 | 라우트 |
+|---|---|
+| `01-login-v3` | `src/routes/login.tsx` (자동 로그인 체크박스 유지) |
+| `02-signup-v2` | `src/routes/signup.tsx` |
+| `03-reset-password-v2` | `src/routes/reset-password.tsx` |
+| `04-onboarding-v2` | `src/routes/_authenticated.onboarding.tsx` |
 
-### B. 로그인/회원가입 네비게이션을 `useAuth` 기반으로 전환
-- `useEffect`에서 `getSession()` 대신 **`useAuth()`의 `session`을 watch** → 세션이 생기는 즉시 `/dashboard`로 이동
-- OAuth 인라인 성공(토큰 즉시 수신) · 비밀번호 로그인 · OAuth 콜백 후 복귀 모두 한 경로로 처리
-- 로딩 중에는 폼 비활성화
+### 3단계 — 메인 화면 (4개)
+| 시안 | 라우트 |
+|---|---|
+| `05-dashboard-v2` | `_authenticated.dashboard.tsx` (가동률 Hero, 미납자 연체일수, 입·퇴실 D-day, 무한 스크롤) |
+| `06-rooms-v2` | `_authenticated.rooms.tsx` (호실 그리드 + 디테일 모달) |
+| `07-tenants-list-v2` | `_authenticated.tenants.tsx` |
+| `13-invoices-v2` | `_authenticated.invoices.tsx` |
 
-```ts
-const { session, loading } = useAuth();
-useEffect(() => {
-  if (!loading && session) navigate({ to: "/dashboard" });
-}, [loading, session, navigate]);
-```
+### 4단계 — 입실자/지원서 상세 (5개)
+| 시안 | 라우트 |
+|---|---|
+| `08-tenant-detail-v2` | `_authenticated.tenants.$tenantId.tsx` |
+| `09-tenant-edit-v2` | `_authenticated.tenants.$tenantId.edit.tsx` (이미 v1 존재 → 시안에 맞춰 정리) |
+| `10-tenant-new-v2` | `_authenticated.tenants.new.tsx` |
+| `11-applications-v2` | `_authenticated.applications.tsx` |
+| `12-application-detail-v2` | `_authenticated.applications.$applicationId.tsx` |
 
-### C. 소셜 OAuth 리다이렉트 URI 수정
-`redirect_uri`를 `${window.location.origin}/dashboard`로 변경하여, 외부 리다이렉트가 발생하더라도 콜백 후 곧바로 인증된 라우트로 진입하게 합니다 (`_authenticated` 가드가 onboarding/대시보드로 자동 분기).
+### 5단계 — 운영 화면 (5개)
+| 시안 | 라우트 |
+|---|---|
+| `14-schedule-v2` | `_authenticated.schedule.tsx` |
+| `15-cleanings-v2` | `_authenticated.cleanings.tsx` |
+| `16-inspections-v2` | `_authenticated.inspections.tsx` |
+| `17-community-v2` | `_authenticated.community.tsx` |
+| `19-room-types-v2` | `_authenticated.room-types.tsx` |
 
-### D. 한국어 오류 메시지 매핑
-헬퍼 함수로 Supabase 오류를 한국어로 변환:
-- `Invalid login credentials` → "이메일 또는 비밀번호가 올바르지 않습니다."
-- `Email not confirmed` → "이메일 인증을 완료해 주세요."
-- `User already registered` → "이미 가입된 이메일입니다."
-- 그 외 → 원본 메시지
+## 데이터 연동 원칙
 
-`src/lib/auth-errors.ts`로 분리하여 login/signup에서 재사용.
+- **시안의 목 데이터는 무시**, 기존 라우트의 Supabase 쿼리(useEffect/select 패턴)는 그대로 유지
+- 시안에서 새로 보이는 파생 값(가동률, 연체일수, D-day 등)은 기존 데이터에서 클라이언트에서 계산
+- 시안에 있지만 DB에 없는 필드(생년월일, 성별, 환불계좌 등)는 현재 v1 입실자 수정 페이지의 `__GS_EXTRA__` JSON 패턴을 유지
+- 페이지네이션/정렬/필터링 같은 기존 동작(예: 알림 4개씩, 수익 6명씩)은 보존
 
-### E. 회원가입 후 처리
-`emailRedirectTo`는 유지하되, `enable_confirmations = false`이므로 즉시 세션이 생성됨 → useEffect가 `/dashboard`로 이동시킴. 별도 명시적 navigate 호출 제거.
+## 진행 방식
 
-## 변경 파일
+작업량이 매우 크기 때문에(18개 화면, 평균 600줄/파일):
+1. **디자인 토큰 + 공통 컴포넌트** 먼저 (1메시지)
+2. **인증/온보딩 4화면** 묶음 (1메시지)  
+3. **대시보드/호실/입실자 목록/청구서** 4화면 (2메시지로 분할)
+4. **입실자/지원서 상세 5화면** (2메시지)
+5. **운영 5화면** (2메시지)
 
-- `supabase/config.toml` — auth 섹션 추가
-- `src/lib/auth-errors.ts` — 신규, 오류 메시지 한글 매핑
-- `src/routes/login.tsx` — useAuth 기반 navigation, redirect_uri 수정, 한글 오류
-- `src/routes/signup.tsx` — useAuth 기반 navigation, 한글 오류
+각 단계 후 빌드/프리뷰로 시각적 확인을 권장드립니다. 한 번의 응답으로 모든 화면을 다 바꾸면 빌드 오류 발생 시 원인 추적이 어렵기 때문입니다.
 
-## 기대 동작
-
-1. 잘못된 비밀번호 → "이메일 또는 비밀번호가 올바르지 않습니다." 토스트 (페이지 유지, 정상)
-2. 올바른 자격증명 → 토스트 후 `/dashboard`로 자동 이동 (지점 없으면 `/onboarding`)
-3. 구글 로그인 클릭 → 구글 인증 → 자동으로 `/dashboard` 진입
-4. 회원가입 → 즉시 로그인되어 `/onboarding`으로 진입
-
+## 변경하지 않는 것
+- DB 스키마, RLS 정책 (스키마 변경 불필요)
+- 라우팅/인증 가드 (`_authenticated.tsx`)
+- Supabase 클라이언트, useAuth/useBranch 훅
+- `src/components/ui/*` (shadcn 원본)
+- `src/integrations/supabase/*` (자동 생성)
